@@ -7,6 +7,7 @@ import (
 	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"os"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -24,7 +25,7 @@ func Add(mgr manager.Manager) error {
 	newrelicClient := newrelic.NewClient(
 		log,
 		"https://api.newrelic.com/v2",
-		"",
+		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
 	repository := newrelic.NewAlertPolicyRepository(log, newrelicClient)
 
