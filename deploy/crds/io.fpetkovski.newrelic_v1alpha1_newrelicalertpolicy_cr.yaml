@@ -1,0 +1,7 @@
+apiVersion: io.fpetkovski.newrelic/v1alpha1
+kind: NewrelicAlertPolicy
+metadata:
+  name: fp-test
+spec:
+  name: "fp-test-updated-2-3-4"
+  incident_preference: "per_policy"

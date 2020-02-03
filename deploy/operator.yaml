@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: newrelic-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: newrelic-operator
+  template:
+    metadata:
+      labels:
+        name: newrelic-operator
+    spec:
+      serviceAccountName: newrelic-operator
+      containers:
+        - name: newrelic-operator
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          command:
+          - newrelic-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "newrelic-operator"
