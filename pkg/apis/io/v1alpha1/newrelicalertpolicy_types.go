@@ -4,18 +4,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// NewrelicAlertPolicySpec defines the desired state of NewrelicAlertPolicy
 type NewrelicAlertPolicySpec struct {
 	Name string `json:"name"`
 
 	// +kubebuilder:validation:Enum=per_policy;per_condition;per_condition_and_target
 	IncidentPreference string `json:"incident_preference"`
+
+	NrqlConditions []NrqlCondition `json:"nrqlConditions,omitempty"`
 }
 
-// NewrelicAlertPolicyStatus defines the observed state of NewrelicAlertPolicy
 type NewrelicAlertPolicyStatus struct {
 	Status           string `json:"status"`
 	Reason           string `json:"reason,omitempty"`
@@ -36,8 +33,6 @@ type NewrelicAlertPolicy struct {
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
-// NewrelicAlertPolicyList contains a list of NewrelicAlertPolicy
 type NewrelicAlertPolicyList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

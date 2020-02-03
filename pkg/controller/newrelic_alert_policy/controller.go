@@ -3,8 +3,8 @@ package newrelic_alert_policy
 import (
 	"context"
 	iov1alpha1 "github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
+	newrelic "github.com/fpetkovski/newrelic-operator/pkg/infrastructure/client"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/repositories"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"
@@ -27,13 +27,13 @@ func Add(mgr manager.Manager) error {
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
-	repository := newrelic.NewAlertPolicyRepository(log, newrelicClient)
+	repository := repositories.NewAlertPolicyRepository(log, newrelicClient)
 
 	return add(mgr, newReconciler(mgr, repository))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, alertPolicyRepository *newrelic.AlertPolicyRepository) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, alertPolicyRepository *repositories.AlertPolicyRepository) reconcile.Reconciler {
 	return &ReconcileNewrelicPolicy{
 		client:     mgr.GetClient(),
 		scheme:     mgr.GetScheme(),
@@ -64,7 +64,7 @@ var _ reconcile.Reconciler = &ReconcileNewrelicPolicy{}
 type ReconcileNewrelicPolicy struct {
 	client     client.Client
 	scheme     *runtime.Scheme
-	repository *newrelic.AlertPolicyRepository
+	repository *repositories.AlertPolicyRepository
 }
 
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
@@ -133,14 +133,4 @@ func (r *ReconcileNewrelicPolicy) getKubernetesObject(request reconcile.Request)
 	}
 
 	return instance, nil
-}
-
-func newNewrelicPolicy(cr *iov1alpha1.NewrelicAlertPolicy) *domain.NewrelicPolicy {
-	return &domain.NewrelicPolicy{
-		Policy: domain.Policy{
-			Id:                 cr.Status.NewrelicPolicyId,
-			Name:               cr.Spec.Name,
-			IncidentPreference: cr.Spec.IncidentPreference,
-		},
-	}
 }

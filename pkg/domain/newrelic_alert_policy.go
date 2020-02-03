@@ -1,7 +1,8 @@
 package domain
 
 type NewrelicPolicy struct {
-	Policy Policy `json:"policy"`
+	Policy         Policy           `json:"policy"`
+	NrqlConditions []*NrqlCondition `json:"nrql_conditions,omitempty"`
 }
 
 type Policy struct {

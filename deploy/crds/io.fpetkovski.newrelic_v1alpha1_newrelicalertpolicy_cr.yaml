@@ -5,3 +5,15 @@ metadata:
 spec:
   name: "fp-test-updated-2-3-4"
   incident_preference: "per_policy"
+  nrqlConditions:
+    - name: High container memory usage
+      query: "SELECT average(cpuLimitCores) FROM K8sContainerSample"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "15"
+        durationMinutes: 60
+      valueFunction: single_value
+
+

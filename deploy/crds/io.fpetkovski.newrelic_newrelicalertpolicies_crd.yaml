@@ -30,7 +30,6 @@ spec:
         metadata:
           type: object
         spec:
-          description: NewrelicAlertPolicySpec defines the desired state of NewrelicAlertPolicy
           properties:
             incident_preference:
               enum:
@@ -40,12 +39,59 @@ spec:
               type: string
             name:
               type: string
+            nrqlConditions:
+              items:
+                properties:
+                  alertThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      operator:
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  enabled:
+                    type: boolean
+                  name:
+                    type: string
+                  query:
+                    type: string
+                  runbook_url:
+                    type: string
+                  sinceMinutes:
+                    type: integer
+                  valueFunction:
+                    enum:
+                    - single_value
+                    - sum
+                    type: string
+                required:
+                - alertThreshold
+                - name
+                - query
+                - sinceMinutes
+                - valueFunction
+                type: object
+              type: array
           required:
           - incident_preference
           - name
           type: object
         status:
-          description: NewrelicAlertPolicyStatus defines the observed state of NewrelicAlertPolicy
           properties:
             newrelicPolicyId:
               format: int64
