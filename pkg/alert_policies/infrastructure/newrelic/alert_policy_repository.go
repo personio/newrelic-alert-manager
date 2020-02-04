@@ -3,19 +3,19 @@ package newrelic
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fpetkovski/newrelic-operator/internal"
 	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 )
 
 type AlertPolicyRepository struct {
-	client                  *newrelic.Client
+	client                  *internal.NewrelicClient
 	logr                    logr.Logger
 	nrqlConditionRepository *nrqlConditionRepository
 }
 
 func NewAlertPolicyRepository(logr logr.Logger, newrelicAdminKey string) *AlertPolicyRepository {
-	client := newrelic.NewClient(
+	client := internal.NewNewrelicClient(
 		logr,
 		"https://api.newrelic.com/v2",
 		newrelicAdminKey,

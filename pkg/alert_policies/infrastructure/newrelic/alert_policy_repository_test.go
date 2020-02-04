@@ -1,8 +1,8 @@
 package newrelic_test
 
 import (
+	"github.com/fpetkovski/newrelic-operator/internal"
 	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
@@ -77,8 +77,8 @@ func newPolicyWithConditions(name string, incidentPreference string) *domain2.Ne
 	return policy
 }
 
-func newClient() *newrelic.Client {
-	client := newrelic.NewClient(
+func newClient() *internal.NewrelicClient {
+	client := internal.NewNewrelicClient(
 		logr,
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),

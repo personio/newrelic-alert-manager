@@ -1,9 +1,8 @@
-package channels_test
+package newrelic_test
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/channels"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
+	"github.com/fpetkovski/newrelic-operator/internal"
+	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
@@ -11,7 +10,7 @@ import (
 var logr = log.Log.WithName("test")
 
 func TestSlackChannelRepository_Save(t *testing.T) {
-	repository := channels.NewSlackChannelRepository(logr, newClient())
+	repository := NewSlackChannelRepository(logr, newClient())
 
 	id := new(int64)
 	*id = 3138077
@@ -37,8 +36,8 @@ func TestSlackChannelRepository_Save(t *testing.T) {
 	}
 }
 
-func newClient() *newrelic.Client {
-	return newrelic.NewClient(
+func newClient() *internal.NewrelicClient {
+	return internal.NewNewrelicClient(
 		logr,
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),

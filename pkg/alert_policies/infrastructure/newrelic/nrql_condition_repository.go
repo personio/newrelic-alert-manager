@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fpetkovski/newrelic-operator/internal"
 	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"io/ioutil"
 )
 
 type nrqlConditionRepository struct {
-	client *newrelic.Client
+	client *internal.NewrelicClient
 	logr   logr.Logger
 }
 
-func newNrqlConditionRepository(logr logr.Logger, client *newrelic.Client) *nrqlConditionRepository {
+func newNrqlConditionRepository(logr logr.Logger, client *internal.NewrelicClient) *nrqlConditionRepository {
 	return &nrqlConditionRepository{
 		client: client,
 		logr:   logr,

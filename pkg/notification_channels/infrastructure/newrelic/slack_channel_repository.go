@@ -1,21 +1,21 @@
-package channels
+package newrelic
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
+	"github.com/fpetkovski/newrelic-operator/internal"
+	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
 	"github.com/go-logr/logr"
 	"io/ioutil"
 )
 
 type SlackChannelRepository struct {
 	logr   logr.Logger
-	client *newrelic.Client
+	client *internal.NewrelicClient
 }
 
-func NewSlackChannelRepository(logr logr.Logger, client *newrelic.Client) *SlackChannelRepository {
+func NewSlackChannelRepository(logr logr.Logger, client *internal.NewrelicClient) *SlackChannelRepository {
 	return &SlackChannelRepository{
 		logr:   logr,
 		client: client,

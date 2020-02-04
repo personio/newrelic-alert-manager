@@ -1,4 +1,4 @@
-package newrelic
+package internal
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type Client struct {
+type NewrelicClient struct {
 	client *http.Client
 	log    logr.Logger
 
@@ -15,8 +15,8 @@ type Client struct {
 	adminKey string
 }
 
-func NewClient(log logr.Logger, url string, adminKey string) *Client {
-	return &Client{
+func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicClient {
+	return &NewrelicClient{
 		client:   &http.Client{},
 		log:      log,
 		url:      url,
@@ -24,25 +24,25 @@ func NewClient(log logr.Logger, url string, adminKey string) *Client {
 	}
 }
 
-func (newrelic Client) Get(path string) (*http.Response, error) {
+func (newrelic NewrelicClient) Get(path string) (*http.Response, error) {
 	request := newrelic.newRequest("Get", path, nil)
 
 	return newrelic.execute(request)
 }
 
-func (newrelic Client) PostJson(path string, payload []byte) (*http.Response, error) {
+func (newrelic NewrelicClient) PostJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("POST", path, payload)
 
 	return newrelic.execute(request)
 }
 
-func (newrelic Client) PutJson(path string, payload []byte) (*http.Response, error) {
+func (newrelic NewrelicClient) PutJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("PUT", path, payload)
 
 	return newrelic.execute(request)
 }
 
-func (newrelic Client) Delete(path string) (*http.Response, error) {
+func (newrelic NewrelicClient) Delete(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("DELETE", path, nil)
 
 	response, err := newrelic.execute(request)
@@ -56,7 +56,7 @@ func (newrelic Client) Delete(path string) (*http.Response, error) {
 	return response, nil
 }
 
-func (newrelic *Client) newRequest(method string, path string, body []byte) *http.Request {
+func (newrelic *NewrelicClient) newRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
 		req = newJsonRequest(method, newrelic.url, path)
@@ -69,7 +69,7 @@ func (newrelic *Client) newRequest(method string, path string, body []byte) *htt
 	return req
 }
 
-func (newrelic *Client) newJsonRequest(method string, path string, body []byte) *http.Request {
+func (newrelic *NewrelicClient) newJsonRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
 		req = newJsonRequest(method, newrelic.url, path)
@@ -101,7 +101,7 @@ func newJsonRequest(method string, url string, path string) *http.Request {
 	return req
 }
 
-func (newrelic Client) execute(request *http.Request) (*http.Response, error) {
+func (newrelic NewrelicClient) execute(request *http.Request) (*http.Response, error) {
 	newrelic.log.Info("Executing request", "Method", request.Method, "Endpoint", request.URL, "Payload", request.Body)
 	response, err := newrelic.client.Do(request)
 	if err != nil {
