@@ -6,8 +6,9 @@ import (
 
 // SlackNotificationChannelSpec defines the desired state of SlackNotificationChannel
 type SlackNotificationChannelSpec struct {
-	Url     string `json:"url"`
-	Channel string `json:"channel"`
+	Url            string            `json:"url"`
+	Channel        string            `json:"channel"`
+	PolicySelector map[string]string `json:"policy_selector,omitempty"`
 }
 
 // SlackNotificationChannelStatus defines the observed state of SlackNotificationChannel

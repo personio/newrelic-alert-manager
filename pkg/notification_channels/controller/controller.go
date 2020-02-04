@@ -118,18 +118,3 @@ func (r *Reconcile) deleteChannel(channel *domain.SlackNotificationChannel, inst
 
 	return reconcile.Result{}, nil
 }
-
-// newPodForCR returns a busybox pod with the same name/namespace as the cr
-func newChannel(cr *iov1alpha1.SlackNotificationChannel) *domain.SlackNotificationChannel {
-	return &domain.SlackNotificationChannel{
-		Channel: domain.Channel{
-			Id:   cr.Status.NewrelicChannelId,
-			Name: cr.Name,
-			Type: "slack",
-			Configuration: domain.Configuration{
-				Url:     cr.Spec.Url,
-				Channel: cr.Spec.Channel,
-			},
-		},
-	}
-}
