@@ -1,9 +1,9 @@
-package alerts
+package newrelic
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
+	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 )
@@ -28,7 +28,7 @@ func NewAlertPolicyRepository(logr logr.Logger, newrelicAdminKey string) *AlertP
 	}
 }
 
-func (repository AlertPolicyRepository) Save(policy *domain.NewrelicPolicy) error {
+func (repository AlertPolicyRepository) Save(policy *domain2.NewrelicPolicy) error {
 	if policy.Policy.Id == nil {
 		err := repository.createPolicy(policy)
 		if err != nil {
@@ -63,7 +63,7 @@ func (repository AlertPolicyRepository) Save(policy *domain.NewrelicPolicy) erro
 	return nil
 }
 
-func (repository AlertPolicyRepository) Delete(policy *domain.NewrelicPolicy) error {
+func (repository AlertPolicyRepository) Delete(policy *domain2.NewrelicPolicy) error {
 	repository.logr.Info("Deleting policy", "Policy", policy)
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
@@ -72,7 +72,7 @@ func (repository AlertPolicyRepository) Delete(policy *domain.NewrelicPolicy) er
 	return err
 }
 
-func (repository AlertPolicyRepository) createPolicy(policy *domain.NewrelicPolicy) error {
+func (repository AlertPolicyRepository) createPolicy(policy *domain2.NewrelicPolicy) error {
 	repository.logr.Info("Creating policy", "Policy", policy)
 	payload, err := json.Marshal(&policy)
 	if err != nil {
@@ -92,7 +92,7 @@ func (repository AlertPolicyRepository) createPolicy(policy *domain.NewrelicPoli
 	return nil
 }
 
-func (repository AlertPolicyRepository) updatePolicy(policy *domain.NewrelicPolicy) error {
+func (repository AlertPolicyRepository) updatePolicy(policy *domain2.NewrelicPolicy) error {
 	repository.logr.Info("Updating policy", "Policy", policy)
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
@@ -114,7 +114,7 @@ func (repository AlertPolicyRepository) updatePolicy(policy *domain.NewrelicPoli
 	return nil
 }
 
-func (repository AlertPolicyRepository) marshal(policy *domain.NewrelicPolicy) ([]byte, error) {
+func (repository AlertPolicyRepository) marshal(policy *domain2.NewrelicPolicy) ([]byte, error) {
 	result := *policy
 	result.Policy.Id = nil
 	result.NrqlConditions = nil

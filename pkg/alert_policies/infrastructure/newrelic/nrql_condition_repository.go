@@ -1,10 +1,10 @@
-package alerts
+package newrelic
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
+	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"io/ioutil"
@@ -22,7 +22,7 @@ func newNrqlConditionRepository(logr logr.Logger, client *newrelic.Client) *nrql
 	}
 }
 
-func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain.NrqlConditionList, error) {
+func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain2.NrqlConditionList, error) {
 	repository.logr.Info("Getting conditions for policy", "PolicyId", policyId)
 
 	endpoint := fmt.Sprintf("alerts_nrql_conditions.json?policy_id=%d", policyId)
@@ -31,7 +31,7 @@ func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain
 		return nil, err
 	}
 
-	var conditionList domain.NrqlConditionList
+	var conditionList domain2.NrqlConditionList
 	err = json.NewDecoder(response.Body).Decode(&conditionList)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (repository nrqlConditionRepository) deleteConditions(conditionId int64) er
 	return err
 }
 
-func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain.NrqlCondition) error {
+func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain2.NrqlCondition) error {
 	repository.logr.Info("Saving condition", "Policy Id", policyId, "Condition", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {

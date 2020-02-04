@@ -1,5 +1,5 @@
 apiVersion: io.fpetkovski.newrelic/v1alpha1
-kind: NewrelicAlertPolicy
+kind: AlertPolicy
 metadata:
   name: fp-test
 spec:

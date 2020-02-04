@@ -1,8 +1,7 @@
-package alerts_test
+package newrelic_test
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/alerts"
+	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -24,7 +23,7 @@ var logr = log.Log.WithName("test")
 
 func TestAlertPolicyRepository_SaveNewPolicyWitConditions(t *testing.T) {
 	client := newClient()
-	repository := alerts.NewAlertPolicyRepository(logr, client)
+	repository := NewAlertPolicyRepository(logr, client)
 
 	policy := newPolicyWithConditions("fp-test-empty", "per_policy")
 	err := repository.Save(policy)
@@ -33,31 +32,31 @@ func TestAlertPolicyRepository_SaveNewPolicyWitConditions(t *testing.T) {
 	}
 }
 
-func newEmptyPolicy(name string, incidentPreference string) *domain.NewrelicPolicy {
+func newEmptyPolicy(name string, incidentPreference string) *domain2.NewrelicPolicy {
 	id := new(int64)
 	*id = 624391
-	policy := &domain.NewrelicPolicy{
-		Policy: domain.Policy{
+	policy := &domain2.NewrelicPolicy{
+		Policy: domain2.Policy{
 			Id:                 id,
 			Name:               name,
 			IncidentPreference: incidentPreference,
 		},
-		NrqlConditions: []*domain.NrqlCondition{},
+		NrqlConditions: []*domain2.NrqlCondition{},
 	}
 	return policy
 }
 
-func newPolicyWithConditions(name string, incidentPreference string) *domain.NewrelicPolicy {
+func newPolicyWithConditions(name string, incidentPreference string) *domain2.NewrelicPolicy {
 	policy := newEmptyPolicy("fp-test-conditions", "per_policy")
-	policy.NrqlConditions = []*domain.NrqlCondition{
+	policy.NrqlConditions = []*domain2.NrqlCondition{
 		{
-			Condition: domain.Condition{
+			Condition: domain2.Condition{
 				Id:         nil,
 				Type:       "static",
 				Name:       "p1-edited",
 				RunbookURL: "",
 				Enabled:    true,
-				Terms: []domain.Term{
+				Terms: []domain2.Term{
 					{
 						Duration:     "50",
 						Operator:     "above",
@@ -67,7 +66,7 @@ func newPolicyWithConditions(name string, incidentPreference string) *domain.New
 					},
 				},
 				ValueFunction: "single_value",
-				Nrql: domain.Nrql{
+				Nrql: domain2.Nrql{
 					Query:      "select average(cpuLimitCores) from K8sContainerSample",
 					SinceValue: "20",
 				},
