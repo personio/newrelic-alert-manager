@@ -3,6 +3,7 @@ package newrelic_test
 import (
 	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/infrastructure/newrelic"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
@@ -10,10 +11,10 @@ import (
 var logr = log.Log.WithName("test")
 
 func TestSlackChannelRepository_Save(t *testing.T) {
-	repository := NewSlackChannelRepository(logr, newClient())
+	repository := newrelic.NewSlackChannelRepository(logr, newClient())
 
 	id := new(int64)
-	*id = 3138077
+	*id = 3138970
 	channel := &domain.SlackNotificationChannel{
 		Channel: domain.Channel{
 			Id:   id,
@@ -22,6 +23,9 @@ func TestSlackChannelRepository_Save(t *testing.T) {
 			Configuration: domain.Configuration{
 				Url:     "http://bla",
 				Channel: "bla",
+			},
+			Links: domain.Links{
+				PolicyIds: []int64{625238},
 			},
 		},
 	}

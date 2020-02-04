@@ -30,6 +30,32 @@ func (c *Client) GetChannel(request reconcile.Request) (*v1alpha1.SlackNotificat
 	return &instance, nil
 }
 
+func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error) {
+	var instance v1alpha1.SlackNotificationChannelList
+	err := c.client.List(context.TODO(), &instance)
+	if err != nil {
+		return instance, err
+	}
+
+	return instance, nil
+}
+
+
+func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
+	options := &client_go.ListOptions{
+		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
+	}
+
+	var result v1alpha1.AlertPolicyList
+	err := c.client.List(context.TODO(), &result, options)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+
 func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	policy.ObjectMeta.Finalizers = []string{}
 	err := c.client.Update(context.TODO(), &policy)

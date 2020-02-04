@@ -34,6 +34,11 @@ spec:
           properties:
             channel:
               type: string
+            policySelector:
+              additionalProperties:
+                type: string
+              description: Set is a map of label:value. It implements Labels.
+              type: object
             url:
               type: string
           required:

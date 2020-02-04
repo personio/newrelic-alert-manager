@@ -1,5 +1,9 @@
 package domain
 
+import (
+	"sort"
+)
+
 type SlackNotificationChannelList struct {
 	Channels []Channel `json:"channels"`
 }
@@ -8,12 +12,21 @@ type SlackNotificationChannel struct {
 	Channel Channel `json:"channel"`
 }
 
+func (channel SlackNotificationChannel) Equals(other SlackNotificationChannel) bool {
+	equals :=
+		channel.Channel.Name == other.Channel.Name &&
+		channel.Channel.Configuration.Equals(other.Channel.Configuration) &&
+		channel.Channel.Links.Equals(other.Channel.Links)
+
+	return equals
+}
+
 type Channel struct {
 	Id            *int64        `json:"id,omitempty"`
 	Name          string        `json:"name"`
 	Type          string        `json:"type"`
 	Configuration Configuration `json:"configuration"`
-	Links         links         `json:"links"`
+	Links         Links         `json:"links"`
 }
 
 type Configuration struct {
@@ -21,15 +34,28 @@ type Configuration struct {
 	Channel string `json:"channel"`
 }
 
-type links struct {
-	PolicyIds []int64 `json:"policy_ids"`
-}
-
-func (channel SlackNotificationChannel) Equals(other SlackNotificationChannel) bool {
-	return channel.Channel.Name == other.Channel.Name &&
-		channel.Channel.Configuration.Equals(other.Channel.Configuration)
-}
-
 func (configuration Configuration) Equals(other Configuration) bool {
 	return configuration.Channel == other.Channel
 }
+
+type Links struct {
+	PolicyIds []int64 `json:"policy_ids"`
+}
+
+func (links Links) Equals(other Links) bool {
+	sort.Slice(links.PolicyIds, func(i, j int) bool { return links.PolicyIds[i] < links.PolicyIds[j] })
+	sort.Slice(other.PolicyIds, func(i, j int) bool { return other.PolicyIds[i] < other.PolicyIds[j] })
+
+	if len(links.PolicyIds) != len(other.PolicyIds) {
+		return false
+	}
+
+	for idx, _ := range links.PolicyIds {
+		if links.PolicyIds[idx] != other.PolicyIds[idx] {
+			return false
+		}
+	}
+
+	return true
+}
+

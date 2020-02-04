@@ -5,6 +5,7 @@
 package v1alpha1
 
 import (
+	labels "k8s.io/apimachinery/pkg/labels"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -194,7 +195,7 @@ func (in *SlackNotificationChannelSpec) DeepCopyInto(out *SlackNotificationChann
 	*out = *in
 	if in.PolicySelector != nil {
 		in, out := &in.PolicySelector, &out.PolicySelector
-		*out = make(map[string]string, len(*in))
+		*out = make(labels.Set, len(*in))
 		for key, val := range *in {
 			(*out)[key] = val
 		}

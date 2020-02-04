@@ -9,6 +9,7 @@ import (
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -22,14 +23,15 @@ var log = logf.Log.WithName("controller-slack-notification-channel")
 
 // Reconcile reconciles a SlackNotificationChannel object
 type Reconcile struct {
-	client   *k8s.Client
+	k8s      *k8s.Client
 	logr     logr.Logger
 	scheme   *runtime.Scheme
 	newrelic *newrelic.SlackChannelRepository
 }
 
 func Add(mgr manager.Manager) error {
-	reconciler := newReconciler(mgr)
+	k8sClient := k8s.NewClient(log, mgr.GetClient())
+	reconciler := newReconciler(mgr, k8sClient)
 
 	// Create a new controller
 	c, err := controller.New("slack-notification-channel-controller", mgr, controller.Options{Reconciler: reconciler})
@@ -42,21 +44,46 @@ func Add(mgr manager.Manager) error {
 		return err
 	}
 
+	mapFn := handler.ToRequestsFunc(
+		func(a handler.MapObject) []reconcile.Request {
+			channels, err := k8sClient.GetAllChannels()
+			if err != nil {
+				log.Error(err, "Unable to list all slack channels")
+			}
+			requests := make([]reconcile.Request, len(channels.Items))
+			for i, item := range channels.Items {
+				requests[i] = reconcile.Request{
+					NamespacedName: types.NamespacedName{
+						Namespace: item.Namespace,
+						Name:      item.Name,
+					},
+				}
+			}
+
+			return requests
+		})
+
+	err = c.Watch(&source.Kind{Type: &iov1alpha1.AlertPolicy{}}, &handler.EnqueueRequestsFromMapFunc{
+		ToRequests: mapFn,
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, k8sClient *k8s.Client) reconcile.Reconciler {
 	newrelicClient := internal.NewNewrelicClient(
 		log,
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
 	repository := newrelic.NewSlackChannelRepository(log, newrelicClient)
-	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	return &Reconcile{
 		logr:     log,
-		client:   k8sClient,
+		k8s:      k8sClient,
 		scheme:   mgr.GetScheme(),
 		newrelic: repository,
 	}
@@ -71,19 +98,24 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 
 	// Fetch the SlackNotificationChannel instance
 	instance := &iov1alpha1.SlackNotificationChannel{}
-	instance, err := r.client.GetChannel(request)
+	instance, err := r.k8s.GetChannel(request)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
 		}
-		// Error reading the object - requeue the request.
+		r.logr.Error(err, "Error reading object, requeueing request")
 		return reconcile.Result{}, err
 	}
 
-	// Define a new Pod object
-	channel := newChannel(instance)
+	policies, err := r.k8s.GetPolicies(*instance)
+	if err != nil {
+		r.logr.Error(err, "Error getting policies for channel, requeueing request")
+		return reconcile.Result{}, err
+	}
+
+	channel := newChannel(instance, policies)
 	if instance.DeletionTimestamp != nil {
-		return r.deleteChannel(channel, *instance)
+		return r.deleteChannel(*channel, *instance)
 	} else {
 		err = r.newrelic.Save(channel)
 		if err != nil {
@@ -93,7 +125,7 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 
 		instance.Status.Status = "created"
 		instance.Status.NewrelicChannelId = channel.Channel.Id
-		err = r.client.UpdateChannel(*instance)
+		err = r.k8s.UpdateChannel(*instance)
 		if err != nil {
 			return reconcile.Result{}, nil
 		}
@@ -103,14 +135,14 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	}
 }
 
-func (r *Reconcile) deleteChannel(channel *domain.SlackNotificationChannel, instance iov1alpha1.SlackNotificationChannel) (reconcile.Result, error) {
+func (r *Reconcile) deleteChannel(channel domain.SlackNotificationChannel, instance iov1alpha1.SlackNotificationChannel) (reconcile.Result, error) {
 	err := r.newrelic.Delete(channel)
 	if err != nil {
 		r.logr.Error(err, "Error deleting policy")
 		return reconcile.Result{}, err
 	}
 
-	err = r.client.DeleteChannel(instance)
+	err = r.k8s.DeleteChannel(instance)
 	if err != nil {
 		r.logr.Error(err, "Error updating resource")
 		return reconcile.Result{}, err

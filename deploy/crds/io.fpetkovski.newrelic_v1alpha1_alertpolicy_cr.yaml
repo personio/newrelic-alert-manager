@@ -2,6 +2,8 @@ apiVersion: io.fpetkovski.newrelic/v1alpha1
 kind: AlertPolicy
 metadata:
   name: fp-test
+  labels:
+    team: dx
 spec:
   name: "fp-test-updated-2-3-4"
   incident_preference: "per_policy"

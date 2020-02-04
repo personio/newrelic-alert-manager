@@ -11,23 +11,31 @@ import (
 )
 
 type SlackChannelRepository struct {
-	logr   logr.Logger
-	client *internal.NewrelicClient
+	policyRepository *slackChannelPoliciesRepository
+	logr             logr.Logger
+	client           *internal.NewrelicClient
 }
 
 func NewSlackChannelRepository(logr logr.Logger, client *internal.NewrelicClient) *SlackChannelRepository {
 	return &SlackChannelRepository{
-		logr:   logr,
-		client: client,
+		policyRepository: newSlackChannelPoliciesRepository(logr, client),
+		logr:             logr,
+		client:           client,
 	}
 }
 
 func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationChannel) error {
+	var err error
 	if channel.Channel.Id == nil {
-		return repository.create(channel)
+		err = repository.create(channel)
 	} else {
-		return repository.update(channel)
+		err = repository.update(channel)
 	}
+	if err != nil {
+		return err
+	}
+
+	return repository.policyRepository.savePolicies(*channel)
 }
 
 func (repository SlackChannelRepository) create(channel *domain.SlackNotificationChannel) error {
@@ -70,19 +78,18 @@ func (repository SlackChannelRepository) update(channel *domain.SlackNotificatio
 		return nil
 	}
 
-	err = repository.Delete(existingChannel)
-	if err != nil {
-		return err
+	if existingChannel != nil {
+		err = repository.Delete(*existingChannel)
+		if err != nil {
+			return err
+		}
 	}
 
 	return repository.create(channel)
 }
 
-func (repository *SlackChannelRepository) Delete(channel *domain.SlackNotificationChannel) error {
+func (repository *SlackChannelRepository) Delete(channel domain.SlackNotificationChannel) error {
 	repository.logr.Info("Deleting slack channel", "Channels", channel)
-	if channel == nil {
-		return nil
-	}
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_channels", *channel.Channel.Id)
 	_, err := repository.client.Delete(endpoint)
@@ -111,12 +118,4 @@ func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNot
 	}
 
 	return nil, nil
-}
-
-func marshal(policy *domain.SlackNotificationChannel) ([]byte, error) {
-	result := *policy
-	result.Channel.Id = nil
-
-	payload, err := json.Marshal(&result)
-	return payload, err
 }

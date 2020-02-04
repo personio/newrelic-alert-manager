@@ -5,3 +5,5 @@ metadata:
 spec:
   channel: "#dx_playground"
   url: "http://blabla.com"
+  policySelector:
+    team: dx
