@@ -1,9 +1,9 @@
-package repositories_test
+package alerts_test
 
 import (
 	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/client"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/repositories"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/alerts"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
@@ -24,7 +24,7 @@ var logr = log.Log.WithName("test")
 
 func TestAlertPolicyRepository_SaveNewPolicyWitConditions(t *testing.T) {
 	client := newClient()
-	repository := repositories.NewAlertPolicyRepository(logr, client)
+	repository := alerts.NewAlertPolicyRepository(logr, client)
 
 	policy := newPolicyWithConditions("fp-test-empty", "per_policy")
 	err := repository.Save(policy)
@@ -78,8 +78,8 @@ func newPolicyWithConditions(name string, incidentPreference string) *domain.New
 	return policy
 }
 
-func newClient() *client.Client {
-	client := client.NewClient(
+func newClient() *newrelic.Client {
+	client := newrelic.NewClient(
 		logr,
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),

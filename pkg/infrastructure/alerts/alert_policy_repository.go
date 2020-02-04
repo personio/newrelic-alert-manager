@@ -1,20 +1,26 @@
-package repositories
+package alerts
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/client"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 )
 
 type AlertPolicyRepository struct {
-	client                  *client.Client
+	client                  *newrelic.Client
 	logr                    logr.Logger
 	nrqlConditionRepository *nrqlConditionRepository
 }
 
-func NewAlertPolicyRepository(logr logr.Logger, client *client.Client) *AlertPolicyRepository {
+func NewAlertPolicyRepository(logr logr.Logger, newrelicAdminKey string) *AlertPolicyRepository {
+	client := newrelic.NewClient(
+		logr,
+		"https://api.newrelic.com/v2",
+		newrelicAdminKey,
+	)
+
 	return &AlertPolicyRepository{
 		client:                  client,
 		logr:                    logr,

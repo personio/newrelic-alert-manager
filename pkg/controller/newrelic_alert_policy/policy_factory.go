@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func newNewrelicPolicy(cr *v1alpha1.NewrelicAlertPolicy) *domain.NewrelicPolicy {
+func newAlertPolicy(cr *v1alpha1.NewrelicAlertPolicy) *domain.NewrelicPolicy {
 	return &domain.NewrelicPolicy{
 		Policy: domain.Policy{
 			Id:                 cr.Status.NewrelicPolicyId,

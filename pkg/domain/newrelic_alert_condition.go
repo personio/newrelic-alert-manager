@@ -20,7 +20,7 @@ type Condition struct {
 }
 
 type Term struct {
-	Duration     string    `json:"duration"`
+	Duration     string `json:"duration"`
 	Operator     string `json:"operator"`
 	Priority     string `json:"priority"`
 	Threshold    string `json:"threshold"`
@@ -29,5 +29,5 @@ type Term struct {
 
 type Nrql struct {
 	Query      string `json:"query"`
-	SinceValue string    `json:"since_value"`
+	SinceValue string `json:"since_value"`
 }

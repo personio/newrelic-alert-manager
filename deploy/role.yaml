@@ -71,6 +71,7 @@ rules:
   resources:
   - '*'
   - newrelicalertpolicies
+  - slacknotificationchannels
   verbs:
   - create
   - delete

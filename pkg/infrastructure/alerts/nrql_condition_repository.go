@@ -1,21 +1,21 @@
-package repositories
+package alerts
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/pkg/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/client"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"io/ioutil"
 )
 
 type nrqlConditionRepository struct {
-	client *client.Client
+	client *newrelic.Client
 	logr   logr.Logger
 }
 
-func newNrqlConditionRepository(logr logr.Logger, client *client.Client) *nrqlConditionRepository {
+func newNrqlConditionRepository(logr logr.Logger, client *newrelic.Client) *nrqlConditionRepository {
 	return &nrqlConditionRepository{
 		client: client,
 		logr:   logr,

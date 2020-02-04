@@ -3,8 +3,9 @@ package newrelic_alert_policy
 import (
 	"context"
 	iov1alpha1 "github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
-	newrelic "github.com/fpetkovski/newrelic-operator/pkg/infrastructure/client"
-	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/repositories"
+	"github.com/fpetkovski/newrelic-operator/pkg/domain"
+	"github.com/fpetkovski/newrelic-operator/pkg/infrastructure/alerts"
+	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"
@@ -19,32 +20,25 @@ import (
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
 
+// ReconcileNewrelicPolicy reconciles a NewrelicPolicy object
+type ReconcileNewrelicPolicy struct {
+	client     client.Client
+	scheme     *runtime.Scheme
+	repository *alerts.AlertPolicyRepository
+	log        logr.Logger
+}
+
 func Add(mgr manager.Manager) error {
 	log.Info("Registering newrelic alert policy controller")
-
-	newrelicClient := newrelic.NewClient(
-		log,
-		"https://api.newrelic.com/v2",
-		os.Getenv("NEWRELIC_ADMIN_KEY"),
-	)
-	repository := repositories.NewAlertPolicyRepository(log, newrelicClient)
-
-	return add(mgr, newReconciler(mgr, repository))
-}
-
-// newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, alertPolicyRepository *repositories.AlertPolicyRepository) reconcile.Reconciler {
-	return &ReconcileNewrelicPolicy{
+	repository := alerts.NewAlertPolicyRepository(log, os.Getenv("NEWRELIC_ADMIN_KEY"))
+	reconciler := &ReconcileNewrelicPolicy{
 		client:     mgr.GetClient(),
 		scheme:     mgr.GetScheme(),
-		repository: alertPolicyRepository,
+		repository: repository,
+		log:        log,
 	}
-}
 
-// add adds a new Controller to mgr with r as the reconcile.Reconciler
-func add(mgr manager.Manager, r reconcile.Reconciler) error {
-	// Create a new controller
-	c, err := controller.New("newrelic-alert-policy-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("newrelic-alert-policy-controller", mgr, controller.Options{Reconciler: reconciler})
 	if err != nil {
 		return err
 	}
@@ -58,15 +52,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-var _ reconcile.Reconciler = &ReconcileNewrelicPolicy{}
-
-// ReconcileNewrelicPolicy reconciles a NewrelicPolicy object
-type ReconcileNewrelicPolicy struct {
-	client     client.Client
-	scheme     *runtime.Scheme
-	repository *repositories.AlertPolicyRepository
-}
-
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling NewrelicPolicy")
@@ -74,29 +59,15 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	instance, err := r.getKubernetesObject(request)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			reqLogger.Error(err, "Object does not exist")
 			return reconcile.Result{}, nil
 		}
 		reqLogger.Error(err, "Error talking to API server. Re-queueing request")
 		return reconcile.Result{}, err
 	}
 
-	policy := newNewrelicPolicy(instance)
+	policy := newAlertPolicy(instance)
 	if instance.DeletionTimestamp != nil {
-		err := r.repository.Delete(policy)
-		if err != nil {
-			reqLogger.Error(err, "Error deleting policy")
-			return reconcile.Result{}, err
-		}
-
-		instance.ObjectMeta.Finalizers = []string{}
-		err = r.client.Update(context.TODO(), instance)
-		if err != nil {
-			reqLogger.Error(err, "Error updating resource")
-			return reconcile.Result{}, err
-		}
-
-		return reconcile.Result{}, nil
+		return r.deletePolicy(policy, reqLogger, instance)
 	}
 
 	err = r.repository.Save(policy)
@@ -121,6 +92,21 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	}
 
 	reqLogger.Info("Finished reconciling")
+	return reconcile.Result{}, nil
+}
+
+func (r *ReconcileNewrelicPolicy) deletePolicy(policy *domain.NewrelicPolicy, reqLogger logr.Logger, instance *iov1alpha1.NewrelicAlertPolicy) (reconcile.Result, error) {
+	err := r.repository.Delete(policy)
+	if err != nil {
+		reqLogger.Error(err, "Error deleting policy")
+		return reconcile.Result{}, err
+	}
+	instance.ObjectMeta.Finalizers = []string{}
+	err = r.client.Update(context.TODO(), instance)
+	if err != nil {
+		reqLogger.Error(err, "Error updating resource")
+		return reconcile.Result{}, err
+	}
 	return reconcile.Result{}, nil
 }
 
