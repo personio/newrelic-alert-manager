@@ -36,8 +36,6 @@ spec:
               - per_condition
               - per_condition_and_target
               type: string
-            name:
-              type: string
             nrqlConditions:
               items:
                 properties:
@@ -88,7 +86,6 @@ spec:
               type: array
           required:
           - incident_preference
-          - name
           type: object
         status:
           properties:

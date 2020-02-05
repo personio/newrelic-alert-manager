@@ -29,25 +29,25 @@ func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicCl
 func (newrelic NewrelicClient) Get(path string) (*http.Response, error) {
 	request := newrelic.newRequest("Get", path, nil)
 
-	return newrelic.execute(request)
+	return newrelic.executeWithStatusCheck(request)
 }
 
 func (newrelic NewrelicClient) GetJson(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("Get", path, nil)
 
-	return newrelic.execute(request)
+	return newrelic.executeWithStatusCheck(request)
 }
 
 func (newrelic NewrelicClient) PostJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("POST", path, payload)
 
-	return newrelic.execute(request)
+	return newrelic.executeWithStatusCheck(request)
 }
 
 func (newrelic NewrelicClient) PutJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("PUT", path, payload)
 
-	return newrelic.execute(request)
+	return newrelic.executeWithStatusCheck(request)
 }
 
 func (newrelic NewrelicClient) Delete(path string) (*http.Response, error) {
@@ -116,6 +116,15 @@ func (newrelic NewrelicClient) execute(request *http.Request) (*http.Response, e
 		return nil, err
 	}
 
+	return response, nil
+}
+
+func (newrelic NewrelicClient) executeWithStatusCheck(request *http.Request) (*http.Response, error) {
+	response, err := newrelic.execute(request)
+	if err != nil {
+		return nil, err
+	}
+	
 	if response != nil && response.StatusCode >= 300 {
 		responseContent, _ := ioutil.ReadAll(response.Body)
 		return nil, errors.New(string(responseContent))

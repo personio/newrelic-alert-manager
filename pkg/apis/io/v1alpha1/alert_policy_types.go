@@ -18,12 +18,9 @@ type AlertPolicy struct {
 }
 
 type AlertPolicySpec struct {
-	Name string `json:"name"`
-
 	// +kubebuilder:validation:Enum=per_policy;per_condition;per_condition_and_target
-	IncidentPreference string `json:"incident_preference"`
-
-	NrqlConditions []NrqlCondition `json:"nrqlConditions,omitempty"`
+	IncidentPreference string          `json:"incident_preference"`
+	NrqlConditions     []NrqlCondition `json:"nrqlConditions,omitempty"`
 }
 
 type AlertPolicyStatus struct {
@@ -31,7 +28,6 @@ type AlertPolicyStatus struct {
 	Reason           string `json:"reason,omitempty"`
 	NewrelicPolicyId *int64 `json:"newrelicPolicyId,omitempty"`
 }
-
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type AlertPolicyList struct {

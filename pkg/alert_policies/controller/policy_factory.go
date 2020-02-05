@@ -11,7 +11,7 @@ func newAlertPolicy(cr *v1alpha1.AlertPolicy) *domain2.AlertPolicy {
 	return &domain2.AlertPolicy{
 		Policy: domain2.Policy{
 			Id:                 cr.Status.NewrelicPolicyId,
-			Name:               cr.Spec.Name,
+			Name:               cr.Name,
 			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
 		NrqlConditions: newConditions(cr.Spec.NrqlConditions),
