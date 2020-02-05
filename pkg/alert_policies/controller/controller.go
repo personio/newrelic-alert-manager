@@ -19,7 +19,7 @@ import (
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
 
-// ReconcileNewrelicPolicy reconciles a NewrelicPolicy object
+// ReconcileNewrelicPolicy reconciles a AlertPolicy object
 type ReconcileNewrelicPolicy struct {
 	k8s      *k8s.Client
 	scheme   *runtime.Scheme
@@ -44,7 +44,7 @@ func Add(mgr manager.Manager) error {
 		return err
 	}
 
-	// Watch for changes to primary resource NewrelicPolicy
+	// Watch for changes to primary resource AlertPolicy
 	err = c.Watch(&source.Kind{Type: &v1alpha1.AlertPolicy{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func Add(mgr manager.Manager) error {
 
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling NewrelicPolicy")
+	reqLogger.Info("Reconciling AlertPolicy")
 
 	instance, err := r.k8s.GetPolicy(request)
 	if err != nil {
@@ -73,11 +73,17 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		err = r.newrelic.Save(policy)
 		if err != nil {
 			reqLogger.Error(err, "Error saving policy")
+			instance.Status.Status = "failed"
+			instance.Status.NewrelicPolicyId = policy.Policy.Id
+			instance.Status.Reason = err.Error()
+			err = r.k8s.UpdatePolicy(*instance)
+
 			return reconcile.Result{}, err
 		}
 
 		instance.Status.Status = "created"
 		instance.Status.NewrelicPolicyId = policy.Policy.Id
+		instance.Status.Reason = ""
 		err = r.k8s.UpdatePolicy(*instance)
 		if err != nil {
 			return reconcile.Result{}, nil
@@ -88,7 +94,7 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	}
 }
 
-func (r *ReconcileNewrelicPolicy) deletePolicy(policy *domain.NewrelicPolicy, instance v1alpha1.AlertPolicy) (reconcile.Result, error) {
+func (r *ReconcileNewrelicPolicy) deletePolicy(policy *domain.AlertPolicy, instance v1alpha1.AlertPolicy) (reconcile.Result, error) {
 	err := r.newrelic.Delete(policy)
 	if err != nil {
 		r.log.Error(err, "Error deleting policy")

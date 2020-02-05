@@ -5,25 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/internal"
-	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
+	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/go-logr/logr"
 	"io/ioutil"
 )
 
 type nrqlConditionRepository struct {
 	client *internal.NewrelicClient
-	logr   logr.Logger
+	log    logr.Logger
 }
 
-func newNrqlConditionRepository(logr logr.Logger, client *internal.NewrelicClient) *nrqlConditionRepository {
+func newNrqlConditionRepository(log logr.Logger, client *internal.NewrelicClient) *nrqlConditionRepository {
 	return &nrqlConditionRepository{
 		client: client,
-		logr:   logr,
+		log:    log,
 	}
 }
 
-func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain2.NrqlConditionList, error) {
-	repository.logr.Info("Getting conditions for policy", "PolicyId", policyId)
+func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain.NrqlConditionList, error) {
+	repository.log.Info("Getting conditions for policy", "PolicyId", policyId)
 
 	endpoint := fmt.Sprintf("alerts_nrql_conditions.json?policy_id=%d", policyId)
 	response, err := repository.client.Get(endpoint)
@@ -31,29 +31,49 @@ func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain
 		return nil, err
 	}
 
-	var conditionList domain2.NrqlConditionList
+	var conditionList domain.NrqlConditionList
 	err = json.NewDecoder(response.Body).Decode(&conditionList)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("%+v\n", conditionList)
-
 	return &conditionList, nil
 }
 
-func (repository nrqlConditionRepository) deleteConditions(conditionId int64) error {
-	repository.logr.Info("Deleting condition", "ConditionId", conditionId)
+func (repository nrqlConditionRepository) saveConditions(policy *domain.AlertPolicy) error {
+	existingConditions, err := repository.getConditions(*policy.Policy.Id)
+	if err != nil {
+		return err
+	}
 
-	fmt.Printf("Deleting condition %d\n", conditionId)
+	for _, condition := range existingConditions.Condition {
+		err := repository.deleteConditions(*condition.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, newCondition := range policy.NrqlConditions {
+		err := repository.saveCondition(*policy.Policy.Id, newCondition)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (repository nrqlConditionRepository) deleteConditions(conditionId int64) error {
+	repository.log.Info("Deleting condition", "ConditionId", conditionId)
+
 	endpoint := fmt.Sprintf("alerts_nrql_conditions/%d.json", conditionId)
 	_, err := repository.client.Delete(endpoint)
 
 	return err
 }
 
-func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain2.NrqlCondition) error {
-	repository.logr.Info("Saving condition", "Policy Id", policyId, "Condition", condition)
+func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain.NrqlCondition) error {
+	repository.log.Info("Saving condition", "Policy Id", policyId, "Condition", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {
 		return err

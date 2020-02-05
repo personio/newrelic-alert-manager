@@ -2,14 +2,16 @@ package internal
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/go-logr/logr"
+	"io/ioutil"
 	"net/http"
 )
 
 type NewrelicClient struct {
 	client *http.Client
-	log    logr.Logger
+	log    logr.InfoLogger
 
 	url      string
 	adminKey string
@@ -18,7 +20,7 @@ type NewrelicClient struct {
 func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicClient {
 	return &NewrelicClient{
 		client:   &http.Client{},
-		log:      log,
+		log:      log.V(2),
 		url:      url,
 		adminKey: adminKey,
 	}
@@ -26,6 +28,12 @@ func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicCl
 
 func (newrelic NewrelicClient) Get(path string) (*http.Response, error) {
 	request := newrelic.newRequest("Get", path, nil)
+
+	return newrelic.execute(request)
+}
+
+func (newrelic NewrelicClient) GetJson(path string) (*http.Response, error) {
+	request := newrelic.newJsonRequest("Get", path, nil)
 
 	return newrelic.execute(request)
 }
@@ -106,6 +114,11 @@ func (newrelic NewrelicClient) execute(request *http.Request) (*http.Response, e
 	response, err := newrelic.client.Do(request)
 	if err != nil {
 		return nil, err
+	}
+
+	if response != nil && response.StatusCode >= 300 {
+		responseContent, _ := ioutil.ReadAll(response.Body)
+		return nil, errors.New(string(responseContent))
 	}
 
 	return response, nil

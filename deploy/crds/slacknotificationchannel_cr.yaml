@@ -1,4 +1,4 @@
-apiVersion: io.fpetkovski.newrelic/v1alpha1
+apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: SlackNotificationChannel
 metadata:
   name: fp-test-123

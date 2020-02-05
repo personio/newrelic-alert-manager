@@ -12,7 +12,7 @@ var logr = log.Log.WithName("test")
 
 //func TestAlertPolicyRepository_SaveNewPolicyWithoutConditions(t *testing.T) {
 //	client := newClient()
-//	repository := newrelic.NewAlertPolicyRepository(logr, client)
+//	repository := newrelic.NewAlertPolicyRepository(log, client)
 //
 //	policy := newEmptyPolicy("fp-test", "per_policy")
 //	err := repository.Save(policy)
@@ -32,10 +32,10 @@ func TestAlertPolicyRepository_SaveNewPolicyWitConditions(t *testing.T) {
 	}
 }
 
-func newEmptyPolicy(name string, incidentPreference string) *domain2.NewrelicPolicy {
+func newEmptyPolicy(name string, incidentPreference string) *domain2.AlertPolicy {
 	id := new(int64)
 	*id = 624391
-	policy := &domain2.NewrelicPolicy{
+	policy := &domain2.AlertPolicy{
 		Policy: domain2.Policy{
 			Id:                 id,
 			Name:               name,
@@ -46,7 +46,7 @@ func newEmptyPolicy(name string, incidentPreference string) *domain2.NewrelicPol
 	return policy
 }
 
-func newPolicyWithConditions(name string, incidentPreference string) *domain2.NewrelicPolicy {
+func newPolicyWithConditions(name string, incidentPreference string) *domain2.AlertPolicy {
 	policy := newEmptyPolicy("fp-test-conditions", "per_policy")
 	policy.NrqlConditions = []*domain2.NrqlCondition{
 		{

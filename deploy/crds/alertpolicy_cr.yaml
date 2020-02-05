@@ -1,4 +1,4 @@
-apiVersion: io.fpetkovski.newrelic/v1alpha1
+apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: AlertPolicy
 metadata:
   name: fp-test
@@ -9,6 +9,15 @@ spec:
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
+      query: "SELECT sum(cpuLimitBytes) FROM K8sContainerSample"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "15"
+        durationMinutes: 60
+      valueFunction: single_value
+    - name: High container cpu usage
       query: "SELECT average(cpuLimitCores) FROM K8sContainerSample"
       sinceMinutes: 15
       alertThreshold:

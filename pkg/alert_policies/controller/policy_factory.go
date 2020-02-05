@@ -4,14 +4,15 @@ import (
 	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
 	"strconv"
+	"strings"
 )
 
-func newAlertPolicy(cr *v1alpha1.AlertPolicy) *domain2.NewrelicPolicy {
-	return &domain2.NewrelicPolicy{
+func newAlertPolicy(cr *v1alpha1.AlertPolicy) *domain2.AlertPolicy {
+	return &domain2.AlertPolicy{
 		Policy: domain2.Policy{
 			Id:                 cr.Status.NewrelicPolicyId,
 			Name:               cr.Spec.Name,
-			IncidentPreference: cr.Spec.IncidentPreference,
+			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
 		NrqlConditions: newConditions(cr.Spec.NrqlConditions),
 	}
