@@ -9,18 +9,12 @@ import (
 )
 
 type AlertPolicyRepository struct {
-	client                  *internal.NewrelicClient
+	client                  internal.NewrelicClient
 	log                     logr.Logger
 	nrqlConditionRepository *nrqlConditionRepository
 }
 
-func NewAlertPolicyRepository(log logr.Logger, newrelicAdminKey string) *AlertPolicyRepository {
-	client := internal.NewNewrelicClient(
-		log,
-		"https://api.newrelic.com/v2",
-		newrelicAdminKey,
-	)
-
+func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient) *AlertPolicyRepository {
 	return &AlertPolicyRepository{
 		client:                  client,
 		log:                     log,
@@ -64,7 +58,7 @@ func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error
 
 func (repository AlertPolicyRepository) createPolicy(policy *domain.AlertPolicy) error {
 	repository.log.Info("Creating policy", "Policy", policy)
-	payload, err := json.Marshal(&policy)
+	payload, err := marshal(*policy)
 	if err != nil {
 		return err
 	}
@@ -90,12 +84,16 @@ func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy)
 		return err
 	}
 
-	if existingPolicy != nil && existingPolicy.Equals(*policy) {
+	if existingPolicy == nil {
+		return repository.createPolicy(policy)
+	}
+
+	if existingPolicy.Equals(*policy) {
 		return nil
 	}
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
-	payload, err := repository.marshal(policy)
+	payload, err := marshal(*policy)
 	if err != nil {
 		return err
 	}
@@ -137,11 +135,11 @@ func (repository AlertPolicyRepository) getPolicy(policyId int64) (*domain.Alert
 	return nil, nil
 }
 
-func (repository AlertPolicyRepository) marshal(policy *domain.AlertPolicy) ([]byte, error) {
-	result := *policy
+func marshal(policy domain.AlertPolicy) ([]byte, error) {
+	result := policy
 	result.Policy.Id = nil
 	result.NrqlConditions = nil
 
-	payload, err := json.Marshal(&result)
+	payload, err := json.Marshal(result)
 	return payload, err
 }

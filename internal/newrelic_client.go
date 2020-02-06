@@ -9,7 +9,15 @@ import (
 	"net/http"
 )
 
-type NewrelicClient struct {
+type NewrelicClient interface {
+	Get(path string) (*http.Response, error)
+	GetJson(path string) (*http.Response, error)
+	PostJson(path string, payload []byte) (*http.Response, error)
+	PutJson(path string, payload []byte) (*http.Response, error)
+	Delete(path string) (*http.Response, error)
+}
+
+type newrelicClient struct {
 	client *http.Client
 	log    logr.InfoLogger
 
@@ -17,8 +25,8 @@ type NewrelicClient struct {
 	adminKey string
 }
 
-func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicClient {
-	return &NewrelicClient{
+func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicClient {
+	return newrelicClient{
 		client:   &http.Client{},
 		log:      log.V(2),
 		url:      url,
@@ -26,31 +34,31 @@ func NewNewrelicClient(log logr.Logger, url string, adminKey string) *NewrelicCl
 	}
 }
 
-func (newrelic NewrelicClient) Get(path string) (*http.Response, error) {
+func (newrelic newrelicClient) Get(path string) (*http.Response, error) {
 	request := newrelic.newRequest("Get", path, nil)
 
 	return newrelic.executeWithStatusCheck(request)
 }
 
-func (newrelic NewrelicClient) GetJson(path string) (*http.Response, error) {
+func (newrelic newrelicClient) GetJson(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("Get", path, nil)
 
 	return newrelic.executeWithStatusCheck(request)
 }
 
-func (newrelic NewrelicClient) PostJson(path string, payload []byte) (*http.Response, error) {
+func (newrelic newrelicClient) PostJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("POST", path, payload)
 
 	return newrelic.executeWithStatusCheck(request)
 }
 
-func (newrelic NewrelicClient) PutJson(path string, payload []byte) (*http.Response, error) {
+func (newrelic newrelicClient) PutJson(path string, payload []byte) (*http.Response, error) {
 	request := newrelic.newJsonRequest("PUT", path, payload)
 
 	return newrelic.executeWithStatusCheck(request)
 }
 
-func (newrelic NewrelicClient) Delete(path string) (*http.Response, error) {
+func (newrelic newrelicClient) Delete(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("DELETE", path, nil)
 
 	response, err := newrelic.execute(request)
@@ -64,7 +72,7 @@ func (newrelic NewrelicClient) Delete(path string) (*http.Response, error) {
 	return response, nil
 }
 
-func (newrelic *NewrelicClient) newRequest(method string, path string, body []byte) *http.Request {
+func (newrelic *newrelicClient) newRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
 		req = newJsonRequest(method, newrelic.url, path)
@@ -77,7 +85,7 @@ func (newrelic *NewrelicClient) newRequest(method string, path string, body []by
 	return req
 }
 
-func (newrelic *NewrelicClient) newJsonRequest(method string, path string, body []byte) *http.Request {
+func (newrelic *newrelicClient) newJsonRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
 		req = newJsonRequest(method, newrelic.url, path)
@@ -109,7 +117,7 @@ func newJsonRequest(method string, url string, path string) *http.Request {
 	return req
 }
 
-func (newrelic NewrelicClient) execute(request *http.Request) (*http.Response, error) {
+func (newrelic newrelicClient) execute(request *http.Request) (*http.Response, error) {
 	newrelic.log.Info("Executing request", "Method", request.Method, "Endpoint", request.URL, "Payload", request.Body)
 	response, err := newrelic.client.Do(request)
 	if err != nil {
@@ -119,7 +127,7 @@ func (newrelic NewrelicClient) execute(request *http.Request) (*http.Response, e
 	return response, nil
 }
 
-func (newrelic NewrelicClient) executeWithStatusCheck(request *http.Request) (*http.Response, error) {
+func (newrelic newrelicClient) executeWithStatusCheck(request *http.Request) (*http.Response, error) {
 	response, err := newrelic.execute(request)
 	if err != nil {
 		return nil, err

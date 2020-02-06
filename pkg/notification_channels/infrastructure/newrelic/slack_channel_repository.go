@@ -13,10 +13,10 @@ import (
 type SlackChannelRepository struct {
 	policyRepository *slackChannelPoliciesRepository
 	logr             logr.Logger
-	client           *internal.NewrelicClient
+	client           internal.NewrelicClient
 }
 
-func NewSlackChannelRepository(logr logr.Logger, client *internal.NewrelicClient) *SlackChannelRepository {
+func NewSlackChannelRepository(logr logr.Logger, client internal.NewrelicClient) *SlackChannelRepository {
 	return &SlackChannelRepository{
 		policyRepository: newSlackChannelPoliciesRepository(logr, client),
 		logr:             logr,
@@ -40,7 +40,7 @@ func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationC
 
 func (repository SlackChannelRepository) create(channel *domain.SlackNotificationChannel) error {
 	repository.logr.Info("Creating slack channel", "Channels", channel)
-	payload, err := json.Marshal(&channel)
+	payload, err := marshal(*channel)
 	if err != nil {
 		return err
 	}
@@ -118,4 +118,12 @@ func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNot
 	}
 
 	return nil, nil
+}
+
+func marshal(channel domain.SlackNotificationChannel) ([]byte, error) {
+	payload, err := json.Marshal(channel); if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }
