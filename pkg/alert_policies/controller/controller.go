@@ -115,4 +115,3 @@ func (r *ReconcileNewrelicPolicy) deletePolicy(policy *domain.AlertPolicy, insta
 
 	return reconcile.Result{}, nil
 }
-

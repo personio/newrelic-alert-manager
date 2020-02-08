@@ -15,8 +15,8 @@ type SlackNotificationChannel struct {
 func (channel SlackNotificationChannel) Equals(other SlackNotificationChannel) bool {
 	equals :=
 		channel.Channel.Name == other.Channel.Name &&
-		channel.Channel.Configuration.Equals(other.Channel.Configuration) &&
-		channel.Channel.Links.Equals(other.Channel.Links)
+			channel.Channel.Configuration.Equals(other.Channel.Configuration) &&
+			channel.Channel.Links.Equals(other.Channel.Links)
 
 	return equals
 }
@@ -58,4 +58,3 @@ func (links Links) Equals(other Links) bool {
 
 	return true
 }
-

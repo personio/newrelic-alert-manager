@@ -121,7 +121,8 @@ func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNot
 }
 
 func marshal(channel domain.SlackNotificationChannel) ([]byte, error) {
-	payload, err := json.Marshal(channel); if err != nil {
+	payload, err := json.Marshal(channel)
+	if err != nil {
 		return nil, err
 	}
 

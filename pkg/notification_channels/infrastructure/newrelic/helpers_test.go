@@ -100,7 +100,6 @@ func newSlackChannelWithId(id int64, name string, url string, channel string) *d
 	return slackChannel
 }
 
-
 func newRequestWithId(id int64, name string, url string, channel string) []byte {
 	request := []byte(fmt.Sprintf(`
 		{
@@ -129,9 +128,9 @@ func newRequestWithId(id int64, name string, url string, channel string) []byte 
 
 func newOkResponse() *http.Response {
 	return &http.Response{
-		StatusCode:    200,
-		Body:          ioutil.NopCloser(bytes.NewReader([]byte{})),
-		Close:         false,
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(bytes.NewReader([]byte{})),
+		Close:      false,
 	}
 }
 
@@ -159,8 +158,8 @@ func newResponse(id int64, name string, url string, channel string) *http.Respon
 	}
 
 	return &http.Response{
-		StatusCode:    200,
-		Body:          ioutil.NopCloser(bytes.NewReader(body)),
-		Close:         false,
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(bytes.NewReader(body)),
+		Close:      false,
 	}
 }

@@ -40,7 +40,6 @@ func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error)
 	return instance, nil
 }
 
-
 func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
 	options := &client_go.ListOptions{
 		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
@@ -54,7 +53,6 @@ func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha
 
 	return result, nil
 }
-
 
 func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	policy.ObjectMeta.Finalizers = []string{}

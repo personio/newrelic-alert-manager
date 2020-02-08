@@ -12,6 +12,7 @@ type AlertPolicyRepository struct {
 	client                  internal.NewrelicClient
 	log                     logr.Logger
 	nrqlConditionRepository *nrqlConditionRepository
+	apmConditionRepository  *apmConditionRepository
 }
 
 func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient) *AlertPolicyRepository {
@@ -19,6 +20,7 @@ func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient) *
 		client:                  client,
 		log:                     log,
 		nrqlConditionRepository: newNrqlConditionRepository(log, client),
+		apmConditionRepository:  newApmConditionRepository(log, client),
 	}
 }
 
@@ -40,6 +42,11 @@ func (repository AlertPolicyRepository) Save(policy *domain.AlertPolicy) error {
 		return err
 	}
 
+	err = repository.apmConditionRepository.saveConditions(policy)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -52,7 +59,7 @@ func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error
 		fmt.Println(response.StatusCode)
 		return nil
 	}
-	
+
 	return err
 }
 

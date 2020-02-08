@@ -30,13 +30,20 @@ func TestAlertPolicyRepository_SaveNewPolicyWithoutConditions(t *testing.T) {
 		nil,
 	)
 
+	client.On(
+		"Get",
+		"alerts_conditions.json?policy_id=1",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
+		nil,
+	)
+
 	policy := newEmptyPolicy("test-empty")
 	err := repository.Save(policy)
 	if err != nil {
 		t.Error(err.Error())
 	}
 }
-
 
 func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions(t *testing.T) {
 	client := new(mocks.NewrelicClient)
@@ -61,6 +68,14 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions(t *testing.T)
 
 	client.On(
 		"Get",
+		"alerts_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
+		nil,
+	)
+
+	client.On(
+		"Get",
 		"alerts_nrql_conditions.json?policy_id=2",
 	).Return(
 		newStringResponse(`{"nrql_conditions":[]}`),
@@ -73,7 +88,6 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions(t *testing.T)
 		t.Error(err.Error())
 	}
 }
-
 
 func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions_DeletedFromNewrelic(t *testing.T) {
 	client := new(mocks.NewrelicClient)
@@ -98,6 +112,14 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions_DeletedFromNe
 
 	client.On(
 		"Get",
+		"alerts_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
+		nil,
+	)
+
+	client.On(
+		"Get",
 		"alerts_nrql_conditions.json?policy_id=2",
 	).Return(
 		newStringResponse(`{"nrql_conditions":[]}`),
@@ -110,4 +132,3 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions_DeletedFromNe
 		t.Error(err.Error())
 	}
 }
-

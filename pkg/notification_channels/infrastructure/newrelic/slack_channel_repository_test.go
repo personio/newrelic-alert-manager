@@ -103,7 +103,6 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 		nil,
 	)
 
-
 	repository := newrelic.NewSlackChannelRepository(logr, client)
 	channel := newSlackChannelWithId(10, "test-updated", "http://test", "#test")
 	err := repository.Save(channel)
@@ -115,7 +114,6 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 		t.Error("Channel id should be 10")
 	}
 }
-
 
 func TestSlackChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testing.T) {
 	client := new(mocks.NewrelicClient)

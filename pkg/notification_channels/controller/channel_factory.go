@@ -22,7 +22,6 @@ func newChannel(cr *v1alpha1.SlackNotificationChannel, policies v1alpha1.AlertPo
 	}
 }
 
-
 func GetPolicyIds(list v1alpha1.AlertPolicyList) []int64 {
 	var result []int64
 	for _, policy := range list.Items {

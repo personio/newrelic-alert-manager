@@ -37,7 +37,7 @@ func TestSlackNotificationChannel_Equals_WithoutPolicyIdsAttached(t *testing.T) 
 	}
 
 	equals := first.Equals(second)
-	if ! equals {
+	if !equals {
 		t.Error("Objects should be equal")
 	}
 }
@@ -74,11 +74,10 @@ func TestSlackNotificationChannel_Equals_WithEmptyPolicyIdsAttached(t *testing.T
 	}
 
 	equals := first.Equals(second)
-	if ! equals {
+	if !equals {
 		t.Error("Objects should be equal")
 	}
 }
-
 
 func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttached(t *testing.T) {
 	first := domain.SlackNotificationChannel{
@@ -112,12 +111,10 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttached(t *testing.T)
 	}
 
 	equals := first.Equals(second)
-	if ! equals {
+	if !equals {
 		t.Error("Objects should be equal")
 	}
 }
-
-
 
 func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttachedInDifferentOrder(t *testing.T) {
 	first := domain.SlackNotificationChannel{
@@ -151,12 +148,10 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttachedInDifferentOrd
 	}
 
 	equals := first.Equals(second)
-	if ! equals {
+	if !equals {
 		t.Error("Objects should be equal")
 	}
 }
-
-
 
 func TestSlackNotificationChannel_Equals_WithDifferentPolicyIdsAttached(t *testing.T) {
 	first := domain.SlackNotificationChannel{
@@ -194,4 +189,3 @@ func TestSlackNotificationChannel_Equals_WithDifferentPolicyIdsAttached(t *testi
 		t.Error("Objects should not be equal")
 	}
 }
-

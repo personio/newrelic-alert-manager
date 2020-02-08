@@ -68,12 +68,11 @@ func newResponse(id int64, name string) *http.Response {
 	}
 
 	return &http.Response{
-		StatusCode:    200,
-		Body:          ioutil.NopCloser(bytes.NewReader(buffer.Bytes())),
-		Close:         false,
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(bytes.NewReader(buffer.Bytes())),
+		Close:      false,
 	}
 }
-
 
 func newArrayResponse(id int64, name string) *http.Response {
 	response := []byte(fmt.Sprintf(`
@@ -92,16 +91,16 @@ func newArrayResponse(id int64, name string) *http.Response {
 	}
 
 	return &http.Response{
-		StatusCode:    200,
-		Body:          ioutil.NopCloser(bytes.NewReader(buffer.Bytes())),
-		Close:         false,
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(bytes.NewReader(buffer.Bytes())),
+		Close:      false,
 	}
 }
 
 func newStringResponse(response string) *http.Response {
 	return &http.Response{
-		StatusCode:    200,
-		Body:          ioutil.NopCloser(strings.NewReader(response)),
-		Close:         false,
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(strings.NewReader(response)),
+		Close:      false,
 	}
 }
