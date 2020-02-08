@@ -30,6 +30,76 @@ spec:
           type: object
         spec:
           properties:
+            apmConditions:
+              items:
+                properties:
+                  alertThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      operator:
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  conditionScope:
+                    enum:
+                    - instance
+                    - application
+                    type: string
+                  enabled:
+                    type: boolean
+                  entities:
+                    items:
+                      format: int64
+                      type: integer
+                    type: array
+                  metric:
+                    enum:
+                    - apdex
+                    - error_percentage
+                    - response_time_web
+                    - response_time_background
+                    - throughput_web
+                    - throughput_background
+                    - user_defined
+                    type: string
+                  name:
+                    type: string
+                  runbookUrl:
+                    type: string
+                  type:
+                    enum:
+                    - apm_app_metric
+                    - jvm_health_metric
+                    - apm_kt_metric
+                    - browser_metric
+                    - mobile_metric
+                    type: string
+                  violationCloseTimer:
+                    type: integer
+                required:
+                - alertThreshold
+                - conditionScope
+                - entities
+                - metric
+                - name
+                - type
+                type: object
+              type: array
             incident_preference:
               enum:
               - per_policy
@@ -67,7 +137,7 @@ spec:
                     type: string
                   query:
                     type: string
-                  runbook_url:
+                  runbookUrl:
                     type: string
                   sinceMinutes:
                     type: integer

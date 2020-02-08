@@ -3,6 +3,7 @@ package domain
 type AlertPolicy struct {
 	Policy         Policy           `json:"policy"`
 	NrqlConditions []*NrqlCondition `json:"nrql_conditions,omitempty"`
+	ApmConditions  []*ApmCondition  `json:"conditions,omitempty"`
 }
 
 func (policy AlertPolicy) Equals(other AlertPolicy) bool {

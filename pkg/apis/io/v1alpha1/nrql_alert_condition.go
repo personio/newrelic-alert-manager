@@ -8,7 +8,7 @@ type NrqlCondition struct {
 	// +kubebuilder:validation:Enum=single_value;sum
 	ValueFunction  string    `json:"valueFunction"`
 	AlertThreshold Threshold `json:"alertThreshold"`
-	RunbookUrl     string    `json:"runbook_url,omitempty"`
+	RunbookUrl     string    `json:"runbookUrl,omitempty"`
 }
 
 type Threshold struct {
