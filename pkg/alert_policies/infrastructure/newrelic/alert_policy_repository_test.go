@@ -30,6 +30,14 @@ func TestAlertPolicyRepository_SaveNewPolicyWithoutConditions(t *testing.T) {
 		nil,
 	)
 
+	client.On(
+		"Get",
+		"alerts_conditions.json?policy_id=1",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
+		nil,
+	)
+
 	policy := newEmptyPolicy("test-empty")
 	err := repository.Save(policy)
 	if err != nil {
@@ -56,6 +64,15 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions(t *testing.T)
 		newRequest("test-updated"),
 	).Return(
 		newResponse(2, "test-updated"),
+		nil,
+	)
+
+
+	client.On(
+		"Get",
+		"alerts_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
 		nil,
 	)
 
@@ -93,6 +110,14 @@ func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions_DeletedFromNe
 		newRequest("test-updated"),
 	).Return(
 		newResponse(2, "test-updated"),
+		nil,
+	)
+
+	client.On(
+		"Get",
+		"alerts_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"alerts_conditions":[]}`),
 		nil,
 	)
 
