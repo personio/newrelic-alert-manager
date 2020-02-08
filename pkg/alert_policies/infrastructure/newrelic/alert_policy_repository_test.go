@@ -1,87 +1,113 @@
 package newrelic_test
 
 import (
-	"github.com/fpetkovski/newrelic-operator/internal"
-	domain2 "github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
-	"os"
+	"github.com/fpetkovski/newrelic-operator/internal/mocks"
+	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/infrastructure/newrelic"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
 )
 
 var logr = log.Log.WithName("test")
 
-//func TestAlertPolicyRepository_SaveNewPolicyWithoutConditions(t *testing.T) {
-//	client := newClient()
-//	repository := newrelic.NewAlertPolicyRepository(log, client)
-//
-//	policy := newEmptyPolicy("fp-test", "per_policy")
-//	err := repository.Save(policy)
-//	if err != nil {
-//		t.Error(err.Error())
-//	}
-//}
+func TestAlertPolicyRepository_SaveNewPolicyWithoutConditions(t *testing.T) {
+	client := new(mocks.NewrelicClient)
+	repository := newrelic.NewAlertPolicyRepository(logr, client)
 
-func TestAlertPolicyRepository_SaveNewPolicyWitConditions(t *testing.T) {
-	client := newClient()
-	repository := NewAlertPolicyRepository(logr, client)
+	client.On(
+		"PostJson",
+		"alerts_policies.json",
+		newRequest("test-empty"),
+	).Return(
+		newResponse(1, "test-empty"),
+		nil,
+	)
 
-	policy := newPolicyWithConditions("fp-test-empty", "per_policy")
+	client.On(
+		"Get",
+		"alerts_nrql_conditions.json?policy_id=1",
+	).Return(
+		newStringResponse(`{"nrql_conditions":[]}`),
+		nil,
+	)
+
+	policy := newEmptyPolicy("test-empty")
 	err := repository.Save(policy)
 	if err != nil {
 		t.Error(err.Error())
 	}
 }
 
-func newEmptyPolicy(name string, incidentPreference string) *domain2.AlertPolicy {
-	id := new(int64)
-	*id = 624391
-	policy := &domain2.AlertPolicy{
-		Policy: domain2.Policy{
-			Id:                 id,
-			Name:               name,
-			IncidentPreference: incidentPreference,
-		},
-		NrqlConditions: []*domain2.NrqlCondition{},
-	}
-	return policy
-}
 
-func newPolicyWithConditions(name string, incidentPreference string) *domain2.AlertPolicy {
-	policy := newEmptyPolicy("fp-test-conditions", "per_policy")
-	policy.NrqlConditions = []*domain2.NrqlCondition{
-		{
-			Condition: domain2.Condition{
-				Id:         nil,
-				Type:       "static",
-				Name:       "p1-edited",
-				RunbookURL: "",
-				Enabled:    true,
-				Terms: []domain2.Term{
-					{
-						Duration:     "50",
-						Operator:     "above",
-						Priority:     "critical",
-						Threshold:    "30",
-						TimeFunction: "any",
-					},
-				},
-				ValueFunction: "single_value",
-				Nrql: domain2.Nrql{
-					Query:      "select average(cpuLimitCores) from K8sContainerSample",
-					SinceValue: "20",
-				},
-			},
-		},
-	}
+func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions(t *testing.T) {
+	client := new(mocks.NewrelicClient)
+	repository := newrelic.NewAlertPolicyRepository(logr, client)
 
-	return policy
-}
-
-func newClient() *internal.NewrelicClient {
-	client := internal.NewNewrelicClient(
-		logr,
-		"https://api.newrelic.com/v2",
-		os.Getenv("NEWRELIC_ADMIN_KEY"),
+	client.On(
+		"GetJson",
+		"alerts_policies.json",
+	).Return(
+		newArrayResponse(2, "test-existing"),
+		nil,
 	)
-	return client
+
+	client.On(
+		"PutJson",
+		"alerts_policies/2.json",
+		newRequest("test-updated"),
+	).Return(
+		newResponse(2, "test-updated"),
+		nil,
+	)
+
+	client.On(
+		"Get",
+		"alerts_nrql_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"nrql_conditions":[]}`),
+		nil,
+	)
+
+	policy := newEmptyPolicyWithId(2, "test-updated")
+	err := repository.Save(policy)
+	if err != nil {
+		t.Error(err.Error())
+	}
 }
+
+
+func TestAlertPolicyRepository_SaveExistingPolicyWithoutConditions_DeletedFromNewrelic(t *testing.T) {
+	client := new(mocks.NewrelicClient)
+	repository := newrelic.NewAlertPolicyRepository(logr, client)
+
+	client.On(
+		"GetJson",
+		"alerts_policies.json",
+	).Return(
+		newStringResponse(`{"policies":[]}`),
+		nil,
+	)
+
+	client.On(
+		"PostJson",
+		"alerts_policies.json",
+		newRequest("test-updated"),
+	).Return(
+		newResponse(2, "test-updated"),
+		nil,
+	)
+
+	client.On(
+		"Get",
+		"alerts_nrql_conditions.json?policy_id=2",
+	).Return(
+		newStringResponse(`{"nrql_conditions":[]}`),
+		nil,
+	)
+
+	policy := newEmptyPolicyWithId(2, "test-updated")
+	err := repository.Save(policy)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+

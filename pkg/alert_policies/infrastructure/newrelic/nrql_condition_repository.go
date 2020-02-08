@@ -11,11 +11,11 @@ import (
 )
 
 type nrqlConditionRepository struct {
-	client *internal.NewrelicClient
+	client internal.NewrelicClient
 	log    logr.Logger
 }
 
-func newNrqlConditionRepository(log logr.Logger, client *internal.NewrelicClient) *nrqlConditionRepository {
+func newNrqlConditionRepository(log logr.Logger, client internal.NewrelicClient) *nrqlConditionRepository {
 	return &nrqlConditionRepository{
 		client: client,
 		log:    log,

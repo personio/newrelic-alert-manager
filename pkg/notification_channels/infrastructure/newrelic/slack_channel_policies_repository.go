@@ -11,10 +11,10 @@ import (
 
 type slackChannelPoliciesRepository struct {
 	logr   logr.Logger
-	client *internal.NewrelicClient
+	client internal.NewrelicClient
 }
 
-func newSlackChannelPoliciesRepository(logr logr.Logger, client *internal.NewrelicClient) *slackChannelPoliciesRepository {
+func newSlackChannelPoliciesRepository(logr logr.Logger, client internal.NewrelicClient) *slackChannelPoliciesRepository {
 	return &slackChannelPoliciesRepository{
 		logr:   logr,
 		client: client,

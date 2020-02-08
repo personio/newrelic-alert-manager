@@ -26,7 +26,7 @@ type Channel struct {
 	Name          string        `json:"name"`
 	Type          string        `json:"type"`
 	Configuration Configuration `json:"configuration"`
-	Links         Links         `json:"links"`
+	Links         Links         `json:"links,omitempty"`
 }
 
 type Configuration struct {

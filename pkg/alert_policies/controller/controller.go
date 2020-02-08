@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/infrastructure/newrelic"
@@ -30,7 +31,12 @@ type ReconcileNewrelicPolicy struct {
 func Add(mgr manager.Manager) error {
 	log.Info("Registering newrelic alert policy controller")
 
-	repository := newrelic.NewAlertPolicyRepository(log, os.Getenv("NEWRELIC_ADMIN_KEY"))
+	client := internal.NewNewrelicClient(
+		log,
+		"https://api.newrelic.com/v2",
+		os.Getenv("NEWRELIC_ADMIN_KEY"),
+	)
+	repository := newrelic.NewAlertPolicyRepository(log, client)
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
 		k8s:      k8sClient,
