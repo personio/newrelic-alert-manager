@@ -9,7 +9,7 @@ spec:
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
-      query: "SELECT sum(cpuLimitBytes) FROM K8sContainerSample"
+      query: "SELECT sum(memoryLimitBytes) FROM K8sContainerSample"
       sinceMinutes: 15
       alertThreshold:
         timeFunction: any
