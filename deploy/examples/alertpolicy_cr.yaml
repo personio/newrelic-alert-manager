@@ -28,9 +28,9 @@ spec:
   apmConditions:
     - name: Low apdex score
       type: apm_app_metric
+      metric: apdex
       entities:
         - 452584204
-      metric: apdex
       alertThreshold:
         timeFunction: any
         operator: above

@@ -15,9 +15,9 @@ type ApmConditionBody struct {
 	Enabled  bool     `json:"enabled,omitempty"`
 	Entities []string `json:"entities"`
 
-	Metric              string `json:"metric"`
-	ConditionScope      string `json:"condition_scope"`
-	ViolationCloseTimer int    `json:"violation_close_timer"`
-	RunbookUrl          string `json:"runbook_url,omitempty"`
-	Threshold           []Term `json:"terms"`
+	Metric              string  `json:"metric"`
+	ConditionScope      string  `json:"condition_scope"`
+	ViolationCloseTimer int     `json:"violation_close_timer"`
+	RunbookUrl          string  `json:"runbook_url,omitempty"`
+	Threshold           [1]Term `json:"terms"`
 }

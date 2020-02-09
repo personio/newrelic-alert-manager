@@ -9,14 +9,14 @@ type NrqlCondition struct {
 }
 
 type Condition struct {
-	Id            *int64 `json:"id,omitempty"`
-	Type          string `json:"type"`
-	Name          string `json:"name"`
-	RunbookURL    string `json:"runbook_url"`
-	Enabled       bool   `json:"enabled"`
-	Terms         []Term `json:"terms"`
-	ValueFunction string `json:"value_function"`
-	Nrql          Nrql   `json:"nrql"`
+	Id            *int64  `json:"id,omitempty"`
+	Type          string  `json:"type"`
+	Name          string  `json:"name"`
+	RunbookURL    string  `json:"runbook_url"`
+	Enabled       bool    `json:"enabled"`
+	Terms         [1]Term `json:"terms"`
+	ValueFunction string  `json:"value_function"`
+	Nrql          Nrql    `json:"nrql"`
 }
 
 type Term struct {

@@ -36,7 +36,7 @@ func newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlConditi
 			Name:       condition.Name,
 			RunbookURL: condition.RunbookUrl,
 			Enabled:    boolWithDefault(condition.Enabled, true),
-			Terms: []domain.Term{
+			Terms: [1]domain.Term{
 				{
 					TimeFunction: condition.AlertThreshold.TimeFunction,
 					Priority:     "critical",
@@ -74,7 +74,7 @@ func newApmAlertCondition(condition v1alpha1.ApmCondition) *domain.ApmCondition 
 			Metric:              condition.Metric,
 			ViolationCloseTimer: condition.ViolationCloseTimer,
 			RunbookUrl:          condition.RunbookUrl,
-			Threshold: []domain.Term{
+			Threshold: [1]domain.Term{
 				{
 					Duration:     strconv.Itoa(condition.Threshold.DurationMinutes),
 					Operator:     condition.Threshold.Operator,
