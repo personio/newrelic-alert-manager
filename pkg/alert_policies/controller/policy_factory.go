@@ -31,7 +31,7 @@ func newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondit
 
 func newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
 	return &domain.NrqlCondition{
-		Condition: domain.Condition{
+		Condition: domain.NrqlConditionBody{
 			Type:       "static",
 			Name:       condition.Name,
 			RunbookURL: condition.RunbookUrl,

@@ -46,14 +46,23 @@ func (repository apmConditionRepository) saveConditions(policy *domain.AlertPoli
 		return err
 	}
 
+	newConditionsSet := domain.NewApmConditionSetFromSlice(policy.ApmConditions)
 	for _, condition := range existingConditions.Condition {
+		if newConditionsSet.Contains(condition) {
+			continue
+		}
 		err := repository.deleteConditions(*condition.Id)
 		if err != nil {
 			return err
 		}
 	}
 
+	existingConditionSet := domain.NewApmConditionSet(*existingConditions)
 	for _, newCondition := range policy.ApmConditions {
+		if existingConditionSet.Contains(newCondition.Condition) {
+			continue
+		}
+
 		err := repository.saveCondition(*policy.Policy.Id, newCondition)
 		if err != nil {
 			return err
@@ -73,7 +82,7 @@ func (repository apmConditionRepository) deleteConditions(conditionId int64) err
 }
 
 func (repository apmConditionRepository) saveCondition(policyId int64, condition *domain.ApmCondition) error {
-	repository.log.Info("Saving alerts condition", "Policy Id", policyId, "Condition", condition)
+	repository.log.Info("Saving alerts condition", "Policy Id", policyId, "NrqlConditionBody", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {
 		return err

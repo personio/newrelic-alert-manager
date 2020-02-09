@@ -34,7 +34,7 @@ spec:
       alertThreshold:
         timeFunction: any
         operator: above
-        value: "15"
+        value: "20"
         durationMinutes: 60
 
 

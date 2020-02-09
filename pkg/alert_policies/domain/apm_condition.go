@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type ApmConditionList struct {
 	Condition []ApmConditionBody `json:"conditions"`
 }
@@ -20,4 +22,19 @@ type ApmConditionBody struct {
 	ViolationCloseTimer int     `json:"violation_close_timer"`
 	RunbookUrl          string  `json:"runbook_url,omitempty"`
 	Threshold           [1]Term `json:"terms"`
+}
+
+func (b ApmConditionBody) getHashKey() string {
+	return fmt.Sprintf(
+		"%s-%s-%t-%s-%s-%s-%d-%s-%s",
+		b.Name,
+		b.Type,
+		b.Enabled,
+		b.Entities,
+		b.Metric,
+		b.ConditionScope,
+		b.ViolationCloseTimer,
+		b.RunbookUrl,
+		b.Threshold[0].getHashKey(),
+	)
 }

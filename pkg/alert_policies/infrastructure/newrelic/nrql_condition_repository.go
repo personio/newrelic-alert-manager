@@ -46,14 +46,23 @@ func (repository nrqlConditionRepository) saveConditions(policy *domain.AlertPol
 		return err
 	}
 
+	newConditionsSet := domain.NewNrqlConditionSetFromSlice(policy.NrqlConditions)
 	for _, condition := range existingConditions.Condition {
+		if newConditionsSet.Contains(condition) {
+			continue
+		}
+
 		err := repository.deleteConditions(*condition.Id)
 		if err != nil {
 			return err
 		}
 	}
 
+	existingConditionSet := domain.NewNrqlConditionSet(*existingConditions)
 	for _, newCondition := range policy.NrqlConditions {
+		if existingConditionSet.Contains(newCondition.Condition) {
+			continue
+		}
 		err := repository.saveCondition(*policy.Policy.Id, newCondition)
 		if err != nil {
 			return err
@@ -73,7 +82,7 @@ func (repository nrqlConditionRepository) deleteConditions(conditionId int64) er
 }
 
 func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain.NrqlCondition) error {
-	repository.log.Info("Saving condition", "Policy Id", policyId, "Condition", condition)
+	repository.log.Info("Saving condition", "Policy Id", policyId, "NrqlConditionBody", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {
 		return err

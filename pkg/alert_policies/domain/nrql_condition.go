@@ -1,14 +1,18 @@
 package domain
 
+import (
+	"fmt"
+)
+
 type NrqlConditionList struct {
-	Condition []Condition `json:"nrql_conditions"`
+	Condition []NrqlConditionBody `json:"nrql_conditions"`
 }
 
 type NrqlCondition struct {
-	Condition Condition `json:"nrql_condition"`
+	Condition NrqlConditionBody `json:"nrql_condition"`
 }
 
-type Condition struct {
+type NrqlConditionBody struct {
 	Id            *int64  `json:"id,omitempty"`
 	Type          string  `json:"type"`
 	Name          string  `json:"name"`
@@ -19,15 +23,24 @@ type Condition struct {
 	Nrql          Nrql    `json:"nrql"`
 }
 
-type Term struct {
-	Duration     string `json:"duration"`
-	Operator     string `json:"operator"`
-	Priority     string `json:"priority"`
-	Threshold    string `json:"threshold"`
-	TimeFunction string `json:"time_function"`
+func (condition NrqlConditionBody) getHashKey() string {
+	return fmt.Sprintf(
+		"%s-%s-%s-%t-%s-%s-%s",
+		condition.Type,
+		condition.Name,
+		condition.RunbookURL,
+		condition.Enabled,
+		condition.ValueFunction,
+		condition.Terms[0].getHashKey(),
+		condition.Nrql.getHashKey(),
+	)
 }
 
 type Nrql struct {
 	Query      string `json:"query"`
 	SinceValue string `json:"since_value"`
+}
+
+func (q Nrql) getHashKey() string {
+	return fmt.Sprintf("%s-%s", q.Query, q.SinceValue)
 }
