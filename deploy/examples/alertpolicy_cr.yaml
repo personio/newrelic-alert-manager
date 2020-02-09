@@ -5,7 +5,6 @@ metadata:
   labels:
     team: dx
 spec:
-  name: "fp-test-updated-2-3-4"
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
@@ -29,7 +28,6 @@ spec:
   apmConditions:
     - name: Low apdex score
       type: apm_app_metric
-      conditionScope: application
       entities:
         - 452584204
       metric: apdex
