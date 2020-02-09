@@ -20,4 +20,3 @@ func (t Term) getHashKey() interface{} {
 		t.TimeFunction,
 	)
 }
-

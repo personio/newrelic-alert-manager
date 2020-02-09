@@ -1,11 +1,13 @@
 package newrelic
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/go-logr/logr"
+	"github.com/opentracing/opentracing-go"
 )
 
 type AlertPolicyRepository struct {
@@ -24,25 +26,28 @@ func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient) *
 	}
 }
 
-func (repository AlertPolicyRepository) Save(policy *domain.AlertPolicy) error {
+func (repository AlertPolicyRepository) Save(ctx context.Context, policy *domain.AlertPolicy) error {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "save-alert-policy-newrelic")
+	defer sp.Finish()
+
 	if policy.Policy.Id == nil {
-		err := repository.createPolicy(policy)
+		err := repository.createPolicy(ctx, policy)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := repository.updatePolicy(policy)
+		err := repository.updatePolicy(ctx, policy)
 		if err != nil {
 			return err
 		}
 	}
 
-	err := repository.nrqlConditionRepository.saveConditions(policy)
+	err := repository.nrqlConditionRepository.saveConditions(ctx, policy)
 	if err != nil {
 		return err
 	}
 
-	err = repository.apmConditionRepository.saveConditions(policy)
+	err = repository.apmConditionRepository.saveConditions(ctx, policy)
 	if err != nil {
 		return err
 	}
@@ -50,8 +55,9 @@ func (repository AlertPolicyRepository) Save(policy *domain.AlertPolicy) error {
 	return nil
 }
 
-func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error {
-	repository.log.Info("Deleting policy", "PolicyId", *policy.Policy.Id)
+func (repository AlertPolicyRepository) Delete(ctx context.Context, policy *domain.AlertPolicy) error {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "delete-alert-policy-newrelic")
+	defer sp.Finish()
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
 	response, err := repository.client.Delete(endpoint)
@@ -63,7 +69,10 @@ func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error
 	return err
 }
 
-func (repository AlertPolicyRepository) createPolicy(policy *domain.AlertPolicy) error {
+func (repository AlertPolicyRepository) createPolicy(ctx context.Context, policy *domain.AlertPolicy) error {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "create-alert-policy-newrelic")
+	defer sp.Finish()
+
 	repository.log.Info("Creating policy", "Policy", policy)
 	payload, err := marshal(*policy)
 	if err != nil {
@@ -83,16 +92,19 @@ func (repository AlertPolicyRepository) createPolicy(policy *domain.AlertPolicy)
 	return nil
 }
 
-func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy) error {
+func (repository AlertPolicyRepository) updatePolicy(ctx context.Context, policy *domain.AlertPolicy) error {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "update-alert-policy-newrelic")
+	defer sp.Finish()
+
 	repository.log.Info("Updating policy", "Policy", policy)
 
-	existingPolicy, err := repository.getPolicy(*policy.Policy.Id)
+	existingPolicy, err := repository.getPolicy(ctx, *policy.Policy.Id)
 	if err != nil {
 		return err
 	}
 
 	if existingPolicy == nil {
-		return repository.createPolicy(policy)
+		return repository.createPolicy(ctx, policy)
 	}
 
 	if existingPolicy.Equals(*policy) {
@@ -118,7 +130,10 @@ func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy)
 	return nil
 }
 
-func (repository AlertPolicyRepository) getPolicy(policyId int64) (*domain.AlertPolicy, error) {
+func (repository AlertPolicyRepository) getPolicy(ctx context.Context, policyId int64) (*domain.AlertPolicy, error) {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "get-alert-policy-newrelic")
+	defer sp.Finish()
+
 	var policyList domain.NewrelicPolicyList
 
 	response, err := repository.client.GetJson("alerts_policies.json")

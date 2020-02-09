@@ -10,10 +10,13 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-runewidth v0.0.8 // indirect
+	github.com/opentracing/opentracing-go v1.1.0
 	github.com/operator-framework/operator-sdk v0.14.0
 	github.com/peterh/liner v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
+	github.com/uber/jaeger-client-go v2.22.1+incompatible
+	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	go.starlark.net v0.0.0-20200126005305-451bf671df23 // indirect
 	golang.org/x/arch v0.0.0-20191126211547-368ea8f32fff // indirect
 	golang.org/x/sys v0.0.0-20200124204421-9fbb57f87de9 // indirect

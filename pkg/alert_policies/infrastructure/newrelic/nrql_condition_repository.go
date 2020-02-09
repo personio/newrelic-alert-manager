@@ -1,12 +1,14 @@
 package newrelic
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/go-logr/logr"
+	"github.com/opentracing/opentracing-go"
 	"io/ioutil"
 )
 
@@ -40,7 +42,10 @@ func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain
 	return &conditionList, nil
 }
 
-func (repository nrqlConditionRepository) saveConditions(policy *domain.AlertPolicy) error {
+func (repository nrqlConditionRepository) saveConditions(ctx context.Context, policy *domain.AlertPolicy) error {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "save-nrql-alert-conditions-newrelic")
+	defer sp.Finish()
+
 	existingConditions, err := repository.getConditions(*policy.Policy.Id)
 	if err != nil {
 		return err

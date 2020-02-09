@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"context"
 	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-operator/pkg/alert_policies/infrastructure/newrelic"
 	"github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
 	"github.com/go-logr/logr"
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/log"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"
@@ -18,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("controller_newrelic_alert_policy")
+var logger = logf.Log.WithName("controller_newrelic_alert_policy")
 
 // ReconcileNewrelicPolicy reconciles a AlertPolicy object
 type ReconcileNewrelicPolicy struct {
@@ -29,20 +32,20 @@ type ReconcileNewrelicPolicy struct {
 }
 
 func Add(mgr manager.Manager) error {
-	log.Info("Registering newrelic alert policy controller")
+	logger.Info("Registering newrelic alert policy controller")
 
 	client := internal.NewNewrelicClient(
-		log,
+		logger,
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
-	repository := newrelic.NewAlertPolicyRepository(log, client)
-	k8sClient := k8s.NewClient(log, mgr.GetClient())
+	repository := newrelic.NewAlertPolicyRepository(logger, client)
+	k8sClient := k8s.NewClient(mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
 		k8s:      k8sClient,
 		scheme:   mgr.GetScheme(),
 		newrelic: repository,
-		log:      log,
+		log:      logger,
 	}
 
 	c, err := controller.New("newrelic-alert-policy-controller", mgr, controller.Options{Reconciler: reconciler})
@@ -60,29 +63,32 @@ func Add(mgr manager.Manager) error {
 }
 
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling AlertPolicy")
+	sp := opentracing.StartSpan("reconcile-alert-policy")
+	ctx := context.Background()
+	ctx = opentracing.ContextWithSpan(ctx, sp)
+	defer sp.Finish()
 
-	instance, err := r.k8s.GetPolicy(request)
+	instance, err := r.k8s.GetPolicy(ctx, request)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
 		}
-		reqLogger.Error(err, "Error talking to API server. Re-queueing request")
+		sp.LogFields(log.Error(err))
 		return reconcile.Result{}, err
 	}
 
 	policy := newAlertPolicy(instance)
 	if instance.DeletionTimestamp != nil {
-		return r.deletePolicy(policy, *instance)
+		return r.deletePolicy(ctx, policy, *instance)
 	} else {
-		err = r.newrelic.Save(policy)
+		err = r.newrelic.Save(ctx, policy)
 		if err != nil {
-			reqLogger.Error(err, "Error saving policy")
+			sp.LogFields(log.Error(err))
+
 			instance.Status.Status = "failed"
 			instance.Status.NewrelicPolicyId = policy.Policy.Id
 			instance.Status.Reason = err.Error()
-			err = r.k8s.UpdatePolicy(*instance)
+			err = r.k8s.UpdatePolicy(ctx, *instance)
 
 			return reconcile.Result{}, err
 		}
@@ -90,26 +96,28 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		instance.Status.Status = "created"
 		instance.Status.NewrelicPolicyId = policy.Policy.Id
 		instance.Status.Reason = ""
-		err = r.k8s.UpdatePolicy(*instance)
+		err = r.k8s.UpdatePolicy(ctx, *instance)
 		if err != nil {
 			return reconcile.Result{}, nil
 		}
 
-		reqLogger.Info("Finished reconciling")
 		return reconcile.Result{}, nil
 	}
 }
 
-func (r *ReconcileNewrelicPolicy) deletePolicy(policy *domain.AlertPolicy, instance v1alpha1.AlertPolicy) (reconcile.Result, error) {
-	err := r.newrelic.Delete(policy)
+func (r *ReconcileNewrelicPolicy) deletePolicy(ctx context.Context, policy *domain.AlertPolicy, instance v1alpha1.AlertPolicy) (reconcile.Result, error) {
+	sp, ctx := opentracing.StartSpanFromContext(ctx, "delete-alert-policy-controller")
+	defer sp.Finish()
+
+	err := r.newrelic.Delete(ctx, policy)
 	if err != nil {
-		r.log.Error(err, "Error deleting policy")
+		sp.LogFields(log.Error(err))
 		return reconcile.Result{}, err
 	}
 
-	err = r.k8s.DeletePolicy(instance)
+	err = r.k8s.DeletePolicy(ctx, instance)
 	if err != nil {
-		r.log.Error(err, "Error deleting policy in k8s")
+		sp.LogFields(log.Error(err))
 		return reconcile.Result{}, err
 	}
 

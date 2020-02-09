@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/fpetkovski/newrelic-operator/pkg/controller"
 	"github.com/fpetkovski/newrelic-operator/version"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	kubemetrics "github.com/operator-framework/operator-sdk/pkg/kube-metrics"
 	"github.com/operator-framework/operator-sdk/pkg/leader"
@@ -23,6 +25,7 @@ import (
 	"github.com/operator-framework/operator-sdk/pkg/metrics"
 	sdkVersion "github.com/operator-framework/operator-sdk/version"
 	"github.com/spf13/pflag"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
@@ -111,13 +114,38 @@ func main() {
 	// Add the Metrics Service
 	addMetrics(ctx, cfg, "")
 
-	log.Info("Starting the Cmd.")
+	closer, err := addTracing()
+	if err != nil {
+		return
+	}
+	defer closer.Close()
 
-	// Start the Cmd
+	log.Info("Starting the manager.")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
 		log.Error(err, "Manager exited non-zero")
 		os.Exit(1)
 	}
+}
+
+func addTracing() (io.Closer, error) {
+	jaegerCfg, err := jaegercfg.FromEnv()
+	if err != nil {
+		// parsing errors might happen here, such as when we get a string where we expect a number
+		log.Error(err, "Could not parse Jaeger env vars")
+		return nil, err
+	}
+
+	jaegerCfg.Sampler.Type = "const"
+	jaegerCfg.Sampler.Param = 1
+	tracer, closer, err := jaegerCfg.NewTracer()
+	if err != nil {
+		log.Error(err, "Could not initialize jaeger tracer")
+		return nil, err
+	}
+
+	opentracing.SetGlobalTracer(tracer)
+
+	return closer, nil
 }
 
 // addMetrics will create the Services and Service Monitors to allow the operator export the metrics by using
