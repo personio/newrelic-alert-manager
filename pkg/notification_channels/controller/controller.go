@@ -119,7 +119,7 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	} else {
 		err = r.newrelic.Save(channel)
 		if err != nil {
-			reqLogger.Error(err, "Error saving policy")
+			reqLogger.Error(err, "Error saving notification channel")
 			return reconcile.Result{}, err
 		}
 

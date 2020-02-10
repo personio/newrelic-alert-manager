@@ -1,12 +1,10 @@
 package newrelic
 
 import (
-	"errors"
 	"fmt"
 	"github.com/fpetkovski/newrelic-operator/internal"
 	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
 	"github.com/go-logr/logr"
-	"io/ioutil"
 )
 
 type slackChannelPoliciesRepository struct {
@@ -36,12 +34,7 @@ func (repository slackChannelPoliciesRepository) savePolicy(channel domain.Slack
 	payload := fmt.Sprintf("policy_id=%d&channel_ids=%d", policyId, *channel.Channel.Id)
 	endpoint := fmt.Sprintf("alerts_policy_channels.json?%s", payload)
 
-	response, err := repository.client.PutJson(endpoint, nil)
-	if response != nil && response.StatusCode >= 300 {
-		responseContent, _ := ioutil.ReadAll(response.Body)
-		return errors.New(string(responseContent))
-	}
-
+	_, err := repository.client.PutJson(endpoint, nil)
 	if err != nil {
 		return err
 	}

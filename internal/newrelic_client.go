@@ -7,6 +7,7 @@ import (
 	"github.com/go-logr/logr"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type NewrelicClient interface {
@@ -131,6 +132,10 @@ func (newrelic newrelicClient) executeWithStatusCheck(request *http.Request) (*h
 	response, err := newrelic.execute(request)
 	if err != nil {
 		return nil, err
+	}
+
+	if response != nil {
+		newrelic.log.Info(strconv.Itoa(response.StatusCode))
 	}
 
 	if response != nil && response.StatusCode >= 300 {

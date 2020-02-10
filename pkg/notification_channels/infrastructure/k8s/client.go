@@ -43,6 +43,7 @@ func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error)
 func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
 	options := &client_go.ListOptions{
 		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
+
 	}
 
 	var result v1alpha1.AlertPolicyList

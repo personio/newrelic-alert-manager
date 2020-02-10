@@ -35,7 +35,13 @@ func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationC
 		return err
 	}
 
-	return repository.policyRepository.savePolicies(*channel)
+	err = repository.policyRepository.savePolicies(*channel)
+	if err != nil {
+		repository.Delete(*channel)
+		return err
+	}
+
+	return nil
 }
 
 func (repository SlackChannelRepository) create(channel *domain.SlackNotificationChannel) error {
