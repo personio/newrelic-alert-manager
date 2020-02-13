@@ -4,7 +4,9 @@ metadata:
   name: fp-test
   labels:
     team: dx
+    project: tm
 spec:
+  name: "alert-policy-test"
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
@@ -25,6 +27,28 @@ spec:
         value: "15"
         durationMinutes: 60
       valueFunction: single_value
+  apmConditions:
+    - name: Low apdex score
+      type: apm_app_metric
+      metric: apdex
+      entities:
+        - 452584204
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "20"
+        durationMinutes: 60
+---
+apiVersion: newrelic.fpetkovski.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: fp-test-2
+  labels:
+    team: sre
+    project: tm2
+spec:
+  name: "alert-policy-test-2"
+  incident_preference: "per_policy"
   apmConditions:
     - name: Low apdex score
       type: apm_app_metric

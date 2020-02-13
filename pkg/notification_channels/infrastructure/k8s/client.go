@@ -43,7 +43,6 @@ func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error)
 func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
 	options := &client_go.ListOptions{
 		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
-
 	}
 
 	var result v1alpha1.AlertPolicyList
@@ -65,17 +64,22 @@ func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	return nil
 }
 
-func (c *Client) UpdateChannel(policy v1alpha1.SlackNotificationChannel) error {
-	err := c.client.Status().Update(context.TODO(), &policy)
+func (c *Client) UpdateChannel(channel v1alpha1.SlackNotificationChannel) error {
+	c.logr.Info("Merging status options", "Options", client_go.MergeFrom(&channel))
+	channelPatch := &v1alpha1.SlackNotificationChannel{
+		Status: channel.Status,
+	}
+
+	err := c.client.Status().Patch(context.TODO(), &channel, channelPatch)
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
+		c.logr.Error(err, "Error updating channel status")
 		return err
 	}
 
-	policy.ObjectMeta.Finalizers = []string{"newrelic"}
-	err = c.client.Update(context.TODO(), &policy)
+	channel.ObjectMeta.Finalizers = []string{"newrelic"}
+	err = c.client.Update(context.TODO(), &channel)
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
+		c.logr.Error(err, "Error updating channel")
 		return err
 	}
 

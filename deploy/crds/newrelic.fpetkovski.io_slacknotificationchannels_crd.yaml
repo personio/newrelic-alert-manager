@@ -34,6 +34,8 @@ spec:
           properties:
             channel:
               type: string
+            name:
+              type: string
             policySelector:
               additionalProperties:
                 type: string
@@ -43,6 +45,7 @@ spec:
               type: string
           required:
           - channel
+          - name
           - url
           type: object
         status:

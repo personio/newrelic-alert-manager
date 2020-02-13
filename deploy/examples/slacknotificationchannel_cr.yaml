@@ -3,6 +3,7 @@ kind: SlackNotificationChannel
 metadata:
   name: fp-test-123
 spec:
+  name: fp-test-channel-2
   channel: "#dx_playground"
   url: "http://blabla.com"
   policySelector:
