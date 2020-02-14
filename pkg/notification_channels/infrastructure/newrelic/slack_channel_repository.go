@@ -36,10 +36,6 @@ func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationC
 	}
 
 	err = repository.policyRepository.savePolicies(*channel)
-	if err != nil {
-		repository.Delete(*channel)
-		return err
-	}
 
 	return nil
 }
@@ -75,7 +71,7 @@ func (repository SlackChannelRepository) create(channel *domain.SlackNotificatio
 func (repository SlackChannelRepository) update(channel *domain.SlackNotificationChannel) error {
 	repository.logr.Info("Updating slack channel", "Channels", channel)
 
-	existingChannel, err := repository.get(*channel.Channel.Id)
+	existingChannel, err := repository.Get(*channel.Channel.Id)
 	if err != nil {
 		return err
 	}
@@ -103,7 +99,7 @@ func (repository *SlackChannelRepository) Delete(channel domain.SlackNotificatio
 	return err
 }
 
-func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNotificationChannel, error) {
+func (repository *SlackChannelRepository) Get(channelId int64) (*domain.SlackNotificationChannel, error) {
 	response, err := repository.client.Get("alerts_channels.json")
 	if err != nil {
 		return nil, err

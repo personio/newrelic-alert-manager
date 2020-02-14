@@ -65,14 +65,9 @@ func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 }
 
 func (c *Client) UpdateChannel(channel v1alpha1.SlackNotificationChannel) error {
-	c.logr.Info("Merging status options", "Options", client_go.MergeFrom(&channel))
-	channelPatch := &v1alpha1.SlackNotificationChannel{
-		Status: channel.Status,
-	}
-
-	err := c.client.Status().Patch(context.TODO(), &channel, channelPatch)
+	err := c.client.Status().Patch(context.TODO(), &channel, client_go.MergeFrom(&v1alpha1.SlackNotificationChannel{}))
 	if err != nil {
-		c.logr.Error(err, "Error updating channel status")
+		c.logr.Error(err, "Error patching channel status")
 		return err
 	}
 

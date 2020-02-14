@@ -17,6 +17,7 @@ require (
 	go.starlark.net v0.0.0-20200126005305-451bf671df23 // indirect
 	golang.org/x/arch v0.0.0-20191126211547-368ea8f32fff // indirect
 	golang.org/x/sys v0.0.0-20200124204421-9fbb57f87de9 // indirect
+	gomodules.xyz/jsonpatch/v2 v2.0.1
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 	k8s.io/api v0.0.0
 	k8s.io/apimachinery v0.0.0
