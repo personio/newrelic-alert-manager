@@ -8,7 +8,7 @@ import (
 func newChannel(cr *v1alpha1.SlackNotificationChannel, policies v1alpha1.AlertPolicyList) *domain.SlackNotificationChannel {
 	return &domain.SlackNotificationChannel{
 		Channel: domain.Channel{
-			Id:   cr.Status.NewrelicChannelId,
+			Id:   nil,
 			Name: cr.Spec.Name,
 			Type: "slack",
 			Configuration: domain.Configuration{

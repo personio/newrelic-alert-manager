@@ -109,30 +109,54 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 
 	policies, err := r.k8s.GetPolicies(*instance)
 	if err != nil {
-		r.logr.Error(err, "Error getting policies for channel, requeueing request")
+		r.logr.Error(err, "Error getting policies for newChannel, requeueing request")
 		return reconcile.Result{}, err
 	}
 
-	channel := newChannel(instance, policies)
+	newChannel := newChannel(instance, policies)
+	existingChannel, err := r.getExistingChannel(instance)
+	if err != nil {
+		reqLogger.Error(err, "Error fetching existing channel")
+		return reconcile.Result{}, err
+	}
+
 	if instance.DeletionTimestamp != nil {
-		return r.deleteChannel(*channel, *instance)
+		return r.deleteChannel(*newChannel, *instance)
 	} else {
-		err = r.newrelic.Save(channel)
+		err = r.newrelic.Save(newChannel)
 		if err != nil {
-			reqLogger.Error(err, "Error saving notification channel")
+			reqLogger.Error(err, "Error saving notification newChannel")
 			return reconcile.Result{}, err
 		}
 
 		instance.Status.Status = "created"
-		instance.Status.NewrelicChannelId = channel.Channel.Id
+		instance.Status.NewrelicChannelId = newChannel.Channel.Id
 		err = r.k8s.UpdateChannel(*instance)
 		if err != nil {
-			return reconcile.Result{}, nil
+			_ = r.newrelic.Delete(*newChannel)
+			return reconcile.Result{}, err
+		}
+
+		if existingChannel != nil {
+			_ = r.newrelic.Delete(*existingChannel)
 		}
 
 		reqLogger.Info("Finished reconciling")
 		return reconcile.Result{}, nil
 	}
+}
+
+func (r *Reconcile) getExistingChannel(instance *iov1alpha1.SlackNotificationChannel) (*domain.SlackNotificationChannel, error) {
+	if instance.Status.NewrelicChannelId != nil {
+		existingChannel, err := r.newrelic.Get(*instance.Status.NewrelicChannelId)
+		if err != nil {
+			return nil, err
+		}
+
+		return existingChannel, nil
+	}
+
+	return nil, nil
 }
 
 func (r *Reconcile) deleteChannel(channel domain.SlackNotificationChannel, instance iov1alpha1.SlackNotificationChannel) (reconcile.Result, error) {
