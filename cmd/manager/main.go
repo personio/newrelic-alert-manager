@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -102,8 +103,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	mutex := &sync.Mutex{}
 	// Setup all Controllers
-	if err := controller.AddToManager(mgr); err != nil {
+	if err := controller.AddToManager(mgr, mutex); err != nil {
 		log.Error(err, "")
 		os.Exit(1)
 	}

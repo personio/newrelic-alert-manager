@@ -16,19 +16,21 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+	"sync"
 )
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
 
 // ReconcileNewrelicPolicy reconciles a AlertPolicy object
 type ReconcileNewrelicPolicy struct {
+	mutex    *sync.Mutex
 	k8s      *k8s.Client
 	scheme   *runtime.Scheme
 	newrelic *newrelic.AlertPolicyRepository
 	log      logr.Logger
 }
 
-func Add(mgr manager.Manager) error {
+func Add(mgr manager.Manager, mutex *sync.Mutex) error {
 	log.Info("Registering newrelic alert policy controller")
 
 	client := internal.NewNewrelicClient(
@@ -39,6 +41,7 @@ func Add(mgr manager.Manager) error {
 	repository := newrelic.NewAlertPolicyRepository(log, client)
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
+		mutex:    mutex,
 		k8s:      k8sClient,
 		scheme:   mgr.GetScheme(),
 		newrelic: repository,
@@ -60,6 +63,9 @@ func Add(mgr manager.Manager) error {
 }
 
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling AlertPolicy")
 

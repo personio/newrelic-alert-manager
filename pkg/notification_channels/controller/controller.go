@@ -17,21 +17,23 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+	"sync"
 )
 
 var log = logf.Log.WithName("controller-slack-notification-channel")
 
 // Reconcile reconciles a SlackNotificationChannel object
 type Reconcile struct {
+	mutex    *sync.Mutex
 	k8s      *k8s.Client
 	logr     logr.Logger
 	scheme   *runtime.Scheme
 	newrelic *newrelic.SlackChannelRepository
 }
 
-func Add(mgr manager.Manager) error {
+func Add(mgr manager.Manager, mutex *sync.Mutex) error {
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
-	reconciler := newReconciler(mgr, k8sClient)
+	reconciler := newReconciler(mgr, k8sClient, mutex)
 
 	// Create a new controller
 	c, err := controller.New("slack-notification-channel-controller", mgr, controller.Options{Reconciler: reconciler})
@@ -74,7 +76,7 @@ func Add(mgr manager.Manager) error {
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, k8sClient *k8s.Client) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, k8sClient *k8s.Client, mutex *sync.Mutex) reconcile.Reconciler {
 	newrelicClient := internal.NewNewrelicClient(
 		log,
 		"https://api.newrelic.com/v2",
@@ -82,6 +84,7 @@ func newReconciler(mgr manager.Manager, k8sClient *k8s.Client) reconcile.Reconci
 	)
 	repository := newrelic.NewSlackChannelRepository(log, newrelicClient)
 	return &Reconcile{
+		mutex:    mutex,
 		logr:     log,
 		k8s:      k8sClient,
 		scheme:   mgr.GetScheme(),
@@ -93,6 +96,9 @@ func newReconciler(mgr manager.Manager, k8sClient *k8s.Client) reconcile.Reconci
 var _ reconcile.Reconciler = &Reconcile{}
 
 func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling SlackNotificationChannel")
 
