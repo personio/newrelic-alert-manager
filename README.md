@@ -20,4 +20,4 @@ With respect to notification channels, the only supported type is a Slack channe
 TBD
 
 ### Example Usage
-Please check the examples folder to find out how to deploy alert policies together with notification channels.
+Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
