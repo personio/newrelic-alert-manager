@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 	"io/ioutil"
 	"net/http"
 )

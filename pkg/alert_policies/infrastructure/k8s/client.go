@@ -2,7 +2,7 @@ package k8s
 
 import (
 	"context"
-	"github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
 	"github.com/go-logr/logr"
 	client_go "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"

@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/fpetkovski/newrelic-operator/internal"
-	iov1alpha1 "github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/infrastructure/k8s"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/infrastructure/newrelic"
+	"github.com/fpetkovski/newrelic-alert-manager/internal"
+	iov1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/k8s"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"

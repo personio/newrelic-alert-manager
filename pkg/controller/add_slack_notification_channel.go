@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/controller"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/controller"
 )
 
 func init() {

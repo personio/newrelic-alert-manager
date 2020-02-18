@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
 )
 
 func init() {

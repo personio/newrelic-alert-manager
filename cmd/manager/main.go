@@ -13,9 +13,9 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
 
-	"github.com/fpetkovski/newrelic-operator/pkg/apis"
-	"github.com/fpetkovski/newrelic-operator/pkg/controller"
-	"github.com/fpetkovski/newrelic-operator/version"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/controller"
+	"github.com/fpetkovski/newrelic-alert-manager/version"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	kubemetrics "github.com/operator-framework/operator-sdk/pkg/kube-metrics"
@@ -79,7 +79,7 @@ func main() {
 
 	ctx := context.TODO()
 	// Become the leader before proceeding
-	err = leader.Become(ctx, "newrelic-operator-lock")
+	err = leader.Become(ctx, "newrelic-alert-manager-lock")
 	if err != nil {
 		log.Error(err, "")
 		os.Exit(1)

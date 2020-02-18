@@ -1,7 +1,7 @@
 package domain_test
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 	"testing"
 )
 

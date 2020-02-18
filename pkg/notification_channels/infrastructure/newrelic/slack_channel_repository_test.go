@@ -1,8 +1,8 @@
 package newrelic_test
 
 import (
-	"github.com/fpetkovski/newrelic-operator/internal/mocks"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/infrastructure/newrelic"
+	"github.com/fpetkovski/newrelic-alert-manager/internal/mocks"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
 )

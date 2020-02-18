@@ -1,4 +1,4 @@
-module github.com/fpetkovski/newrelic-operator
+module github.com/fpetkovski/newrelic-alert-manager
 
 go 1.13
 

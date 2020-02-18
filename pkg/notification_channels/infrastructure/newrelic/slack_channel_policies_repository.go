@@ -2,8 +2,8 @@ package newrelic
 
 import (
 	"fmt"
-	"github.com/fpetkovski/newrelic-operator/internal"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-alert-manager/internal"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 	"github.com/go-logr/logr"
 )
 

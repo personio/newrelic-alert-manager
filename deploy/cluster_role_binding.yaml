@@ -1,11 +1,11 @@
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: newrelic-operator
+  name: newrelic-alert-manager
 subjects:
 - kind: ServiceAccount
-  name: newrelic-operator
+  name: newrelic-alert-manager
 roleRef:
   kind: Role
-  name: newrelic-operator
+  name: newrelic-alert-manager
   apiGroup: rbac.authorization.k8s.io

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/fpetkovski/newrelic-operator/pkg/apis/io/v1alpha1"
-	"github.com/fpetkovski/newrelic-operator/pkg/notification_channels/domain"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 )
 
 func newChannel(cr *v1alpha1.SlackNotificationChannel, policies v1alpha1.AlertPolicyList) *domain.SlackNotificationChannel {
