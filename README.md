@@ -17,7 +17,14 @@ The newrelic-alert-manager currently supports the management of the following al
 With respect to notification channels, the only supported type is a Slack channel.  
 
 ### Deployment
-TBD
+In order to deploy the operator, execute the following steps:
+
+* Clone this repository
+* Deploy the custom resource definitions by running
+```kubectl apply -f deploy/crds/```
+* Add your base64 encoded newrelic admin password to deploy/secret.yaml
+& Deploy the operator manifests by running
+```kubectl apply -f deploy/```
 
 ### Example Usage
 Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.

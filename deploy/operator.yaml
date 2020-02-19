@@ -15,13 +15,19 @@ spec:
       serviceAccountName: newrelic-alert-manager
       containers:
         - name: newrelic-alert-manager
-          # Replace this with the built image name
-          image: REPLACE_IMAGE
+          image: fpetkovski/newrelic-alert-manager:0.1
           command:
           - newrelic-alert-manager
           imagePullPolicy: Always
           env:
             - name: OPERATOR_NAME
-              value: "newrelic-alert-manager"
+              value: .newrelic-alert-manager
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: NEWRELIC_ADMIN_KEY
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: newrelic-alert-manager
+                  key: adminKey
