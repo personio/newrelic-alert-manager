@@ -23,7 +23,7 @@ In order to deploy the operator, execute the following steps:
 * Deploy the custom resource definitions by running
 ```kubectl apply -f deploy/crds/```
 * Add your base64 encoded newrelic admin password to deploy/secret.yaml
-& Deploy the operator manifests by running
+* Deploy the operator manifests by running
 ```kubectl apply -f deploy/```
 
 ### Example Usage
