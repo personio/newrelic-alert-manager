@@ -24,13 +24,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: newrelic-alert-manager
-    namespace: default
+    namespace: newrelic-alert-manager
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: newrelic-alert-manager
-  namespace: default
+  namespace: newrelic-alert-manager
 rules:
   - apiGroups:
       - ""
@@ -44,10 +44,11 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: newrelic-alert-manager
+  namespace: newrelic-alert-manager
 subjects:
   - kind: ServiceAccount
     name: newrelic-alert-manager
-    namespace: default
+    namespace: newrelic-alert-manager
 roleRef:
   kind: Role
   name: newrelic-alert-manager

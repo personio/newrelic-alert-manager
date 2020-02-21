@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: newrelic-alert-manager
+  namespace: newrelic-alert-manager
 spec:
   replicas: 1
   selector:
@@ -31,3 +32,11 @@ spec:
                 secretKeyRef:
                   name: newrelic-alert-manager
                   key: adminKey
+
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "300Mi"
+            limits:
+              cpu: "0.5"
+              memory: "300Mi"

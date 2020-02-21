@@ -1,4 +1,4 @@
 apiVersion: v1
-kind: ServiceAccount
+kind: Namespace
 metadata:
   name: newrelic-alert-manager
