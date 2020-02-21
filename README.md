@@ -20,7 +20,7 @@ With respect to notification channels, the only supported type is a Slack channe
 In order to deploy the operator, execute the following steps:
 
 * Clone this repository
-* Add your base64 encoded newrelic admin password to deploy/1-secret.yaml
+* Add your base64 encoded newrelic admin password to `deploy/1-secret.yaml`
 * Deploy the custom resource definitions by running
 ```kubectl apply -f deploy/crds/```
 * Deploy the operator manifests by running
