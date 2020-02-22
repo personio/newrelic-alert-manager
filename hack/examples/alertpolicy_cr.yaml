@@ -1,10 +1,11 @@
 apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: AlertPolicy
 metadata:
-  name: fp-test
+  name: p1
   labels:
     team: dx
 spec:
+  name: policy1
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
@@ -40,10 +41,11 @@ spec:
 apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: AlertPolicy
 metadata:
-  name: fp-test-2
+  name: p2
   labels:
     team: px
 spec:
+  name: policy2
   incident_preference: "per_policy"
   apmConditions:
     - name: Low apdex score
