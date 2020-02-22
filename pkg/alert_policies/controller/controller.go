@@ -63,9 +63,6 @@ func Add(mgr manager.Manager, mutex *sync.Mutex) error {
 }
 
 func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
-
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling AlertPolicy")
 

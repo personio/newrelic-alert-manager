@@ -96,15 +96,11 @@ func newReconciler(mgr manager.Manager, k8sClient *k8s.Client, mutex *sync.Mutex
 var _ reconcile.Reconciler = &Reconcile{}
 
 func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
-
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling SlackNotificationChannel")
 
 	// Fetch the SlackNotificationChannel instance
-	instance := &iov1alpha1.SlackNotificationChannel{}
-	instance, err := r.k8s.GetChannel(request)
+	instance, err := r.k8s.GetChannel(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
@@ -131,7 +127,8 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 
 		instance.Status.Status = "created"
 		instance.Status.NewrelicChannelId = channel.Channel.Id
-		err = r.k8s.UpdateChannel(*instance)
+
+		err = r.k8s.UpdateChannelStatus(instance)
 		if err != nil {
 			return reconcile.Result{}, nil
 		}

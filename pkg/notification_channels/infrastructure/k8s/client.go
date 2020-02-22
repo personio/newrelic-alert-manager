@@ -4,8 +4,9 @@ import (
 	"context"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
 	"github.com/go-logr/logr"
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 	client_go "sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 type Client struct {
@@ -20,9 +21,9 @@ func NewClient(logr logr.Logger, client client_go.Client) *Client {
 	}
 }
 
-func (c *Client) GetChannel(request reconcile.Request) (*v1alpha1.SlackNotificationChannel, error) {
+func (c *Client) GetChannel(name types.NamespacedName) (*v1alpha1.SlackNotificationChannel, error) {
 	var instance v1alpha1.SlackNotificationChannel
-	err := c.client.Get(context.TODO(), request.NamespacedName, &instance)
+	err := c.client.Get(context.TODO(), name, &instance)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,6 @@ func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error)
 func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
 	options := &client_go.ListOptions{
 		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
-
 	}
 
 	var result v1alpha1.AlertPolicyList
@@ -65,17 +65,44 @@ func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	return nil
 }
 
-func (c *Client) UpdateChannel(policy v1alpha1.SlackNotificationChannel) error {
-	err := c.client.Status().Update(context.TODO(), &policy)
+func (c *Client) UpdateChannelStatus(channel *v1alpha1.SlackNotificationChannel) error {
+	key := types.NamespacedName{
+		Namespace: channel.Namespace,
+		Name:      channel.Name,
+	}
+
+	err := c.updateWithRetries(key, channel)
+	if err != nil {
+		c.logr.Error(err, "Error updating status status")
+		return err
+	}
+
+	channel.ObjectMeta.Finalizers = []string{"newrelic"}
+	err = c.client.Update(context.TODO(), channel)
 	if err != nil {
 		c.logr.Error(err, "Error updating status")
 		return err
 	}
 
-	policy.ObjectMeta.Finalizers = []string{"newrelic"}
-	err = c.client.Update(context.TODO(), &policy)
+	return nil
+}
+
+func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.SlackNotificationChannel) error {
+	err := c.client.Status().Update(context.TODO(), channel)
+
+	if err != nil && errors.IsConflict(err) {
+		c.logr.Info("Conflict updating channel status, retrying")
+		serverChannel, err := c.GetChannel(key)
+		if err != nil {
+			c.logr.Error(err, "Error patching status status")
+			return err
+		}
+
+		serverChannel.Status = channel.Status
+		return c.updateWithRetries(key, serverChannel)
+	}
+
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
 		return err
 	}
 
