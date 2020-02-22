@@ -4,8 +4,9 @@ import (
 	"context"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
 	"github.com/go-logr/logr"
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 	client_go "sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 type Client struct {
@@ -20,9 +21,9 @@ func NewClient(logr logr.Logger, client client_go.Client) *Client {
 	}
 }
 
-func (c *Client) GetPolicy(request reconcile.Request) (*v1alpha1.AlertPolicy, error) {
+func (c *Client) GetPolicy(name types.NamespacedName) (*v1alpha1.AlertPolicy, error) {
 	var instance v1alpha1.AlertPolicy
-	err := c.client.Get(context.TODO(), request.NamespacedName, &instance)
+	err := c.client.Get(context.TODO(), name, &instance)
 	if err != nil {
 		return nil, err
 	}
@@ -40,18 +41,50 @@ func (c *Client) DeletePolicy(policy v1alpha1.AlertPolicy) error {
 	return nil
 }
 
-func (c *Client) UpdatePolicy(policy v1alpha1.AlertPolicy) error {
-	err := c.client.Status().Update(context.TODO(), &policy)
+func (c *Client) UpdatePolicyStatus(policy *v1alpha1.AlertPolicy) error {
+	key := types.NamespacedName{
+		Namespace: policy.Namespace,
+		Name:      policy.Name,
+	}
+
+	err := c.updateWithRetries(key, policy)
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
+		c.logr.Error(err, "Error updating status status")
 		return err
 	}
 
+	return nil
+}
+
+func (c *Client) updateWithRetries(key types.NamespacedName, policy *v1alpha1.AlertPolicy) error {
+	err := c.client.Status().Update(context.TODO(), policy)
+
+	if err != nil && errors.IsConflict(err) {
+		c.logr.Info("Conflict updating policy status, retrying")
+		serverPolicy, err := c.GetPolicy(key)
+		if err != nil {
+			c.logr.Error(err, "Error updating policy status")
+			return err
+		}
+
+		serverPolicy.Status = policy.Status
+		return c.updateWithRetries(key, serverPolicy)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) SetFinalizer(policy v1alpha1.AlertPolicy) error {
 	policy.ObjectMeta.Finalizers = []string{"newrelic"}
-	err = c.client.Update(context.TODO(), &policy)
+	err := c.client.Update(context.TODO(), &policy)
 	if err != nil {
 		c.logr.Error(err, "Error updating status")
 		return err
+
 	}
 
 	return nil

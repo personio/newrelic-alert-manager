@@ -16,21 +16,19 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"sync"
 )
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
 
 // ReconcileNewrelicPolicy reconciles a AlertPolicy object
 type ReconcileNewrelicPolicy struct {
-	mutex    *sync.Mutex
 	k8s      *k8s.Client
 	scheme   *runtime.Scheme
 	newrelic *newrelic.AlertPolicyRepository
 	log      logr.Logger
 }
 
-func Add(mgr manager.Manager, mutex *sync.Mutex) error {
+func Add(mgr manager.Manager) error {
 	log.Info("Registering newrelic alert policy controller")
 
 	client := internal.NewNewrelicClient(
@@ -41,7 +39,6 @@ func Add(mgr manager.Manager, mutex *sync.Mutex) error {
 	repository := newrelic.NewAlertPolicyRepository(log, client)
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
-		mutex:    mutex,
 		k8s:      k8sClient,
 		scheme:   mgr.GetScheme(),
 		newrelic: repository,
@@ -66,7 +63,7 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling AlertPolicy")
 
-	instance, err := r.k8s.GetPolicy(request)
+	instance, err := r.k8s.GetPolicy(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			return reconcile.Result{}, nil
@@ -79,13 +76,19 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	if instance.DeletionTimestamp != nil {
 		return r.deletePolicy(policy, *instance)
 	} else {
+		err := r.k8s.SetFinalizer(*instance)
+		if err != nil {
+			reqLogger.Error(err, "Error setting finalizer on policy")
+			return reconcile.Result{}, err
+		}
+
 		err = r.newrelic.Save(policy)
 		if err != nil {
 			reqLogger.Error(err, "Error saving policy")
 			instance.Status.Status = "failed"
 			instance.Status.NewrelicPolicyId = policy.Policy.Id
 			instance.Status.Reason = err.Error()
-			err = r.k8s.UpdatePolicy(*instance)
+			err = r.k8s.UpdatePolicyStatus(instance)
 
 			return reconcile.Result{}, err
 		}
@@ -93,7 +96,7 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		instance.Status.Status = "created"
 		instance.Status.NewrelicPolicyId = policy.Policy.Id
 		instance.Status.Reason = ""
-		err = r.k8s.UpdatePolicy(*instance)
+		err = r.k8s.UpdatePolicyStatus(instance)
 		if err != nil {
 			return reconcile.Result{}, nil
 		}

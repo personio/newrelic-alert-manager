@@ -51,6 +51,10 @@ func (repository AlertPolicyRepository) Save(policy *domain.AlertPolicy) error {
 }
 
 func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error {
+	if policy.Policy.Id == nil {
+		return nil
+	}
+	
 	repository.log.Info("Deleting policy", "PolicyId", *policy.Policy.Id)
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)

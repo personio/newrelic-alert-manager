@@ -77,13 +77,6 @@ func (c *Client) UpdateChannelStatus(channel *v1alpha1.SlackNotificationChannel)
 		return err
 	}
 
-	channel.ObjectMeta.Finalizers = []string{"newrelic"}
-	err = c.client.Update(context.TODO(), channel)
-	if err != nil {
-		c.logr.Error(err, "Error updating status")
-		return err
-	}
-
 	return nil
 }
 
@@ -103,6 +96,17 @@ func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.S
 	}
 
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) SetFinalizer(channel *v1alpha1.SlackNotificationChannel) error {
+	channel.ObjectMeta.Finalizers = []string{"newrelic"}
+	err := c.client.Update(context.TODO(), channel)
+	if err != nil {
+		c.logr.Error(err, "Error updating status")
 		return err
 	}
 
