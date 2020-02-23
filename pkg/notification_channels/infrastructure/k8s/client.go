@@ -59,7 +59,7 @@ func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	policy.ObjectMeta.Finalizers = []string{}
 	err := c.client.Update(context.TODO(), &policy)
 	if err != nil {
-		c.logr.Error(err, "Error updating resource")
+		c.logr.Error(err, "Error deleting channel")
 		return err
 	}
 	return nil
@@ -71,13 +71,7 @@ func (c *Client) UpdateChannelStatus(channel *v1alpha1.SlackNotificationChannel)
 		Name:      channel.Name,
 	}
 
-	err := c.updateWithRetries(key, channel)
-	if err != nil {
-		c.logr.Error(err, "Error updating status status")
-		return err
-	}
-
-	return nil
+	return c.updateWithRetries(key, channel)
 }
 
 func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.SlackNotificationChannel) error {
@@ -87,7 +81,7 @@ func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.S
 		c.logr.Info("Conflict updating channel status, retrying")
 		serverChannel, err := c.GetChannel(key)
 		if err != nil {
-			c.logr.Error(err, "Error patching status status")
+			c.logr.Error(err, "Error updating channel status")
 			return err
 		}
 
@@ -106,7 +100,11 @@ func (c *Client) SetFinalizer(channel *v1alpha1.SlackNotificationChannel) error 
 	channel.ObjectMeta.Finalizers = []string{"newrelic"}
 	err := c.client.Update(context.TODO(), channel)
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
+		if errors.IsConflict(err) {
+			c.logr.Info("Conflict adding channel finalizer, retrying")
+		} else {
+			c.logr.Error(err, "Error channel policy finalizer")
+		}
 		return err
 	}
 

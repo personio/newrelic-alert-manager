@@ -35,7 +35,7 @@ func (c *Client) DeletePolicy(policy v1alpha1.AlertPolicy) error {
 	policy.ObjectMeta.Finalizers = []string{}
 	err := c.client.Update(context.TODO(), &policy)
 	if err != nil {
-		c.logr.Error(err, "Error updating resource")
+		c.logr.Error(err, "Error deleting policy")
 		return err
 	}
 	return nil
@@ -47,13 +47,7 @@ func (c *Client) UpdatePolicyStatus(policy *v1alpha1.AlertPolicy) error {
 		Name:      policy.Name,
 	}
 
-	err := c.updateWithRetries(key, policy)
-	if err != nil {
-		c.logr.Error(err, "Error updating status status")
-		return err
-	}
-
-	return nil
+	return c.updateWithRetries(key, policy)
 }
 
 func (c *Client) updateWithRetries(key types.NamespacedName, policy *v1alpha1.AlertPolicy) error {
@@ -82,7 +76,11 @@ func (c *Client) SetFinalizer(policy v1alpha1.AlertPolicy) error {
 	policy.ObjectMeta.Finalizers = []string{"newrelic"}
 	err := c.client.Update(context.TODO(), &policy)
 	if err != nil {
-		c.logr.Error(err, "Error updating status")
+		if errors.IsConflict(err) {
+			c.logr.Info("Conflict adding policy finalizer, retrying")
+		} else {
+			c.logr.Error(err, "Error setting policy finalizer")
+		}
 		return err
 
 	}

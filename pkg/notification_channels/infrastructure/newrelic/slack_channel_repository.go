@@ -96,6 +96,9 @@ func (repository SlackChannelRepository) update(channel *domain.SlackNotificatio
 
 func (repository *SlackChannelRepository) Delete(channel domain.SlackNotificationChannel) error {
 	repository.logr.Info("Deleting slack channel", "Channels", channel)
+	if channel.Channel.Id == nil {
+		return nil
+	}
 
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_channels", *channel.Channel.Id)
 	_, err := repository.client.Delete(endpoint)
