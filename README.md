@@ -28,3 +28,13 @@ In order to deploy the operator, execute the following steps:
 
 ### Example Usage
 Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
+
+### FAQ
+##### Where can I find a more information on how each alerting condition parameter affects the alert policy?  
+The alert condition parameters are best explained by the documentation for the Newrelic REST API
+Some examples include:
+* [apmConditions.alertThreshold.metric](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric)
+* [apmConditions.alertThreshold.timeFunction](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)
+* [nrqlConditions.valueFunction](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_value_function)
+
+You can review the [Alerts conditions API field names](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names) page for more information.
