@@ -14,7 +14,7 @@ The newrelic-alert-manager currently supports the management of the following al
 * [NRQL alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions-nrql-queries)
 * [APM alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions)
 
-With respect to notification channels, the only supported type is a Slack channel.  
+With respect to notification channels, the currently supported types are Email and Slack channel.  
 
 ### Deployment
 In order to deploy the operator, execute the following steps:

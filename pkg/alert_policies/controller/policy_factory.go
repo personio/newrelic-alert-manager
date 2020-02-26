@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/domain"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
 	"strconv"
 	"strings"
 )

@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-func newSlackChannel(name string, url string, channel string) *domain.SlackNotificationChannel {
-	return &domain.SlackNotificationChannel{
+func newSlackChannel(name string, url string, channel string) *domain.NotificationChannel {
+	return &domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: name,
@@ -23,8 +23,8 @@ func newSlackChannel(name string, url string, channel string) *domain.SlackNotif
 	}
 }
 
-func newSlackChannelWithPolicies(name string, url string, channel string, policies []int64) *domain.SlackNotificationChannel {
-	return &domain.SlackNotificationChannel{
+func newSlackChannelWithPolicies(name string, url string, channel string, policies []int64) *domain.NotificationChannel {
+	return &domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: name,
@@ -40,7 +40,7 @@ func newSlackChannelWithPolicies(name string, url string, channel string, polici
 	}
 }
 
-func newRequest(name string, url string, channel string) []byte {
+func newSlackRequest(name string, url string, channel string) []byte {
 	request := []byte(fmt.Sprintf(`
 		{
 			"channel": {
@@ -65,7 +65,7 @@ func newRequest(name string, url string, channel string) []byte {
 	return buffer.Bytes()
 }
 
-func newRequestWithPolicies(name string, url string, channel string, policyIds string) []byte {
+func newSlackRequestWithPolicies(name string, url string, channel string, policyIds string) []byte {
 	request := []byte(fmt.Sprintf(`
 		{
 			"channel": {
@@ -90,7 +90,7 @@ func newRequestWithPolicies(name string, url string, channel string, policyIds s
 	return buffer.Bytes()
 }
 
-func newSlackChannelWithId(id int64, name string, url string, channel string) *domain.SlackNotificationChannel {
+func newSlackChannelWithId(id int64, name string, url string, channel string) *domain.NotificationChannel {
 	slackChannel := newSlackChannel(name, url, channel)
 
 	channelId := new(int64)
@@ -100,7 +100,7 @@ func newSlackChannelWithId(id int64, name string, url string, channel string) *d
 	return slackChannel
 }
 
-func newRequestWithId(id int64, name string, url string, channel string) []byte {
+func newSlackRequestWithId(id int64, name string, url string, channel string) []byte {
 	request := []byte(fmt.Sprintf(`
 		{
 			"channel": {
@@ -134,7 +134,7 @@ func newOkResponse() *http.Response {
 	}
 }
 
-func newResponse(id int64, name string, url string, channel string) *http.Response {
+func newSlackResponse(id int64, name string, url string, channel string) *http.Response {
 	request := map[string]interface{}{
 		"channels": []interface{}{
 			map[string]interface{}{

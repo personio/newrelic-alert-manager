@@ -3,26 +3,23 @@ package newrelic_test
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal/mocks"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
 )
 
-var logr = log.Log.WithName("test")
-
-func TestSlackChannelRepository_SaveNewChannel(t *testing.T) {
+func TestEmailChannelRepository_SaveNewChannel(t *testing.T) {
 	client := new(mocks.NewrelicClient)
 
 	client.On(
 		"PostJson",
 		"alerts_channels.json",
-		newRequest("test", "http://test", "#test"),
+		newEmailRequest("test", "test@test.com"),
 	).Return(
-		newResponse(10, "test", "http://test", "#test"),
+		newEmailResponse(10, "test", "test@test.com"),
 		nil,
 	)
 
-	repository := newrelic.NewSlackChannelRepository(logr, client)
-	channel := newSlackChannel("test", "http://test", "#test")
+	repository := newrelic.NewChannelRepository(logr, client)
+	channel := newEmailChannel("test", "test@test.com")
 	err := repository.Save(channel)
 	if err != nil {
 		t.Error(err.Error())
@@ -33,15 +30,15 @@ func TestSlackChannelRepository_SaveNewChannel(t *testing.T) {
 	}
 }
 
-func TestSlackChannelRepository_SaveNewChannelWithPolicies(t *testing.T) {
+func TestEmailChannelRepository_SaveNewChannelWithPolicies(t *testing.T) {
 	client := new(mocks.NewrelicClient)
 
 	client.On(
 		"PostJson",
 		"alerts_channels.json",
-		newRequestWithPolicies("test", "http://test", "#test", "[5,1]"),
+		newEmailRequestWithPolicies("test", "test@test.com", "[5,1]"),
 	).Return(
-		newResponse(10, "test", "http://test", "#test"),
+		newEmailResponse(10, "test", "test@test.com"),
 		nil,
 	)
 
@@ -63,8 +60,8 @@ func TestSlackChannelRepository_SaveNewChannelWithPolicies(t *testing.T) {
 		nil,
 	)
 
-	repository := newrelic.NewSlackChannelRepository(logr, client)
-	channel := newSlackChannelWithPolicies("test", "http://test", "#test", []int64{5, 1})
+	repository := newrelic.NewChannelRepository(logr, client)
+	channel := newEmailChannelWithPolicies("test", "test@test.com", []int64{5, 1})
 	err := repository.Save(channel)
 	if err != nil {
 		t.Error(err.Error())
@@ -75,14 +72,14 @@ func TestSlackChannelRepository_SaveNewChannelWithPolicies(t *testing.T) {
 	}
 }
 
-func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
+func TestEmailChannelRepository_SaveExistingChannel(t *testing.T) {
 	client := new(mocks.NewrelicClient)
 
 	client.On(
 		"Get",
 		"alerts_channels.json",
 	).Return(
-		newResponse(10, "test", "http://test", "#test"),
+		newEmailResponse(10, "test", "test@test.com"),
 		nil,
 	)
 
@@ -97,14 +94,14 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 	client.On(
 		"PostJson",
 		"alerts_channels.json",
-		newRequestWithId(10, "test-updated", "http://test", "#test"),
+		newEmailRequestWithId(10, "test-updated", "test@test.com"),
 	).Return(
-		newResponse(10, "test-updated", "http://test", "#test"),
+		newEmailResponse(10, "test-updated", "test@test.com"),
 		nil,
 	)
 
-	repository := newrelic.NewSlackChannelRepository(logr, client)
-	channel := newSlackChannelWithId(10, "test-updated", "http://test", "#test")
+	repository := newrelic.NewChannelRepository(logr, client)
+	channel := newEmailChannelWithId(10, "test-updated", "test@test.com")
 	err := repository.Save(channel)
 	if err != nil {
 		t.Error(err.Error())
@@ -115,28 +112,28 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 	}
 }
 
-func TestSlackChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testing.T) {
+func TestEmailChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testing.T) {
 	client := new(mocks.NewrelicClient)
 
 	client.On(
 		"Get",
 		"alerts_channels.json",
 	).Return(
-		newResponse(20, "test", "http://test", "#test"),
+		newEmailResponse(20, "test", "test@test.com"),
 		nil,
 	)
 
 	client.On(
 		"PostJson",
 		"alerts_channels.json",
-		newRequestWithId(10, "test-updated", "http://test", "#test"),
+		newEmailRequestWithId(10, "test-updated", "test@test.com"),
 	).Return(
-		newResponse(10, "test-updated", "http://test", "#test"),
+		newEmailResponse(10, "test-updated", "test@test.com"),
 		nil,
 	)
 
-	repository := newrelic.NewSlackChannelRepository(logr, client)
-	channel := newSlackChannelWithId(10, "test-updated", "http://test", "#test")
+	repository := newrelic.NewChannelRepository(logr, client)
+	channel := newEmailChannelWithId(10, "test-updated", "test@test.com")
 	err := repository.Save(channel)
 	if err != nil {
 		t.Error(err.Error())

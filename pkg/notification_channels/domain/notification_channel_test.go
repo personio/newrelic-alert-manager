@@ -6,7 +6,7 @@ import (
 )
 
 func TestSlackNotificationChannel_Equals_WithoutPolicyIdsAttached(t *testing.T) {
-	first := domain.SlackNotificationChannel{
+	first := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -21,7 +21,7 @@ func TestSlackNotificationChannel_Equals_WithoutPolicyIdsAttached(t *testing.T) 
 		},
 	}
 
-	second := domain.SlackNotificationChannel{
+	second := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -43,7 +43,7 @@ func TestSlackNotificationChannel_Equals_WithoutPolicyIdsAttached(t *testing.T) 
 }
 
 func TestSlackNotificationChannel_Equals_WithEmptyPolicyIdsAttached(t *testing.T) {
-	first := domain.SlackNotificationChannel{
+	first := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -58,7 +58,7 @@ func TestSlackNotificationChannel_Equals_WithEmptyPolicyIdsAttached(t *testing.T
 		},
 	}
 
-	second := domain.SlackNotificationChannel{
+	second := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -80,7 +80,7 @@ func TestSlackNotificationChannel_Equals_WithEmptyPolicyIdsAttached(t *testing.T
 }
 
 func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttached(t *testing.T) {
-	first := domain.SlackNotificationChannel{
+	first := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -95,7 +95,7 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttached(t *testing.T)
 		},
 	}
 
-	second := domain.SlackNotificationChannel{
+	second := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -117,7 +117,7 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttached(t *testing.T)
 }
 
 func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttachedInDifferentOrder(t *testing.T) {
-	first := domain.SlackNotificationChannel{
+	first := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -132,7 +132,7 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttachedInDifferentOrd
 		},
 	}
 
-	second := domain.SlackNotificationChannel{
+	second := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -154,7 +154,7 @@ func TestSlackNotificationChannel_Equals_WithSamePolicyIdsAttachedInDifferentOrd
 }
 
 func TestSlackNotificationChannel_Equals_WithDifferentPolicyIdsAttached(t *testing.T) {
-	first := domain.SlackNotificationChannel{
+	first := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",
@@ -169,7 +169,7 @@ func TestSlackNotificationChannel_Equals_WithDifferentPolicyIdsAttached(t *testi
 		},
 	}
 
-	second := domain.SlackNotificationChannel{
+	second := domain.NotificationChannel{
 		Channel: domain.Channel{
 			Id:   nil,
 			Name: "name1",

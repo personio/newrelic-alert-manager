@@ -2,14 +2,13 @@ package controller
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal"
-	iov1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
+	iov1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	"os"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -21,42 +20,39 @@ import (
 
 var log = logf.Log.WithName("controller-slack-notification-channel")
 
-// Reconcile reconciles a SlackNotificationChannel object
+// Reconcile reconciles a NotificationChannel object
 type Reconcile struct {
 	k8s      *k8s.Client
 	logr     logr.Logger
 	scheme   *runtime.Scheme
-	newrelic *newrelic.SlackChannelRepository
+	newrelic *newrelic.ChannelRepository
 }
 
-func Add(mgr manager.Manager) error {
-	k8sClient := k8s.NewClient(log, mgr.GetClient())
+func Add(mgr manager.Manager, controllerName string, channelType iov1alpha1.NotificationChannel, channelFactory iov1alpha1.ChannelFactory) error {
+	k8sClient := k8s.NewClient(log, mgr.GetClient(), channelFactory)
 	reconciler := newReconciler(mgr, k8sClient)
 
 	// Create a new controller
-	c, err := controller.New("slack-notification-channel-controller", mgr, controller.Options{Reconciler: reconciler})
+	c, err := controller.New(controllerName, mgr, controller.Options{Reconciler: reconciler})
 	if err != nil {
 		return err
 	}
 
-	err = c.Watch(&source.Kind{Type: &iov1alpha1.SlackNotificationChannel{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: channelType}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
 
 	mapFn := handler.ToRequestsFunc(
 		func(a handler.MapObject) []reconcile.Request {
-			channels, err := k8sClient.GetAllChannels()
+			channels, err := k8sClient.GetChannels()
 			if err != nil {
 				log.Error(err, "Unable to list all slack channels")
 			}
-			requests := make([]reconcile.Request, len(channels.Items))
-			for i, item := range channels.Items {
+			requests := make([]reconcile.Request, channels.Size())
+			for i, namespacedName := range channels.GetNamespacedNames() {
 				requests[i] = reconcile.Request{
-					NamespacedName: types.NamespacedName{
-						Namespace: item.Namespace,
-						Name:      item.Name,
-					},
+					NamespacedName: namespacedName,
 				}
 			}
 
@@ -80,7 +76,7 @@ func newReconciler(mgr manager.Manager, k8sClient *k8s.Client) reconcile.Reconci
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
-	repository := newrelic.NewSlackChannelRepository(log, newrelicClient)
+	repository := newrelic.NewChannelRepository(log, newrelicClient)
 	return &Reconcile{
 		logr:     log,
 		k8s:      k8sClient,
@@ -94,9 +90,9 @@ var _ reconcile.Reconciler = &Reconcile{}
 
 func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
-	reqLogger.Info("Reconciling SlackNotificationChannel")
+	reqLogger.Info("Reconciling NotificationChannel")
 
-	// Fetch the SlackNotificationChannel instance
+	// Fetch the NotificationChannel instance
 	instance, err := r.k8s.GetChannel(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -106,15 +102,15 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 		return reconcile.Result{}, err
 	}
 
-	policies, err := r.k8s.GetPolicies(*instance)
+	policies, err := r.k8s.GetPolicies(instance)
 	if err != nil {
 		r.logr.Error(err, "Error getting policies for channel, requeueing request")
 		return reconcile.Result{}, err
 	}
 
-	channel := newChannel(instance, policies)
-	if instance.DeletionTimestamp != nil {
-		return r.deleteChannel(*channel, *instance)
+	channel := instance.NewChannel(policies)
+	if instance.IsDeleted() {
+		return r.deleteChannel(*channel, instance)
 	} else {
 		err = r.k8s.SetFinalizer(instance)
 		if err != nil {
@@ -128,9 +124,12 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 			return reconcile.Result{}, err
 		}
 
-		instance.Status.Status = "created"
-		instance.Status.NewrelicChannelId = channel.Channel.Id
-
+		status := iov1alpha1.NotificationChannelStatus{
+			Status:            "created",
+			Reason:            "",
+			NewrelicChannelId: channel.Channel.Id,
+		}
+		instance.SetStatus(status)
 		err = r.k8s.UpdateChannelStatus(instance)
 		if err != nil {
 			return reconcile.Result{}, nil
@@ -141,7 +140,7 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	}
 }
 
-func (r *Reconcile) deleteChannel(channel domain.SlackNotificationChannel, instance iov1alpha1.SlackNotificationChannel) (reconcile.Result, error) {
+func (r *Reconcile) deleteChannel(channel domain.NotificationChannel, instance iov1alpha1.NotificationChannel) (reconcile.Result, error) {
 	err := r.newrelic.Delete(channel)
 	if err != nil {
 		r.logr.Error(err, "Error deleting policy")

@@ -1,0 +1,9 @@
+apiVersion: newrelic.fpetkovski.io/v1alpha1
+kind: EmailNotificationChannel
+metadata:
+  name: fp-test-123
+spec:
+  name: Email channel test
+  recipients: "filip.petkovski@personio.de"
+  policySelector:
+    team: dx
