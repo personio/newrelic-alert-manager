@@ -2,7 +2,7 @@ package k8s
 
 import (
 	"context"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/io/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -10,30 +10,32 @@ import (
 )
 
 type Client struct {
-	logr   logr.Logger
-	client client_go.Client
+	logr    logr.Logger
+	client  client_go.Client
+	factory v1alpha1.ChannelFactory
 }
 
-func NewClient(logr logr.Logger, client client_go.Client) *Client {
+func NewClient(logr logr.Logger, client client_go.Client, factory v1alpha1.ChannelFactory) *Client {
 	return &Client{
-		logr:   logr,
-		client: client,
+		logr:    logr,
+		client:  client,
+		factory: factory,
 	}
 }
 
-func (c *Client) GetChannel(name types.NamespacedName) (*v1alpha1.SlackNotificationChannel, error) {
-	var instance v1alpha1.SlackNotificationChannel
-	err := c.client.Get(context.TODO(), name, &instance)
+func (c *Client) GetChannel(name types.NamespacedName) (v1alpha1.NotificationChannel, error) {
+	instance := c.factory.NewChannel()
+	err := c.client.Get(context.TODO(), name, instance)
 	if err != nil {
 		return nil, err
 	}
 
-	return &instance, nil
+	return instance, nil
 }
 
-func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error) {
-	var instance v1alpha1.SlackNotificationChannelList
-	err := c.client.List(context.TODO(), &instance)
+func (c *Client) GetChannels() (v1alpha1.NotificationChannelList, error) {
+	instance := c.factory.NewList()
+	err := c.client.List(context.TODO(), instance)
 	if err != nil {
 		return instance, err
 	}
@@ -41,9 +43,9 @@ func (c *Client) GetAllChannels() (v1alpha1.SlackNotificationChannelList, error)
 	return instance, nil
 }
 
-func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha1.AlertPolicyList, error) {
+func (c *Client) GetPolicies(channel v1alpha1.NotificationChannel) (v1alpha1.AlertPolicyList, error) {
 	options := &client_go.ListOptions{
-		LabelSelector: channel.Spec.PolicySelector.AsSelector(),
+		LabelSelector: channel.GetPolicySelector(),
 	}
 
 	var result v1alpha1.AlertPolicyList
@@ -55,9 +57,9 @@ func (c *Client) GetPolicies(channel v1alpha1.SlackNotificationChannel) (v1alpha
 	return result, nil
 }
 
-func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
-	policy.ObjectMeta.Finalizers = []string{}
-	err := c.client.Update(context.TODO(), &policy)
+func (c *Client) DeleteChannel(channel v1alpha1.NotificationChannel) error {
+	channel.SetFinalizers([]string{})
+	err := c.client.Update(context.TODO(), channel)
 	if err != nil {
 		c.logr.Error(err, "Error deleting channel")
 		return err
@@ -65,16 +67,11 @@ func (c *Client) DeleteChannel(policy v1alpha1.SlackNotificationChannel) error {
 	return nil
 }
 
-func (c *Client) UpdateChannelStatus(channel *v1alpha1.SlackNotificationChannel) error {
-	key := types.NamespacedName{
-		Namespace: channel.Namespace,
-		Name:      channel.Name,
-	}
-
-	return c.updateWithRetries(key, channel)
+func (c *Client) UpdateChannelStatus(channel v1alpha1.NotificationChannel) error {
+	return c.updateWithRetries(channel.GetNamespacedName(), channel)
 }
 
-func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.SlackNotificationChannel) error {
+func (c *Client) updateWithRetries(key types.NamespacedName, channel v1alpha1.NotificationChannel) error {
 	err := c.client.Status().Update(context.TODO(), channel)
 
 	if err != nil && errors.IsConflict(err) {
@@ -85,7 +82,7 @@ func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.S
 			return err
 		}
 
-		serverChannel.Status = channel.Status
+		serverChannel.SetStatus(channel.GetStatus())
 		return c.updateWithRetries(key, serverChannel)
 	}
 
@@ -96,8 +93,8 @@ func (c *Client) updateWithRetries(key types.NamespacedName, channel *v1alpha1.S
 	return nil
 }
 
-func (c *Client) SetFinalizer(channel *v1alpha1.SlackNotificationChannel) error {
-	channel.ObjectMeta.Finalizers = []string{"newrelic"}
+func (c *Client) SetFinalizer(channel v1alpha1.NotificationChannel) error {
+	channel.SetFinalizers([]string{"newrelic"})
 	err := c.client.Update(context.TODO(), channel)
 	if err != nil {
 		if errors.IsConflict(err) {

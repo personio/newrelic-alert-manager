@@ -7,19 +7,19 @@ import (
 	"github.com/go-logr/logr"
 )
 
-type slackChannelPoliciesRepository struct {
+type ChannelPoliciesRepository struct {
 	logr   logr.Logger
 	client internal.NewrelicClient
 }
 
-func newSlackChannelPoliciesRepository(logr logr.Logger, client internal.NewrelicClient) *slackChannelPoliciesRepository {
-	return &slackChannelPoliciesRepository{
+func newChannelPoliciesRepository(logr logr.Logger, client internal.NewrelicClient) *ChannelPoliciesRepository {
+	return &ChannelPoliciesRepository{
 		logr:   logr,
 		client: client,
 	}
 }
 
-func (repository slackChannelPoliciesRepository) savePolicies(channel domain.SlackNotificationChannel) error {
+func (repository ChannelPoliciesRepository) savePolicies(channel domain.NotificationChannel) error {
 	for _, policyId := range channel.Channel.Links.PolicyIds {
 		err := repository.savePolicy(channel, policyId)
 		if err != nil {
@@ -30,7 +30,7 @@ func (repository slackChannelPoliciesRepository) savePolicies(channel domain.Sla
 	return nil
 }
 
-func (repository slackChannelPoliciesRepository) savePolicy(channel domain.SlackNotificationChannel, policyId int64) error {
+func (repository ChannelPoliciesRepository) savePolicy(channel domain.NotificationChannel, policyId int64) error {
 	payload := fmt.Sprintf("policy_id=%d&channel_ids=%d", policyId, *channel.Channel.Id)
 	endpoint := fmt.Sprintf("alerts_policy_channels.json?%s", payload)
 

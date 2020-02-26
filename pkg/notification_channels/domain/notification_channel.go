@@ -4,17 +4,18 @@ import (
 	"sort"
 )
 
-type SlackNotificationChannelList struct {
+type NotificationChannelList struct {
 	Channels []Channel `json:"channels"`
 }
 
-type SlackNotificationChannel struct {
+type NotificationChannel struct {
 	Channel Channel `json:"channel"`
 }
 
-func (channel SlackNotificationChannel) Equals(other SlackNotificationChannel) bool {
+func (channel NotificationChannel) Equals(other NotificationChannel) bool {
 	equals :=
-		channel.Channel.Name == other.Channel.Name &&
+		channel.Channel.Type == other.Channel.Type &&
+			channel.Channel.Name == other.Channel.Name &&
 			channel.Channel.Configuration.Equals(other.Channel.Configuration) &&
 			channel.Channel.Links.Equals(other.Channel.Links)
 
@@ -30,12 +31,16 @@ type Channel struct {
 }
 
 type Configuration struct {
-	Url     string `json:"url"`
-	Channel string `json:"channel"`
+	Url                    string `json:"url,omitempty"`
+	Channel                string `json:"channel,omitempty"`
+	Recipients             string `json:"recipients,omitempty"`
+	IncludeJsonAttachments bool   `json:"include_json_attachment,omitempty"`
 }
 
 func (configuration Configuration) Equals(other Configuration) bool {
-	return configuration.Channel == other.Channel
+	return configuration.Channel == other.Channel &&
+		configuration.IncludeJsonAttachments == other.IncludeJsonAttachments &&
+		configuration.Recipients == other.Recipients
 }
 
 type Links struct {

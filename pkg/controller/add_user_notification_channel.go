@@ -9,9 +9,9 @@ import (
 func init() {
 	// AddToManagerFuncs is a list of functions to create controllers and add them to a manager.
 	add := func(mgr manager.Manager) error {
-		channelType := &v1alpha1.SlackNotificationChannel{}
-		factory := v1alpha1.NewSlackNotificationChannelFactory()
-		return controller.Add(mgr, "slack-notification-channel-controller", channelType, factory)
+		channelType := &v1alpha1.EmailNotificationChannel{}
+		factory := v1alpha1.NewEmailNotificationChannelFactory()
+		return controller.Add(mgr, "user-notification-channel-controller", channelType, factory)
 	}
 	AddToManagerFuncs = append(AddToManagerFuncs, add)
 }
