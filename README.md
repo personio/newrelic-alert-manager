@@ -29,6 +29,10 @@ In order to deploy the operator, execute the following steps:
 ### Example Usage
 Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
 
+### Debugging resources
+If you applied an alert policy but it was not created in Newrelic, you can check the 
+status of the policy using kubectl describe alertpolicies <policy-name>. If there was an error while creating the policy, it will be shown in the `Status.reason` field.
+
 ### FAQ
 ##### Where can I find a more information on how each alerting condition parameter affects the alert policy?  
 The alert condition parameters are best explained by the documentation for the Newrelic REST API
@@ -38,3 +42,7 @@ Some examples include:
 * [nrqlConditions.valueFunction](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_value_function)
 
 You can review the [Alerts conditions API field names](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names) page for more information.
+
+#### How do I create an APM condition of type Web transaction percentiles
+Unfortunately, it is [not possible](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/rest-api-calls-new-relic-alerts#excluded) to use NewRelic's REST API to create these types of conditions.
+ 

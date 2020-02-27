@@ -58,6 +58,27 @@ spec:
         operator: above
         value: "20"
         durationMinutes: 60
+---
+apiVersion: newrelic.fpetkovski.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: p3
+  labels:
+    team: px
+spec:
+  name: policy3
+  incident_preference: "per_policy"
+  apmConditions:
+    - name: Low apdex score
+      type: apm_app_metric
+      metric: response_time_web
+      entities:
+        - 452584204
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "0.1"
+        durationMinutes: 10
 
 
 
