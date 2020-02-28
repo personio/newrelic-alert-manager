@@ -121,7 +121,6 @@ func newEmailRequestWithId(id int64, name string, recipients string) []byte {
 	return buffer.Bytes()
 }
 
-
 func newEmailResponse(id int64, name string, recipients string) *http.Response {
 	request := map[string]interface{}{
 		"channels": []interface{}{
@@ -130,7 +129,7 @@ func newEmailResponse(id int64, name string, recipients string) *http.Response {
 				"name": name,
 				"type": "email",
 				"configuration": map[string]interface{}{
-					"url":     recipients,
+					"url": recipients,
 				},
 				"links": map[string]interface{}{
 					"policy_ids": nil,

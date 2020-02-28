@@ -8,15 +8,16 @@ import (
 	"strings"
 )
 
-func newAlertPolicy(cr *v1alpha1.AlertPolicy) *domain.AlertPolicy {
+func NewAlertPolicy(cr *v1alpha1.AlertPolicy) *domain.AlertPolicy {
 	return &domain.AlertPolicy{
 		Policy: domain.Policy{
 			Id:                 cr.Status.NewrelicPolicyId,
 			Name:               cr.Spec.Name,
 			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
-		NrqlConditions: newNrqlConditions(cr.Spec.NrqlConditions),
-		ApmConditions:  newApmConditions(cr.Spec.ApmConditions),
+		NrqlConditions:  newNrqlConditions(cr.Spec.NrqlConditions),
+		ApmConditions:   newApmConditions(cr.Spec.ApmConditions),
+		InfraConditions: newInfraConditions(cr.Spec.InfraConditions),
 	}
 }
 
@@ -83,6 +84,37 @@ func newApmAlertCondition(condition v1alpha1.ApmCondition) *domain.ApmCondition 
 					TimeFunction: condition.Threshold.TimeFunction,
 				},
 			},
+		},
+	}
+}
+
+func newInfraConditions(conditions []v1alpha1.InfraCondition) []*domain.InfraCondition {
+	result := make([]*domain.InfraCondition, len(conditions))
+	for i, condition := range conditions {
+		result[i] = newInfraAlertCondition(condition)
+	}
+
+	return result
+}
+
+func newInfraAlertCondition(condition v1alpha1.InfraCondition) *domain.InfraCondition {
+	return &domain.InfraCondition{
+		Condition: domain.InfraConditionBody{
+			Name:       condition.Name,
+			Type:       "infra_metric",
+			Comparison: condition.Comparison,
+			Threshold: domain.InfraThreshold{
+				TimeFunction:    condition.Threshold.TimeFunction,
+				Value:           condition.Threshold.Value,
+				DurationMinutes: condition.Threshold.DurationMinutes,
+			},
+			Enabled:             boolWithDefault(condition.Enabled, true),
+			EventType:           condition.EventType,
+			IntegrationProvider: condition.IntegrationProvider,
+			RunbookUrl:          condition.RunbookUrl,
+			SelectValue:         condition.SelectValue,
+			ViolationCloseTimer: condition.ViolationCloseTimer,
+			WhereClause:         condition.WhereClause,
 		},
 	}
 }

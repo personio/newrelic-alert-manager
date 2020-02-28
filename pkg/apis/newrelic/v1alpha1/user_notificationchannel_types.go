@@ -25,7 +25,7 @@ type EmailNotificationChannel struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	Spec   EmailNotificationChannelSpec `json:"spec,omitempty"`
-	Status NotificationChannelStatus   `json:"status,omitempty"`
+	Status NotificationChannelStatus    `json:"status,omitempty"`
 }
 
 func (channel EmailNotificationChannel) GetNamespacedName() types.NamespacedName {
@@ -58,7 +58,7 @@ func (channel EmailNotificationChannel) NewChannel(policies AlertPolicyList) *do
 			Name: channel.Spec.Name,
 			Type: "email",
 			Configuration: domain.Configuration{
-				Recipients: channel.Spec.Recipients,
+				Recipients:             channel.Spec.Recipients,
 				IncludeJsonAttachments: channel.Spec.IncludeJsonAttachments,
 			},
 			Links: domain.Links{

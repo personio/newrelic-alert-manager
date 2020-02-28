@@ -36,7 +36,13 @@ func Add(mgr manager.Manager) error {
 		"https://api.newrelic.com/v2",
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
-	repository := newrelic.NewAlertPolicyRepository(log, client)
+	infraClient := internal.NewNewrelicClient(
+		log,
+		"https://infra-api.newrelic.com/v2",
+		os.Getenv("NEWRELIC_ADMIN_KEY"),
+	)
+
+	repository := newrelic.NewAlertPolicyRepository(log, client, infraClient)
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
 		k8s:      k8sClient,
@@ -72,7 +78,7 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
-	policy := newAlertPolicy(instance)
+	policy := NewAlertPolicy(instance)
 	if instance.DeletionTimestamp != nil {
 		return r.deletePolicy(policy, *instance)
 	} else {

@@ -13,6 +13,7 @@ Additionally, we still cannot offer strong guarantees of API stability.
 The newrelic-alert-manager currently supports the management of the following alerting conditions
 * [NRQL alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions-nrql-queries)
 * [APM alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions)
+* [Infra alerting conditions](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts) of type `infra_metric`
 
 With respect to notification channels, the currently supported types are Email and Slack channels.  
 
@@ -43,6 +44,6 @@ Some examples include:
 
 You can review the [Alerts conditions API field names](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names) page for more information.
 
-#### How do I create an APM condition of type Web transaction percentiles
+##### How do I create an APM condition of type Web transaction percentiles
 Unfortunately, it is [not possible](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/rest-api-calls-new-relic-alerts#excluded) to use NewRelic's REST API to create these types of conditions.
  

@@ -37,6 +37,18 @@ spec:
         operator: above
         value: "20"
         durationMinutes: 60
+  infraConditions:
+    - name: First infra condition
+      violationCloseTimer: 60
+      integrationProvider: SqsQueue
+      eventType: QueueSample
+      selectValue: "provider.approximateAgeOfOldestMessage.Average"
+      comparison: above
+      alertThreshold:
+        timeFunction: any
+        value: 5
+        durationMinutes: 10
+      whereClause: "(provider.queueName = 'documents-virus-scanner')"
 ---
 apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: AlertPolicy

@@ -29,14 +29,14 @@ type newrelicClient struct {
 func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicClient {
 	return newrelicClient{
 		client:   &http.Client{},
-		log:      log.V(2),
+		log:      log,
 		url:      url,
 		adminKey: adminKey,
 	}
 }
 
 func (newrelic newrelicClient) Get(path string) (*http.Response, error) {
-	request := newrelic.newRequest("Get", path, nil)
+	request := newrelic.newRequest("GET", path, nil)
 
 	return newrelic.executeWithStatusCheck(request)
 }
@@ -76,9 +76,9 @@ func (newrelic newrelicClient) Delete(path string) (*http.Response, error) {
 func (newrelic *newrelicClient) newRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
-		req = newJsonRequest(method, newrelic.url, path)
+		req = newRequest(method, newrelic.url, path)
 	} else {
-		req = newJsonRequestWithBody(method, newrelic.url, path, body)
+		req = newRequestWithBody(method, newrelic.url, path, body)
 	}
 
 	req.Header.Add("X-Api-Key", newrelic.adminKey)
@@ -89,9 +89,9 @@ func (newrelic *newrelicClient) newRequest(method string, path string, body []by
 func (newrelic *newrelicClient) newJsonRequest(method string, path string, body []byte) *http.Request {
 	var req *http.Request
 	if body == nil {
-		req = newJsonRequest(method, newrelic.url, path)
+		req = newRequest(method, newrelic.url, path)
 	} else {
-		req = newJsonRequestWithBody(method, newrelic.url, path, body)
+		req = newRequestWithBody(method, newrelic.url, path, body)
 	}
 
 	req.Header.Add("X-Api-Key", newrelic.adminKey)
@@ -100,7 +100,7 @@ func (newrelic *newrelicClient) newJsonRequest(method string, path string, body 
 	return req
 }
 
-func newJsonRequestWithBody(method string, url string, path string, body []byte) *http.Request {
+func newRequestWithBody(method string, url string, path string, body []byte) *http.Request {
 	req, _ := http.NewRequest(
 		method,
 		fmt.Sprintf("%s/%s", url, path),
@@ -109,7 +109,7 @@ func newJsonRequestWithBody(method string, url string, path string, body []byte)
 	return req
 }
 
-func newJsonRequest(method string, url string, path string) *http.Request {
+func newRequest(method string, url string, path string) *http.Request {
 	req, _ := http.NewRequest(
 		method,
 		fmt.Sprintf("%s/%s", url, path),

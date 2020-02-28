@@ -20,9 +20,10 @@ type AlertPolicy struct {
 type AlertPolicySpec struct {
 	Name string `json:"name"`
 	// +kubebuilder:validation:Enum=per_policy;per_condition;per_condition_and_target
-	IncidentPreference string          `json:"incident_preference"`
-	NrqlConditions     []NrqlCondition `json:"nrqlConditions,omitempty"`
-	ApmConditions      []ApmCondition  `json:"apmConditions,omitempty"`
+	IncidentPreference string           `json:"incident_preference"`
+	NrqlConditions     []NrqlCondition  `json:"nrqlConditions,omitempty"`
+	ApmConditions      []ApmCondition   `json:"apmConditions,omitempty"`
+	InfraConditions    []InfraCondition `json:"infraConditions,omitempty"`
 }
 
 type AlertPolicyStatus struct {

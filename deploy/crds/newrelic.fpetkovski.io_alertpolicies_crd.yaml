@@ -113,6 +113,56 @@ spec:
               - per_condition
               - per_condition_and_target
               type: string
+            infraConditions:
+              items:
+                properties:
+                  alertThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: integer
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  comparison:
+                    enum:
+                    - equal
+                    - above
+                    - bellow
+                    type: string
+                  enabled:
+                    type: boolean
+                  eventType:
+                    type: string
+                  integrationProvider:
+                    type: string
+                  name:
+                    type: string
+                  runbookUrl:
+                    type: string
+                  selectValue:
+                    type: string
+                  violationCloseTimer:
+                    type: integer
+                  whereClause:
+                    type: string
+                required:
+                - alertThreshold
+                - comparison
+                - eventType
+                - integrationProvider
+                - name
+                - selectValue
+                type: object
+              type: array
             name:
               type: string
             nrqlConditions:
