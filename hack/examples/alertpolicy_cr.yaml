@@ -1,63 +1,3 @@
-apiVersion: newrelic.fpetkovski.io/v1alpha1
-kind: AlertPolicy
-metadata:
-  name: p1
-  labels:
-    team: dx
-spec:
-  name: policy1
-  incident_preference: "per_policy"
-  nrqlConditions:
-    - name: High container memory usage
-      query: "SELECT sum(memoryLimitBytes) FROM K8sContainerSample"
-      sinceMinutes: 15
-      alertThreshold:
-        timeFunction: any
-        operator: above
-        value: "15"
-        durationMinutes: 60
-      valueFunction: single_value
-    - name: High container cpu usage
-      query: "SELECT average(cpuLimitCores) FROM K8sContainerSample"
-      sinceMinutes: 15
-      alertThreshold:
-        timeFunction: any
-        operator: above
-        value: "15"
-        durationMinutes: 60
-      valueFunction: single_value
-  apmConditions:
-    - name: Low apdex score
-      type: apm_app_metric
-      metric: apdex
-      entities:
-        - 452584204
-      alertThreshold:
-        timeFunction: any
-        operator: above
-        value: "20"
-        durationMinutes: 60
----
-apiVersion: newrelic.fpetkovski.io/v1alpha1
-kind: AlertPolicy
-metadata:
-  name: p2
-  labels:
-    team: px
-spec:
-  name: policy2
-  incident_preference: "per_policy"
-  apmConditions:
-    - name: Low apdex score
-      type: apm_app_metric
-      metric: apdex
-      entities:
-        - 452584204
-      alertThreshold:
-        timeFunction: any
-        operator: above
-        value: "20"
-        durationMinutes: 60
 ---
 apiVersion: newrelic.fpetkovski.io/v1alpha1
 kind: AlertPolicy
@@ -68,17 +8,17 @@ metadata:
 spec:
   name: policy3
   incident_preference: "per_policy"
-  apmConditions:
-    - name: Low apdex score
-      type: apm_app_metric
-      metric: response_time_web
-      entities:
-        - 452584204
+  infraConditions:
+    - name: First infra condition
+      violationCloseTimer: 60
+      eventType: "QueueSample"
+      selectValue: "provider.approximateAgeOfOldestMessage.Average"
+      comparison: "above"
       alertThreshold:
         timeFunction: any
-        operator: above
-        value: "0.1"
-        durationMinutes: 10
+        value: "5"
+        durationMinutes: 5
+      integrationProvider: SqsQueue
 
 
 

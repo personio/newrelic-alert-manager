@@ -9,18 +9,22 @@ import (
 )
 
 type AlertPolicyRepository struct {
-	client                  internal.NewrelicClient
-	log                     logr.Logger
-	nrqlConditionRepository *nrqlConditionRepository
-	apmConditionRepository  *apmConditionRepository
+	client                   internal.NewrelicClient
+	infraClient              internal.NewrelicClient
+	log                      logr.Logger
+	nrqlConditionRepository  *nrqlConditionRepository
+	apmConditionRepository   *apmConditionRepository
+	infraConditionRepository *infraConditionRepository
 }
 
-func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient) *AlertPolicyRepository {
+func NewAlertPolicyRepository(log logr.Logger, client internal.NewrelicClient, infraClient internal.NewrelicClient) *AlertPolicyRepository {
 	return &AlertPolicyRepository{
-		client:                  client,
-		log:                     log,
-		nrqlConditionRepository: newNrqlConditionRepository(log, client),
-		apmConditionRepository:  newApmConditionRepository(log, client),
+		client:                   client,
+		infraClient:              infraClient,
+		log:                      log,
+		nrqlConditionRepository:  newNrqlConditionRepository(log, client),
+		apmConditionRepository:   newApmConditionRepository(log, client),
+		infraConditionRepository: newInfraConditionRepository(log, infraClient),
 	}
 }
 
@@ -43,6 +47,11 @@ func (repository AlertPolicyRepository) Save(policy *domain.AlertPolicy) error {
 	}
 
 	err = repository.apmConditionRepository.saveConditions(policy)
+	if err != nil {
+		return err
+	}
+
+	err = repository.infraConditionRepository.saveConditions(policy)
 	if err != nil {
 		return err
 	}
