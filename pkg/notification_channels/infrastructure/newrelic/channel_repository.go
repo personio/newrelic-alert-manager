@@ -10,21 +10,21 @@ import (
 	"io/ioutil"
 )
 
-type SlackChannelRepository struct {
-	policyRepository *slackChannelPoliciesRepository
+type ChannelRepository struct {
+	policyRepository *ChannelPoliciesRepository
 	logr             logr.Logger
 	client           internal.NewrelicClient
 }
 
-func NewSlackChannelRepository(logr logr.Logger, client internal.NewrelicClient) *SlackChannelRepository {
-	return &SlackChannelRepository{
-		policyRepository: newSlackChannelPoliciesRepository(logr, client),
+func NewChannelRepository(logr logr.Logger, client internal.NewrelicClient) *ChannelRepository {
+	return &ChannelRepository{
+		policyRepository: newChannelPoliciesRepository(logr, client),
 		logr:             logr,
 		client:           client,
 	}
 }
 
-func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationChannel) error {
+func (repository ChannelRepository) Save(channel *domain.NotificationChannel) error {
 	var err error
 	if channel.Channel.Id == nil {
 		err = repository.create(channel)
@@ -44,8 +44,8 @@ func (repository SlackChannelRepository) Save(channel *domain.SlackNotificationC
 	return nil
 }
 
-func (repository SlackChannelRepository) create(channel *domain.SlackNotificationChannel) error {
-	repository.logr.Info("Creating slack channel", "Channels", channel)
+func (repository ChannelRepository) create(channel *domain.NotificationChannel) error {
+	repository.logr.Info("Creating channel", "Channels", channel)
 	payload, err := marshal(*channel)
 	if err != nil {
 		return err
@@ -61,7 +61,7 @@ func (repository SlackChannelRepository) create(channel *domain.SlackNotificatio
 		return err
 	}
 
-	var channels domain.SlackNotificationChannelList
+	var channels domain.NotificationChannelList
 	err = json.NewDecoder(response.Body).Decode(&channels)
 	if err != nil {
 		return err
@@ -72,8 +72,8 @@ func (repository SlackChannelRepository) create(channel *domain.SlackNotificatio
 	return nil
 }
 
-func (repository SlackChannelRepository) update(channel *domain.SlackNotificationChannel) error {
-	repository.logr.Info("Updating slack channel", "Channels", channel)
+func (repository ChannelRepository) update(channel *domain.NotificationChannel) error {
+	repository.logr.Info("Updating channel", "Channels", channel)
 
 	existingChannel, err := repository.get(*channel.Channel.Id)
 	if err != nil {
@@ -94,8 +94,8 @@ func (repository SlackChannelRepository) update(channel *domain.SlackNotificatio
 	return repository.create(channel)
 }
 
-func (repository *SlackChannelRepository) Delete(channel domain.SlackNotificationChannel) error {
-	repository.logr.Info("Deleting slack channel", "Channels", channel)
+func (repository *ChannelRepository) Delete(channel domain.NotificationChannel) error {
+	repository.logr.Info("Deleting channel", "Channels", channel)
 	if channel.Channel.Id == nil {
 		return nil
 	}
@@ -106,13 +106,13 @@ func (repository *SlackChannelRepository) Delete(channel domain.SlackNotificatio
 	return err
 }
 
-func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNotificationChannel, error) {
+func (repository *ChannelRepository) get(channelId int64) (*domain.NotificationChannel, error) {
 	response, err := repository.client.Get("alerts_channels.json")
 	if err != nil {
 		return nil, err
 	}
 
-	var channels domain.SlackNotificationChannelList
+	var channels domain.NotificationChannelList
 	err = json.NewDecoder(response.Body).Decode(&channels)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNot
 
 	for _, channel := range channels.Channels {
 		if *channel.Id == channelId {
-			return &domain.SlackNotificationChannel{
+			return &domain.NotificationChannel{
 				Channel: channel,
 			}, nil
 		}
@@ -129,7 +129,7 @@ func (repository *SlackChannelRepository) get(channelId int64) (*domain.SlackNot
 	return nil, nil
 }
 
-func marshal(channel domain.SlackNotificationChannel) ([]byte, error) {
+func marshal(channel domain.NotificationChannel) ([]byte, error) {
 	payload, err := json.Marshal(channel)
 	if err != nil {
 		return nil, err
