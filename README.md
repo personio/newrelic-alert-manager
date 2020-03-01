@@ -15,6 +15,10 @@ The newrelic-alert-manager currently supports the management of the following al
 * [APM alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions)
 * [Infra alerting conditions](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts) of type `infra_metric`
 
+If you are unable to create a particular alerting condition due to lack of support by the operator or the New Relic API,
+you can try to fall back to defining it as a NRQL alerting condition instead.
+An example of how to alert on web transaction percentiles is given in the FAQ section. 
+
 With respect to notification channels, the currently supported types are Email and Slack channels.  
 
 ### Deployment
@@ -46,4 +50,8 @@ You can review the [Alerts conditions API field names](https://docs.newrelic.com
 
 ##### How do I create an APM condition of type Web transaction percentiles
 Unfortunately, it is [not possible](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/rest-api-calls-new-relic-alerts#excluded) to use New Relic's REST API to create these types of conditions.
+However, you can try to define a NRQL alerting condition instead. A possible query could be the following: 
+```
+SELECT percentile(totalTime) FROM Transaction WHERE appName = '<your APM application name>'
+```
  
