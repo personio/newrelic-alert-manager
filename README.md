@@ -6,7 +6,7 @@ New Relic alert policies and notification channels.
 It allows end users of a Kubernetes cluster to define alerting policies and channels as [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 
 ### Project status
-The project is currently in an alpha version and might not be suitable for production usage.
+The project is currently in an alpha state and might not be suitable for production usage.
 Additionally, we still cannot offer strong guarantees of API stability. 
 
 ### Supported features
@@ -17,7 +17,7 @@ The newrelic-alert-manager currently supports the management of the following al
 
 If you are unable to create a particular alerting condition due to lack of support by the operator or the New Relic API,
 you can try to fall back to defining it as a NRQL alerting condition instead.
-An example of how to alert on web transaction percentiles is given in the FAQ section. 
+One such example is given in the [FAQ](https://github.com/fpetkovski/newrelic-alert-manager#how-do-i-create-an-apm-condition-of-type-web-transaction-percentiles) section. 
 
 With respect to notification channels, the currently supported types are Email and Slack channels.  
 
@@ -36,10 +36,10 @@ Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager
 
 ### Debugging resources
 If you applied an alert policy but it was not created in New Relic, you can check the 
-status of the policy using kubectl describe alertpolicies <policy-name>. If there was an error while creating the policy, it will be shown in the `Status.reason` field.
+status of the policy using `kubectl describe alertpolicies <policy-name>`. If there was an error while creating the policy, it will be shown in the `Status.reason` field.
 
 ### FAQ
-##### Where can I find a more information on how each alerting condition parameter affects the alert policy?  
+#### Where can I find a more information on how each alerting condition parameter affects the alert policy?  
 The alert condition parameters are best explained by the documentation for the New Relic REST API
 Some examples include:
 * [apmConditions.alertThreshold.metric](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric)
@@ -48,9 +48,9 @@ Some examples include:
 
 You can review the [Alerts conditions API field names](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names) page for more information.
 
-##### How do I create an APM condition of type Web transaction percentiles
+#### How do I create an APM condition of type Web transaction percentiles
 Unfortunately, it is [not possible](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/rest-api-calls-new-relic-alerts#excluded) to use New Relic's REST API to create these types of conditions.
-However, you can try to define a NRQL alerting condition instead. A possible query could be the following: 
+However, you can try to define a NRQL alerting condition instead. The query parameter could be defined as follows: 
 ```
 SELECT percentile(totalTime) FROM Transaction WHERE appName = '<your APM application name>'
 ```
