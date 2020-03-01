@@ -5,25 +5,25 @@ metadata:
   labels:
     team: dx
 spec:
-  name: policy1
+  name: "[NewRelic Operator] Mixed alerting conditions"
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
-      query: "SELECT sum(memoryLimitBytes) FROM K8sContainerSample"
+      query: "SELECT sum(memoryUsedBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
       sinceMinutes: 15
       alertThreshold:
         timeFunction: any
         operator: above
-        value: "15"
+        value: "80"
         durationMinutes: 60
       valueFunction: single_value
     - name: High container cpu usage
-      query: "SELECT average(cpuLimitCores) FROM K8sContainerSample"
+      query: "SELECT average(cpuUsedCores/cpuLimitCores)*100 FROM K8sContainerSample FACET podName"
       sinceMinutes: 15
       alertThreshold:
         timeFunction: any
         operator: above
-        value: "15"
+        value: "80"
         durationMinutes: 60
       valueFunction: single_value
   apmConditions:
@@ -34,11 +34,11 @@ spec:
         - 452584204
       alertThreshold:
         timeFunction: any
-        operator: above
-        value: "20"
+        operator: below
+        value: "0.9"
         durationMinutes: 60
   infraConditions:
-    - name: First infra condition
+    - name: Stale queue
       violationCloseTimer: 60
       integrationProvider: SqsQueue
       eventType: QueueSample
@@ -57,7 +57,7 @@ metadata:
   labels:
     team: px
 spec:
-  name: policy2
+  name: "[NewRelic Operator] APM metric alert"
   incident_preference: "per_policy"
   apmConditions:
     - name: Low apdex score
@@ -67,8 +67,8 @@ spec:
         - 452584204
       alertThreshold:
         timeFunction: any
-        operator: above
-        value: "20"
+        operator: below
+        value: "0.9"
         durationMinutes: 60
 ---
 apiVersion: newrelic.fpetkovski.io/v1alpha1
@@ -76,21 +76,22 @@ kind: AlertPolicy
 metadata:
   name: p3
   labels:
-    team: px
+    team: x
 spec:
-  name: policy3
+  name: "[NewRelic Operator] JVM metric alert"
   incident_preference: "per_policy"
   apmConditions:
-    - name: Low apdex score
-      type: apm_app_metric
-      metric: response_time_web
+    - name: High heap usage
+      type: apm_jvm_metric
+      metric: heap_memory_usage
       entities:
-        - 452584204
+        - 552646861
       alertThreshold:
         timeFunction: any
         operator: above
-        value: "0.1"
+        value: "0.8"
         durationMinutes: 10
+      violationCloseTimer: 12
 
 
 

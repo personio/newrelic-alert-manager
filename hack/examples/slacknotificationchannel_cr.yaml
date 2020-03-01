@@ -3,7 +3,7 @@ kind: SlackNotificationChannel
 metadata:
   name: fp-test-123
 spec:
-  name: Slack channel test
+  name: "[NewRelic operator] Slack channel test"
   channel: "#dx_playground"
   url: "http://blabla.com"
   policySelector:
