@@ -99,6 +99,28 @@ spec:
                     type: object
                   violationCloseTimer:
                     type: integer
+                  warningThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      operator:
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
                 required:
                 - alertThreshold
                 - entities
@@ -152,6 +174,22 @@ spec:
                     type: string
                   violationCloseTimer:
                     type: integer
+                  warningThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: integer
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
                   whereClause:
                     type: string
                 required:
@@ -205,6 +243,28 @@ spec:
                     - single_value
                     - sum
                     type: string
+                  warningThreshold:
+                    properties:
+                      durationMinutes:
+                        type: integer
+                      operator:
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
                 required:
                 - alertThreshold
                 - name

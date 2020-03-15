@@ -6,9 +6,10 @@ type NrqlCondition struct {
 	Query   string `json:"query"`
 	Since   int    `json:"sinceMinutes"`
 	// +kubebuilder:validation:Enum=single_value;sum
-	ValueFunction  string    `json:"valueFunction"`
-	AlertThreshold Threshold `json:"alertThreshold"`
-	RunbookUrl     string    `json:"runbookUrl,omitempty"`
+	ValueFunction    string     `json:"valueFunction"`
+	AlertThreshold   Threshold  `json:"alertThreshold"`
+	WarningThreshold *Threshold `json:"warningThreshold,omitempty"`
+	RunbookUrl       string     `json:"runbookUrl,omitempty"`
 }
 
 type Threshold struct {

@@ -11,7 +11,8 @@ type ApmCondition struct {
 	ViolationCloseTimer int          `json:"violationCloseTimer,omitempty"`
 	RunbookUrl          string       `json:"runbookUrl,omitempty"`
 	Metric              string       `json:"metric"`
-	Threshold           Threshold    `json:"alertThreshold"`
+	CriticalThreshold   Threshold    `json:"alertThreshold"`
+	WarningThreshold    *Threshold   `json:"warningThreshold,omitempty"`
 	UserDefined         *UserDefined `json:"userDefined,omitempty"`
 }
 

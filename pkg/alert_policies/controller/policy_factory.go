@@ -15,43 +15,9 @@ func NewAlertPolicy(cr *v1alpha1.AlertPolicy) *domain.AlertPolicy {
 			Name:               cr.Spec.Name,
 			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
-		NrqlConditions:  newNrqlConditions(cr.Spec.NrqlConditions),
 		ApmConditions:   newApmConditions(cr.Spec.ApmConditions),
+		NrqlConditions:  newNrqlConditions(cr.Spec.NrqlConditions),
 		InfraConditions: newInfraConditions(cr.Spec.InfraConditions),
-	}
-}
-
-func newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondition {
-	result := make([]*domain.NrqlCondition, len(conditions))
-	for i, condition := range conditions {
-		result[i] = newNrqlAlertCondition(condition)
-	}
-
-	return result
-}
-
-func newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
-	return &domain.NrqlCondition{
-		Condition: domain.NrqlConditionBody{
-			Type:       "static",
-			Name:       condition.Name,
-			RunbookURL: condition.RunbookUrl,
-			Enabled:    boolWithDefault(condition.Enabled, true),
-			Terms: [1]domain.Term{
-				{
-					TimeFunction: condition.AlertThreshold.TimeFunction,
-					Priority:     "critical",
-					Operator:     condition.AlertThreshold.Operator,
-					Threshold:    condition.AlertThreshold.Value,
-					Duration:     strconv.Itoa(condition.AlertThreshold.DurationMinutes),
-				},
-			},
-			ValueFunction: condition.ValueFunction,
-			Nrql: domain.Nrql{
-				Query:      condition.Query,
-				SinceValue: strconv.Itoa(condition.Since),
-			},
-		},
 	}
 }
 
@@ -75,17 +41,59 @@ func newApmAlertCondition(condition v1alpha1.ApmCondition) *domain.ApmCondition 
 			Metric:              condition.Metric,
 			ViolationCloseTimer: condition.ViolationCloseTimer,
 			RunbookUrl:          condition.RunbookUrl,
-			Threshold: [1]domain.Term{
-				{
-					Duration:     strconv.Itoa(condition.Threshold.DurationMinutes),
-					Operator:     condition.Threshold.Operator,
-					Priority:     "critical",
-					Threshold:    condition.Threshold.Value,
-					TimeFunction: condition.Threshold.TimeFunction,
-				},
+			Terms:               newThresholds(condition.CriticalThreshold, condition.WarningThreshold),
+		},
+	}
+}
+
+func newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondition {
+	result := make([]*domain.NrqlCondition, len(conditions))
+	for i, condition := range conditions {
+		result[i] = newNrqlAlertCondition(condition)
+	}
+
+	return result
+}
+
+func newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
+	return &domain.NrqlCondition{
+		Condition: domain.NrqlConditionBody{
+			Type:          "static",
+			Name:          condition.Name,
+			RunbookURL:    condition.RunbookUrl,
+			Enabled:       boolWithDefault(condition.Enabled, true),
+			Terms:         newThresholds(condition.AlertThreshold, condition.WarningThreshold),
+			ValueFunction: condition.ValueFunction,
+			Nrql: domain.Nrql{
+				Query:      condition.Query,
+				SinceValue: strconv.Itoa(condition.Since),
 			},
 		},
 	}
+}
+
+func newThresholds(criticalThreshold v1alpha1.Threshold, warningThreshold *v1alpha1.Threshold) []domain.Term {
+	var terms []domain.Term
+	criticalTerm := domain.Term{
+		Duration:     strconv.Itoa(criticalThreshold.DurationMinutes),
+		Operator:     criticalThreshold.Operator,
+		Priority:     "critical",
+		Threshold:    criticalThreshold.Value,
+		TimeFunction: criticalThreshold.TimeFunction,
+	}
+	terms = append(terms, criticalTerm)
+
+	if warningThreshold != nil {
+		warningTerm := domain.Term{
+			Duration:     strconv.Itoa(warningThreshold.DurationMinutes),
+			Operator:     warningThreshold.Operator,
+			Priority:     "warning",
+			Threshold:    warningThreshold.Value,
+			TimeFunction: warningThreshold.TimeFunction,
+		}
+		terms = append(terms, warningTerm)
+	}
+	return terms
 }
 
 func newInfraConditions(conditions []v1alpha1.InfraCondition) []*domain.InfraCondition {
@@ -103,11 +111,12 @@ func newInfraAlertCondition(condition v1alpha1.InfraCondition) *domain.InfraCond
 			Name:       condition.Name,
 			Type:       "infra_metric",
 			Comparison: condition.Comparison,
-			Threshold: domain.InfraThreshold{
-				TimeFunction:    condition.Threshold.TimeFunction,
-				Value:           condition.Threshold.Value,
-				DurationMinutes: condition.Threshold.DurationMinutes,
+			CriticalThreshold: domain.InfraThreshold{
+				TimeFunction:    condition.CriticalThreshold.TimeFunction,
+				Value:           condition.CriticalThreshold.Value,
+				DurationMinutes: condition.CriticalThreshold.DurationMinutes,
 			},
+			WarningThreshold:    maybeInfraThreshold(condition.WarningThreshold),
 			Enabled:             boolWithDefault(condition.Enabled, true),
 			EventType:           condition.EventType,
 			IntegrationProvider: condition.IntegrationProvider,
@@ -116,6 +125,18 @@ func newInfraAlertCondition(condition v1alpha1.InfraCondition) *domain.InfraCond
 			ViolationCloseTimer: condition.ViolationCloseTimer,
 			WhereClause:         condition.WhereClause,
 		},
+	}
+}
+
+func maybeInfraThreshold(threshold *v1alpha1.InfraThreshold) *domain.InfraThreshold {
+	if threshold == nil {
+		return nil
+	}
+
+	return &domain.InfraThreshold{
+		TimeFunction:    threshold.TimeFunction,
+		Value:           threshold.Value,
+		DurationMinutes: threshold.DurationMinutes,
 	}
 }
 

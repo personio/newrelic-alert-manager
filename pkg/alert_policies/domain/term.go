@@ -10,7 +10,7 @@ type Term struct {
 	TimeFunction string `json:"time_function"`
 }
 
-func (t Term) getHashKey() interface{} {
+func (t Term) getHashKey() string {
 	return fmt.Sprintf(
 		"%s-%s-%s-%s-%s",
 		t.Duration,

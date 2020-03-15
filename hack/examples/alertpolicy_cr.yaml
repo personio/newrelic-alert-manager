@@ -16,6 +16,11 @@ spec:
         operator: above
         value: "80"
         durationMinutes: 60
+      warningThreshold:
+        timeFunction: any
+        operator: below
+        value: "0.70"
+        durationMinutes: 20
       valueFunction: single_value
     - name: High container cpu usage
       query: "SELECT average(cpuUsedCores/cpuLimitCores)*100 FROM K8sContainerSample FACET podName"
@@ -37,6 +42,11 @@ spec:
         operator: below
         value: "0.9"
         durationMinutes: 60
+      warningThreshold:
+        timeFunction: any
+        operator: below
+        value: "0.95"
+        durationMinutes: 20
   infraConditions:
     - name: Stale queue
       violationCloseTimer: 60
@@ -48,6 +58,10 @@ spec:
         timeFunction: any
         value: 5
         durationMinutes: 10
+      warningThreshold:
+        timeFunction: any
+        value: 3
+        durationMinutes: 5
       whereClause: "(provider.queueName = 'documents-virus-scanner')"
 ---
 apiVersion: newrelic.fpetkovski.io/v1alpha1

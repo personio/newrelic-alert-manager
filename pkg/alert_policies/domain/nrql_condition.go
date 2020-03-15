@@ -13,14 +13,14 @@ type NrqlCondition struct {
 }
 
 type NrqlConditionBody struct {
-	Id            *int64  `json:"id,omitempty"`
-	Type          string  `json:"type"`
-	Name          string  `json:"name"`
-	RunbookURL    string  `json:"runbook_url"`
-	Enabled       bool    `json:"enabled"`
-	Terms         [1]Term `json:"terms"`
-	ValueFunction string  `json:"value_function"`
-	Nrql          Nrql    `json:"nrql"`
+	Id            *int64 `json:"id,omitempty"`
+	Type          string `json:"type"`
+	Name          string `json:"name"`
+	RunbookURL    string `json:"runbook_url"`
+	Enabled       bool   `json:"enabled"`
+	Terms         []Term `json:"terms"`
+	ValueFunction string `json:"value_function"`
+	Nrql          Nrql   `json:"nrql"`
 }
 
 func (condition NrqlConditionBody) getHashKey() string {
@@ -31,9 +31,17 @@ func (condition NrqlConditionBody) getHashKey() string {
 		condition.RunbookURL,
 		condition.Enabled,
 		condition.ValueFunction,
-		condition.Terms[0].getHashKey(),
+		condition.getTermsHash(),
 		condition.Nrql.getHashKey(),
 	)
+}
+
+func (b NrqlConditionBody) getTermsHash() string {
+	if len(b.Terms) == 1 {
+		return b.Terms[0].getHashKey()
+	}
+
+	return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
 }
 
 type Nrql struct {
