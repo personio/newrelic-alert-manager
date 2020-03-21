@@ -18,7 +18,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("controller-slack-notification-channel")
+var log = logf.Log.WithName("controller-notification-channel")
 
 // Reconcile reconciles a NotificationChannel object
 type Reconcile struct {
@@ -47,7 +47,7 @@ func Add(mgr manager.Manager, controllerName string, channelType iov1alpha1.Noti
 		func(a handler.MapObject) []reconcile.Request {
 			channels, err := k8sClient.GetChannels()
 			if err != nil {
-				log.Error(err, "Unable to list all slack channels")
+				log.Error(err, "Unable to list all channels")
 			}
 			requests := make([]reconcile.Request, channels.Size())
 			for i, namespacedName := range channels.GetNamespacedNames() {

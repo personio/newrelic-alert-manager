@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg"
 	"os"
 	"runtime"
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -12,7 +13,6 @@ import (
 	"k8s.io/client-go/rest"
 
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/controller"
 	"github.com/fpetkovski/newrelic-alert-manager/version"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
@@ -102,7 +102,7 @@ func main() {
 	}
 
 	// Setup all Controllers
-	if err := controller.AddToManager(mgr); err != nil {
+	if err := pkg.RegisterControllers(mgr); err != nil {
 		log.Error(err, "")
 		os.Exit(1)
 	}
