@@ -1,0 +1,16 @@
+apiVersion: newrelic.fpetkovski.io/v1alpha1
+kind: Dashboard
+metadata:
+  name: fptest
+spec:
+  title: First dashboard
+  widgets:
+  - title: first widget
+    visualization: faceted_line_chart
+    data:
+      nrql: "SELECT average(cpuUsedCores/cpuLimitCores) FROM K8sContainerSample FACET podName  TIMESERIES"
+    layout:
+      width: 2
+      height: 1
+      row: 1
+      column: 1

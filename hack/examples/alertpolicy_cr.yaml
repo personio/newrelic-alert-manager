@@ -18,7 +18,7 @@ spec:
         durationMinutes: 60
       warningThreshold:
         timeFunction: any
-        operator: below
+        operator: above
         value: "0.70"
         durationMinutes: 20
       valueFunction: single_value
@@ -40,7 +40,7 @@ spec:
       alertThreshold:
         timeFunction: any
         operator: below
-        value: "0.9"
+        value: "0.85"
         durationMinutes: 60
       warningThreshold:
         timeFunction: any
@@ -103,7 +103,7 @@ spec:
       alertThreshold:
         timeFunction: any
         operator: above
-        value: "0.8"
+        value: "0.85"
         durationMinutes: 10
       violationCloseTimer: 12
 

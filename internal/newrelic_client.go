@@ -7,7 +7,6 @@ import (
 	"github.com/go-logr/logr"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 )
 
 type NewrelicClient interface {
@@ -38,13 +37,13 @@ func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicCli
 func (newrelic newrelicClient) Get(path string) (*http.Response, error) {
 	request := newrelic.newRequest("GET", path, nil)
 
-	return newrelic.executeWithStatusCheck(request)
+	return newrelic.execute(request)
 }
 
 func (newrelic newrelicClient) GetJson(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("Get", path, nil)
 
-	return newrelic.executeWithStatusCheck(request)
+	return newrelic.execute(request)
 }
 
 func (newrelic newrelicClient) PostJson(path string, payload []byte) (*http.Response, error) {
@@ -63,7 +62,7 @@ func (newrelic newrelicClient) Delete(path string) (*http.Response, error) {
 	request := newrelic.newJsonRequest("DELETE", path, nil)
 
 	response, err := newrelic.execute(request)
-	if response != nil && response.Status == "404" {
+	if response != nil && response.StatusCode == 404 {
 		return response, nil
 	}
 	if err != nil {
@@ -118,29 +117,25 @@ func newRequest(method string, url string, path string) *http.Request {
 	return req
 }
 
-func (newrelic newrelicClient) execute(request *http.Request) (*http.Response, error) {
-	newrelic.log.Info("Executing request", "Method", request.Method, "Endpoint", request.URL, "Payload", request.Body)
-	response, err := newrelic.client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-
-	return response, nil
-}
-
 func (newrelic newrelicClient) executeWithStatusCheck(request *http.Request) (*http.Response, error) {
 	response, err := newrelic.execute(request)
 	if err != nil {
 		return nil, err
 	}
 
-	if response != nil {
-		newrelic.log.Info(strconv.Itoa(response.StatusCode))
-	}
-
 	if response != nil && response.StatusCode >= 300 {
 		responseContent, _ := ioutil.ReadAll(response.Body)
 		return nil, errors.New(string(responseContent))
+	}
+
+	return response, nil
+}
+
+func (newrelic newrelicClient) execute(request *http.Request) (*http.Response, error) {
+	newrelic.log.Info("Executing request", "Method", request.Method, "Endpoint", request.URL, "Payload", request.Body)
+	response, err := newrelic.client.Do(request)
+	if err != nil {
+		return nil, err
 	}
 
 	return response, nil

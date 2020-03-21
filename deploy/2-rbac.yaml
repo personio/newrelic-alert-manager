@@ -12,6 +12,8 @@ rules:
     - slacknotificationchannels/status
     - emailnotificationchannels
     - emailnotificationchannels/status
+    - dashboards
+    - dashboards/status
   verbs:
     - "*"
 ---
