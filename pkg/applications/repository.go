@@ -30,6 +30,9 @@ func (repository Repository) GetApplicationByName(name string) (*Application, er
 	}
 
 	application := findApplicationByName(applications, name)
+	if application == nil {
+		return nil, fmt.Errorf("application with name %s does not exist", name)
+	}
 	return application, nil
 }
 

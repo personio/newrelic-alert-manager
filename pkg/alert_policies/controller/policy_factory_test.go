@@ -45,16 +45,13 @@ func TestPolicyFactory_NewAlertPolicy_ApmCondition_NonExistentEntity(t *testing.
 
 	policy := newPolicyWithApmCondition("test-policy", "test-entity")
 	factory := controller.NewPolicyFactory(repository)
-	domainPolicy, err := factory.NewAlertPolicy(policy)
-	if err != nil {
-		t.Error(err)
-	}
 
-	if len(domainPolicy.ApmConditions[0].Condition.Entities) != 0 {
-		t.Error("Entity count should be 0")
+	_, err := factory.NewAlertPolicy(policy)
+	expoectedError := "application with name test-entity does not exist"
+	if err == nil || err.Error() != expoectedError {
+		t.Errorf("Expected error %s", expoectedError)
 	}
 }
-
 
 func TestPolicyFactory_NewAlertPolicy_ApmCondition_MisnamedEntity(t *testing.T) {
 	client := new(mocks.NewrelicClient)
@@ -70,12 +67,10 @@ func TestPolicyFactory_NewAlertPolicy_ApmCondition_MisnamedEntity(t *testing.T) 
 
 	policy := newPolicyWithApmCondition("test-policy", "test-entity")
 	factory := controller.NewPolicyFactory(repository)
-	domainPolicy, err := factory.NewAlertPolicy(policy)
-	if err != nil {
-		t.Error(err)
-	}
 
-	if len(domainPolicy.ApmConditions[0].Condition.Entities) != 0 {
-		t.Error("Entity count should be 0")
+	_, err := factory.NewAlertPolicy(policy)
+	expoectedError := "application with name test-entity does not exist"
+	if err == nil || err.Error() != expoectedError {
+		t.Errorf("Expected error %s", expoectedError)
 	}
 }

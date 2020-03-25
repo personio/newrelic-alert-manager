@@ -41,7 +41,8 @@ func newRequest(title string) []byte {
 				"visibility": "all",
 				"metadata": {
 					"version": 1
-				}
+				},
+				"widgets": null
 			}
 		}
 	`, title))

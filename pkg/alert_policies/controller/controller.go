@@ -17,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+	"time"
 )
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
@@ -88,9 +89,13 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		reqLogger.Error(err, "Error creating alerting policy")
 		instance.Status.Status = "failed"
 		instance.Status.Reason = err.Error()
-		err = r.k8s.UpdatePolicyStatus(instance)
-
-		return reconcile.Result{}, err
+		err2 := r.k8s.UpdatePolicyStatus(instance)
+		if err2 != nil {
+			return reconcile.Result{}, err2
+		}
+		return reconcile.Result{
+			RequeueAfter: 5 * time.Second,
+		}, nil
 	}
 
 	if instance.DeletionTimestamp != nil {
@@ -108,9 +113,14 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 			instance.Status.Status = "failed"
 			instance.Status.NewrelicPolicyId = policy.Policy.Id
 			instance.Status.Reason = err.Error()
-			err = r.k8s.UpdatePolicyStatus(instance)
+			err2 := r.k8s.UpdatePolicyStatus(instance)
+			if err2 != nil {
+				return reconcile.Result{}, err2
+			}
 
-			return reconcile.Result{}, err
+			return reconcile.Result{
+				RequeueAfter: 5 * time.Second,
+			}, nil
 		}
 
 		instance.Status.Status = "created"

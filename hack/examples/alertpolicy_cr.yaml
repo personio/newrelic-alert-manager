@@ -78,7 +78,7 @@ spec:
       type: apm_app_metric
       metric: apdex
       entities:
-        - "kotlin-microservice-template"
+        - "application-name"
       alertThreshold:
         timeFunction: any
         operator: below
