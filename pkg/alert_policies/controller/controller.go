@@ -6,6 +6,7 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/newrelic"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -22,10 +23,11 @@ var log = logf.Log.WithName("controller_newrelic_alert_policy")
 
 // ReconcileNewrelicPolicy reconciles a AlertPolicy object
 type ReconcileNewrelicPolicy struct {
-	k8s      *k8s.Client
-	scheme   *runtime.Scheme
-	newrelic *newrelic.AlertPolicyRepository
-	log      logr.Logger
+	policyFactory *PolicyFactory
+	k8s           *k8s.Client
+	scheme        *runtime.Scheme
+	newrelic      *newrelic.AlertPolicyRepository
+	log           logr.Logger
 }
 
 func Add(mgr manager.Manager) error {
@@ -43,12 +45,15 @@ func Add(mgr manager.Manager) error {
 	)
 
 	repository := newrelic.NewAlertPolicyRepository(log, client, infraClient)
+	policyFactory := NewPolicyFactory(applications.NewRepository(client))
+
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
 	reconciler := &ReconcileNewrelicPolicy{
-		k8s:      k8sClient,
-		scheme:   mgr.GetScheme(),
-		newrelic: repository,
-		log:      log,
+		policyFactory: policyFactory,
+		k8s:           k8sClient,
+		scheme:        mgr.GetScheme(),
+		newrelic:      repository,
+		log:           log,
 	}
 
 	c, err := controller.New("newrelic-alert-policy-controller", mgr, controller.Options{Reconciler: reconciler})
@@ -78,7 +83,16 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		return reconcile.Result{}, err
 	}
 
-	policy := NewAlertPolicy(instance)
+	policy, err := r.policyFactory.NewAlertPolicy(instance)
+	if err != nil {
+		reqLogger.Error(err, "Error creating alerting policy")
+		instance.Status.Status = "failed"
+		instance.Status.Reason = err.Error()
+		err = r.k8s.UpdatePolicyStatus(instance)
+
+		return reconcile.Result{}, err
+	}
+
 	if instance.DeletionTimestamp != nil {
 		return r.deletePolicy(policy, *instance)
 	} else {

@@ -33,7 +33,7 @@ func newDashboardWithId(id int, title string) *domain.Dashboard {
 }
 
 func newRequest(title string) []byte {
-	request := []byte(fmt.Sprintf(`
+	request := []byte(fmt.Sprintf(	`
 		{
 			"dashboard": {
 				"title": "%s",
