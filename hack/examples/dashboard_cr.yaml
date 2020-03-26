@@ -14,3 +14,34 @@ spec:
       height: 1
       row: 1
       column: 1
+  - title: second widget
+    visualization: metric_line_chart
+    data:
+      nrql: "hello"
+      apm:
+        duration: 1800000
+        metrics:
+          - name: Apdex
+            values:
+              - score
+        entities:
+          - kotlin-microservice-template
+    layout:
+      width: 2
+      height: 1
+      row: 1
+      column: 1
+  - title: third widget
+    visualization: application_breakdown
+    data:
+      nrql: "hello"
+      apm:
+        duration: 1800000
+        entities:
+          - kotlin-microservice-template
+    layout:
+      width: 2
+      height: 1
+      row: 1
+      column: 1
+

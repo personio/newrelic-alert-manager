@@ -11,7 +11,7 @@ type Widget struct {
 	Presentation  Presentation `json:"presentation"`
 }
 
-func (w Widget) getHashKey() string {
+func (w Widget) getSortKey() string {
 	return fmt.Sprintf("%s-%s-%s-%s", w.Data.getHashKey(), w.Layout.getHashKey(), w.Visualization, w.Presentation.getHashKey())
 }
 

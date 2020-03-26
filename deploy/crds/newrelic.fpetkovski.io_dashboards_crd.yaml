@@ -38,10 +38,39 @@ spec:
                 properties:
                   data:
                     properties:
+                      apm:
+                        properties:
+                          duration:
+                            type: integer
+                          entities:
+                            items:
+                              type: string
+                            type: array
+                          facet:
+                            type: string
+                          metrics:
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - name
+                              - values
+                              type: object
+                            type: array
+                          order_by:
+                            type: string
+                        required:
+                        - duration
+                        - entities
+                        - metrics
+                        type: object
                       nrql:
                         type: string
-                    required:
-                    - nrql
                     type: object
                   layout:
                     properties:
@@ -63,24 +92,26 @@ spec:
                     type: string
                   visualization:
                     enum:
+                    - application_breakdown
+                    - attribute_sheet
+                    - background_breakdown
+                    - billboard
+                    - billboard_comparison
+                    - comparison_line_chart
                     - event_table
-                    - line_chart
-                    - facet_table
                     - facet_bar_chart
                     - facet_pie_chart
-                    - billboard
+                    - facet_table
                     - faceted_area_chart
                     - faceted_line_chart
-                    - event_table
-                    - comparison_line_chart
-                    - heatmap
-                    - histogram
-                    - billboard_comparison
-                    - attribute_sheet
                     - funnel
                     - gauge
+                    - heatmap
+                    - histogram
                     - json
+                    - line_chart
                     - list
+                    - metric_line_chart
                     type: string
                 required:
                 - data
