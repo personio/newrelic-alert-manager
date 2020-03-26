@@ -7,7 +7,7 @@ type ApmCondition struct {
 	Enabled *bool  `json:"enabled,omitempty"`
 	// +kubebuilder:validation:Enum=instance;application
 	ConditionScope      *string      `json:"conditionScope,omitempty"`
-	Entities            []int64      `json:"entities"`
+	Entities            []string     `json:"entities"`
 	ViolationCloseTimer int          `json:"violationCloseTimer,omitempty"`
 	RunbookUrl          string       `json:"runbookUrl,omitempty"`
 	Metric              string       `json:"metric"`

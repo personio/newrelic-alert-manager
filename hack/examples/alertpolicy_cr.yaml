@@ -78,7 +78,7 @@ spec:
       type: apm_app_metric
       metric: apdex
       entities:
-        - 452584204
+        - "application-name"
       alertThreshold:
         timeFunction: any
         operator: below
@@ -99,7 +99,7 @@ spec:
       type: apm_jvm_metric
       metric: heap_memory_usage
       entities:
-        - 552646861
+        - "552646861
       alertThreshold:
         timeFunction: any
         operator: above

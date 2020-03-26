@@ -1,61 +1,85 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"strconv"
 	"strings"
 )
 
-func NewAlertPolicy(cr *v1alpha1.AlertPolicy) *domain.AlertPolicy {
+type PolicyFactory struct {
+	appRepository *applications.Repository
+}
+
+func NewPolicyFactory(appRepository *applications.Repository) *PolicyFactory {
+	return &PolicyFactory{
+		appRepository: appRepository,
+	}
+}
+
+func (policyFactory PolicyFactory) NewAlertPolicy(cr *v1alpha1.AlertPolicy) (*domain.AlertPolicy, error) {
+	apmConditions, err := policyFactory.newApmConditions(cr.Spec.ApmConditions)
+	if err != nil {
+		return nil, err
+	}
+
 	return &domain.AlertPolicy{
 		Policy: domain.Policy{
 			Id:                 cr.Status.NewrelicPolicyId,
 			Name:               cr.Spec.Name,
 			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
-		ApmConditions:   newApmConditions(cr.Spec.ApmConditions),
-		NrqlConditions:  newNrqlConditions(cr.Spec.NrqlConditions),
-		InfraConditions: newInfraConditions(cr.Spec.InfraConditions),
-	}
+		ApmConditions:   apmConditions,
+		NrqlConditions:  policyFactory.newNrqlConditions(cr.Spec.NrqlConditions),
+		InfraConditions: policyFactory.newInfraConditions(cr.Spec.InfraConditions),
+	}, nil
 }
 
-func newApmConditions(conditions []v1alpha1.ApmCondition) []*domain.ApmCondition {
+func (policyFactory PolicyFactory) newApmConditions(conditions []v1alpha1.ApmCondition) ([]*domain.ApmCondition, error) {
 	result := make([]*domain.ApmCondition, len(conditions))
 	for i, condition := range conditions {
-		result[i] = newApmAlertCondition(condition)
+		condition, err := policyFactory.newApmAlertCondition(condition)
+		if err != nil {
+			return nil, err
+		}
+		result[i] = condition
 	}
 
-	return result
+	return result, nil
 }
 
-func newApmAlertCondition(condition v1alpha1.ApmCondition) *domain.ApmCondition {
+func (policyFactory PolicyFactory) newApmAlertCondition(condition v1alpha1.ApmCondition) (*domain.ApmCondition, error) {
+	entityIds, err := policyFactory.getApplicationIds(condition)
+	if err != nil {
+		return nil, err
+	}
+
 	return &domain.ApmCondition{
 		Condition: domain.ApmConditionBody{
 			Name:                condition.Name,
 			Type:                condition.Type,
 			Enabled:             boolWithDefault(condition.Enabled, true),
-			Entities:            intToString(condition.Entities),
+			Entities:            entityIds,
 			ConditionScope:      stringWithDefault(condition.ConditionScope, "application"),
 			Metric:              condition.Metric,
 			ViolationCloseTimer: condition.ViolationCloseTimer,
 			RunbookUrl:          condition.RunbookUrl,
 			Terms:               newThresholds(condition.CriticalThreshold, condition.WarningThreshold),
 		},
-	}
+	}, nil
 }
 
-func newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondition {
+func (policyFactory PolicyFactory) newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondition {
 	result := make([]*domain.NrqlCondition, len(conditions))
 	for i, condition := range conditions {
-		result[i] = newNrqlAlertCondition(condition)
+		result[i] = policyFactory.newNrqlAlertCondition(condition)
 	}
 
 	return result
 }
 
-func newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
+func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
 	return &domain.NrqlCondition{
 		Condition: domain.NrqlConditionBody{
 			Type:          "static",
@@ -96,16 +120,16 @@ func newThresholds(criticalThreshold v1alpha1.Threshold, warningThreshold *v1alp
 	return terms
 }
 
-func newInfraConditions(conditions []v1alpha1.InfraCondition) []*domain.InfraCondition {
+func (policyFactory PolicyFactory) newInfraConditions(conditions []v1alpha1.InfraCondition) []*domain.InfraCondition {
 	result := make([]*domain.InfraCondition, len(conditions))
 	for i, condition := range conditions {
-		result[i] = newInfraAlertCondition(condition)
+		result[i] = policyFactory.newInfraAlertCondition(condition)
 	}
 
 	return result
 }
 
-func newInfraAlertCondition(condition v1alpha1.InfraCondition) *domain.InfraCondition {
+func (policyFactory PolicyFactory) newInfraAlertCondition(condition v1alpha1.InfraCondition) *domain.InfraCondition {
 	return &domain.InfraCondition{
 		Condition: domain.InfraConditionBody{
 			Name:       condition.Name,
@@ -156,11 +180,19 @@ func stringWithDefault(scope *string, defaultValue string) string {
 	return *scope
 }
 
-func intToString(input []int64) []string {
-	result := make([]string, len(input))
-	for i, item := range input {
-		result[i] = fmt.Sprintf("%d", item)
+func (policyFactory PolicyFactory) getApplicationIds(condition v1alpha1.ApmCondition) ([]string, error) {
+	var result []string
+	for _, item := range condition.Entities {
+		application, err := policyFactory.appRepository.GetApplicationByName(item)
+		if err != nil {
+			return nil, err
+		}
+		if application == nil {
+			continue
+		}
+
+		result = append(result, strconv.Itoa(application.Id))
 	}
 
-	return result
+	return result, nil
 }

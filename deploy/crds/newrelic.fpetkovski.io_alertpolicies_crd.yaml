@@ -64,8 +64,7 @@ spec:
                     type: boolean
                   entities:
                     items:
-                      format: int64
-                      type: integer
+                      type: string
                     type: array
                   metric:
                     type: string

@@ -143,7 +143,7 @@ func (in *ApmCondition) DeepCopyInto(out *ApmCondition) {
 	}
 	if in.Entities != nil {
 		in, out := &in.Entities, &out.Entities
-		*out = make([]int64, len(*in))
+		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
 	out.CriticalThreshold = in.CriticalThreshold
