@@ -5,12 +5,61 @@ metadata:
 spec:
   title: First dashboard
   widgets:
-  - title: first widget
+  - title: Average cpu utilization per pods
     visualization: faceted_line_chart
     data:
-      nrql: "SELECT average(cpuUsedCores/cpuLimitCores) FROM K8sContainerSample FACET podName  TIMESERIES"
+      nrql: "SELECT average(cpuUsedCores/cpuLimitCores) FROM K8sContainerSample FACET podName TIMESERIES"
+    layout:
+      row: 1
+      column: 1
+      width: 2
+      height: 1
+  - title: Error rate
+    visualization: metric_line_chart
+    data:
+      apm:
+        duration: 1800000
+        metrics:
+          - name: Errors/all
+            values:
+              - errors_per_minute
+              - error_count
+        entities:
+          - application-name
+    layout:
+      row: 1
+      column: 3
+      width: 1
+      height: 1
+  - title: Apdex score
+    visualization: metric_line_chart
+    data:
+      apm:
+        duration: 1800000
+        metrics:
+          - name: Apdex
+            values:
+              - score
+        entities:
+          - application-name
     layout:
       width: 2
       height: 1
-      row: 1
+      row: 2
       column: 1
+  - title: Requests per minute
+    visualization: metric_line_chart
+    data:
+      apm:
+        duration: 1800000
+        metrics:
+          - name: WebTransactionTotalTime
+            values:
+              - requests_per_minute
+        entities:
+          - application-name
+    layout:
+      row: 2
+      column: 3
+      width: 1
+      height: 1

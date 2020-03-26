@@ -2,76 +2,115 @@ package newrelic_test
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal/mocks"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
+	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"
 )
+
 var logr = log.Log.WithName("test")
 
+type testCase struct {
+	dashboard *domain.Dashboard
+	request   []byte
+	response  *http.Response
+}
+
+func newObjectTestCases() []testCase {
+	return []testCase{
+		{
+			dashboard: newEmptyDashboard("test"),
+			request:   newEmptyDashboardRequest("test"),
+			response:  newEmptyDashboardResponse(10, "test"),
+		},
+		{
+			dashboard: newApmDashboard("test-title", "test-metric", 5),
+			request:   newApmDashboardRequest("test-title", "test-metric", 5),
+			response:  newApmDashboardResponse(10, "test-title", "test-metric", 5),
+		},
+	}
+}
 
 func TestRepository_Save_NewValidObject(t *testing.T) {
-	client := new(mocks.NewrelicClient)
+	for _, testCase := range newObjectTestCases() {
+		client := new(mocks.NewrelicClient)
+		client.On(
+			"PostJson",
+			"/dashboards.json",
+			testCase.request,
+		).Return(
+			testCase.response,
+			nil,
+		)
 
-	client.On(
-		"PostJson",
-		"/dashboards.json",
-		newRequest("test"),
-	).Return(
-		newResponse(10, "test"),
-		nil,
-	)
+		repository := newrelic.NewRepository(logr, client)
+		err := repository.Save(testCase.dashboard)
+		if err != nil {
+			t.Error(err)
+		}
 
-	dashboard := newDashboard("test")
-	repository := newrelic.NewRepository(logr, client)
-	err := repository.Save(dashboard)
-	if err != nil {
-		t.Error(err)
+		if *testCase.dashboard.DashboardBody.Id != 10 {
+			t.Error("DashboardBody id should be equal to 10")
+		}
 	}
+}
 
-	if *dashboard.DashboardBody.Id != 10 {
-		t.Error("DashboardBody id should be equal to 10")
+func existingObjectTestCases() []testCase {
+	return []testCase{
+		{
+			dashboard: newDashboardWithId(10, "test"),
+			request:   newEmptyDashboardRequest("test"),
+			response:  newEmptyDashboardResponse(10, "test"),
+		},
+		{
+			dashboard: newApmDashboardWithId(10, "test-title", "test-metric", 5),
+			request:   newApmDashboardRequest("test-title", "test-metric", 5),
+			response:  newApmDashboardResponse(10, "test-title", "test-metric", 5),
+		},
 	}
 }
 
 func TestRepository_Save_ExistingValidObject(t *testing.T) {
-	client := new(mocks.NewrelicClient)
 
-	client.On(
-		"GetJson",
-		"/dashboards/20.json",
-	).Return(
-		newResponse(20, "test"),
-		nil,
-	)
+	for _, testCase := range existingObjectTestCases() {
+		client := new(mocks.NewrelicClient)
+		client.On(
+			"GetJson",
+			"/dashboards/10.json",
+		).Return(
+			 newEmptyDashboardResponse(10, "existing-dashboard"),
+			nil,
+		)
 
-	client.On(
-		"PutJson",
-		"/dashboards/20.json",
-		newRequest("test-edited"),
-	).Return(
-		newResponse(20, "test-edited"),
-		nil,
-	)
+		client.On(
+			"PutJson",
+			"/dashboards/10.json",
+			testCase.request,
+		).Return(
+			testCase.response,
+			nil,
+		)
 
-	dashboard := newDashboardWithId(20, "test-edited")
-	repository := newrelic.NewRepository(logr, client)
-	err := repository.Save(dashboard)
-	if err != nil {
-		t.Error(err)
+		repository := newrelic.NewRepository(logr, client)
+		err := repository.Save(testCase.dashboard)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if *testCase.dashboard.DashboardBody.Id != 10 {
+			t.Error("DashboardBody id should be equal to 20")
+		}
+
+		client.AssertCalled(
+			t,
+			"PutJson",
+			"/dashboards/10.json",
+			testCase.request,
+		)
 	}
 
-	if *dashboard.DashboardBody.Id != 20 {
-		t.Error("DashboardBody id should be equal to 20")
-	}
-
-	client.AssertCalled(
-		t,
-		"PutJson",
-		"/dashboards/20.json",
-		newRequest("test-edited"),
-	)
 }
-
 
 func TestRepository_Save_UpdateNonExistingObject(t *testing.T) {
 	client := new(mocks.NewrelicClient)
@@ -87,9 +126,9 @@ func TestRepository_Save_UpdateNonExistingObject(t *testing.T) {
 	client.On(
 		"PostJson",
 		"/dashboards.json",
-		newRequest("test-edited"),
+		newEmptyDashboardRequest("test-edited"),
 	).Return(
-		newResponse(20, "test-edited"),
+		newEmptyDashboardResponse(20, "test-edited"),
 		nil,
 	)
 
@@ -108,6 +147,6 @@ func TestRepository_Save_UpdateNonExistingObject(t *testing.T) {
 		t,
 		"PostJson",
 		"/dashboards.json",
-		newRequest("test-edited"),
+		newEmptyDashboardRequest("test-edited"),
 	)
 }

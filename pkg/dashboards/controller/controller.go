@@ -3,11 +3,13 @@ package controller
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"os"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -21,6 +23,14 @@ import (
 
 var log = logf.Log.WithName("controller_dashboard")
 
+type ReconcileDashboard struct {
+	k8s              *k8s.Client
+	scheme           *runtime.Scheme
+	newrelic         *newrelic.Repository
+	dashboardFactory *DashboardFactory
+	log              logr.Logger
+}
+
 func Add(mgr manager.Manager) error {
 	log.Info("Registering newrelic dashboard controller")
 
@@ -30,13 +40,16 @@ func Add(mgr manager.Manager) error {
 		os.Getenv("NEWRELIC_ADMIN_KEY"),
 	)
 
-	repository := newrelic.NewRepository(log, client)
 	k8sClient := k8s.NewClient(log, mgr.GetClient())
+	repository := newrelic.NewRepository(log, client)
+	appRepository := applications.NewRepository(client)
+	dashboardFactory := NewDashboardFactory(appRepository)
 	reconciler := &ReconcileDashboard{
-		k8s:      k8sClient,
-		scheme:   mgr.GetScheme(),
-		newrelic: repository,
-		log:      log,
+		k8s:              k8sClient,
+		scheme:           mgr.GetScheme(),
+		newrelic:         repository,
+		dashboardFactory: dashboardFactory,
+		log:              log,
 	}
 
 	c, err := controller.New("newrelic-dashboard-controller", mgr, controller.Options{Reconciler: reconciler})
@@ -56,13 +69,6 @@ func Add(mgr manager.Manager) error {
 // blank assignment to verify that ReconcileDashboard implements reconcile.Reconciler
 var _ reconcile.Reconciler = &ReconcileDashboard{}
 
-type ReconcileDashboard struct {
-	k8s      *k8s.Client
-	scheme   *runtime.Scheme
-	newrelic *newrelic.Repository
-	log      logr.Logger
-}
-
 func (r *ReconcileDashboard) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
 	reqLogger.Info("Reconciling Dashboard")
@@ -76,7 +82,21 @@ func (r *ReconcileDashboard) Reconcile(request reconcile.Request) (reconcile.Res
 		return reconcile.Result{}, err
 	}
 
-	dashboard := NewDashboard(instance)
+	dashboard, err := r.dashboardFactory.NewDashboard(instance)
+	if err != nil {
+		reqLogger.Error(err, "Error saving dashboard")
+		instance.Status.Status = "failed"
+		instance.Status.Reason = err.Error()
+		err2 := r.k8s.UpdateDashboardStatus(instance)
+		if err2 != nil {
+			return reconcile.Result{}, err2
+		}
+
+		return reconcile.Result{
+			RequeueAfter: 5 * time.Second,
+		}, nil
+	}
+
 	if instance.DeletionTimestamp != nil {
 		return r.deleteDashboard(dashboard, *instance)
 	} else {

@@ -5,12 +5,26 @@ import "github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widge
 type Widget struct {
 	Title string `json:"title"`
 
-	// +kubebuilder:validation:Enum=event_table;line_chart;facet_table;facet_bar_chart;facet_pie_chart;billboard;faceted_area_chart;faceted_line_chart;event_table;comparison_line_chart;heatmap;histogram;billboard_comparison;attribute_sheet;funnel;gauge;json;list
+	// +kubebuilder:validation:Enum=application_breakdown;attribute_sheet;background_breakdown;billboard;billboard_comparison;comparison_line_chart;event_table;facet_bar_chart;facet_pie_chart;facet_table;faceted_area_chart;faceted_line_chart;funnel;gauge;heatmap;histogram;json;line_chart;list;metric_line_chart
 	Visualization string        `json:"visualization"`
 	Data          Data          `json:"data"`
 	Layout        widget.Layout `json:"layout"`
 }
 
 type Data struct {
-	Nrql string `json:"nrql"`
+	Nrql      string `json:"nrql,omitempty"`
+	ApmMetric *Apm   `json:"apm,omitempty"`
+}
+
+type Apm struct {
+	Duration int      `json:"duration"`
+	Entities []string `json:"entities"`
+	Metrics  []Metric `json:"metrics"`
+	Facet    string   `json:"facet,omitempty"`
+	OrderBy  string   `json:"order_by,omitempty"`
+}
+
+type Metric struct {
+	Name   string   `json:"name"`
+	Values []string `json:"values"`
 }
