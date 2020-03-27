@@ -16,7 +16,7 @@ spec:
       serviceAccountName: newrelic-alert-manager
       containers:
         - name: newrelic-alert-manager
-          image: fpetkovski/newrelic-alert-manager:0.7
+          image: fpetkovski/newrelic-alert-manager:0.8
           command:
           - newrelic-alert-manager
           imagePullPolicy: Always
