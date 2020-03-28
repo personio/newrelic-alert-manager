@@ -2,7 +2,7 @@ package widget
 
 type DataList [1]Data
 
-func (list DataList) getHashKey() string {
+func (list DataList) getSortKey() string {
 	return list[0].Nrql
 }
 

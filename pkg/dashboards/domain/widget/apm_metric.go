@@ -19,11 +19,9 @@ func (m ApmMetric) Equals(other *ApmMetric) bool {
 		return false
 	}
 
-	equalEntities := m.equalEntityIds(other)
-
-	return m.Duration == other.Duration &&
-		equalEntities &&
+	return m.equalEntityIds(other) &&
 		m.Metrics.Equals(other.Metrics) &&
+		m.Duration == other.Duration &&
 		m.Facet == other.Facet &&
 		m.OrderBy == other.OrderBy
 }

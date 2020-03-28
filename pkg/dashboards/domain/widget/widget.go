@@ -12,7 +12,7 @@ type Widget struct {
 }
 
 func (w Widget) getSortKey() string {
-	return fmt.Sprintf("%s-%s-%s-%s", w.Data.getHashKey(), w.Layout.getHashKey(), w.Visualization, w.Presentation.getHashKey())
+	return fmt.Sprintf("%s-%s-%s-%s", w.Data.getSortKey(), w.Layout.getHashKey(), w.Visualization, w.Presentation.getSortKey())
 }
 
 func (w Widget) Equals(other Widget) bool {
