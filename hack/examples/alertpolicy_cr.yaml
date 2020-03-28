@@ -99,7 +99,7 @@ spec:
       type: apm_jvm_metric
       metric: heap_memory_usage
       entities:
-        - "552646861
+        - "application-name"
       alertThreshold:
         timeFunction: any
         operator: above
