@@ -63,3 +63,16 @@ spec:
       column: 3
       width: 1
       height: 1
+  - title: Average response time, by tier (ms)
+    visualization: application_breakdown
+    data:
+      apm:
+        duration: 1800000
+        entities:
+          - application-name
+        metrics: []
+    layout:
+      row: 2
+      column: 3
+      width: 1
+      height: 1

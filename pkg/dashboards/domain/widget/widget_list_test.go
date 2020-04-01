@@ -71,6 +71,32 @@ func validTestCases() []TestCase {
 			},
 			equals: true,
 		},
+		{
+			first: widget.WidgetList{
+				newWidget(1),
+				newApmWidget(1),
+				newApmWidget(2),
+			},
+			second: widget.WidgetList{
+				newWidget(1),
+				newApmWidget(2),
+				newApmWidget(1),
+			},
+			equals: true,
+		},
+		{
+			first: widget.WidgetList{
+				newWidget(1),
+				newApmWidget(2),
+				newEmptyWidget(3),
+			},
+			second: widget.WidgetList{
+				newWidget(1),
+				newEmptyWidget(3),
+				newApmWidget(2),
+			},
+			equals: true,
+		},
 	}
 }
 
@@ -91,6 +117,48 @@ func newWidget(id int) widget.Widget {
 				Nrql: "query " + string(id),
 			},
 		},
+		Layout: widget.Layout{
+			Width:  id,
+			Height: id,
+			Row:    id,
+			Column: id,
+		},
+	}
+}
+
+func newApmWidget(id int) widget.Widget {
+	return widget.Widget{
+		Visualization: "v" + string(id),
+		Data: widget.DataList{
+			{
+				ApmMetric: &widget.ApmMetric{
+					Duration:  10,
+					EntityIds: []int{id},
+					Metrics: widget.MetricList{
+						{
+							Name:   "metric " + string(id),
+							Values: []string{"value" + string(id)},
+						},
+					},
+					Facet:   "",
+					OrderBy: "",
+				},
+				Nrql: "",
+			},
+		},
+		Layout: widget.Layout{
+			Width:  id,
+			Height: id,
+			Row:    id,
+			Column: id,
+		},
+	}
+}
+
+func newEmptyWidget(id int) widget.Widget {
+	return widget.Widget{
+		Visualization: "v" + string(id),
+		Data: widget.DataList{},
 		Layout: widget.Layout{
 			Width:  id,
 			Height: id,

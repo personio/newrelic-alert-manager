@@ -67,7 +67,6 @@ spec:
                         required:
                         - duration
                         - entities
-                        - metrics
                         type: object
                       nrql:
                         type: string
