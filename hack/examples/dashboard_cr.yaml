@@ -20,7 +20,6 @@ spec:
     visualization: metric_line_chart
     data:
       apm:
-        sinceSeconds: 1800
         metrics:
           - name: Errors/all
             values:
@@ -55,7 +54,7 @@ spec:
     visualization: metric_line_chart
     data:
       apm:
-        sinceSeconds: 1800
+        sinceSeconds: 3600
         metrics:
           - name: WebTransactionTotalTime
             values:
@@ -72,7 +71,6 @@ spec:
     visualization: application_breakdown
     data:
       apm:
-        sinceSeconds: 1800
         entities:
           - application-name
     layout:
