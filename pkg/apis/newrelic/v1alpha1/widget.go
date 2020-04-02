@@ -17,11 +17,11 @@ type Data struct {
 }
 
 type Apm struct {
-	Duration int      `json:"duration"`
-	Entities []string `json:"entities"`
-	Metrics  []Metric `json:"metrics,omitempty"`
-	Facet    string   `json:"facet,omitempty"`
-	OrderBy  string   `json:"order_by,omitempty"`
+	SinceSeconds int      `json:"sinceSeconds,omitempty"`
+	Entities     []string `json:"entities"`
+	Metrics      []Metric `json:"metrics,omitempty"`
+	Facet        string   `json:"facet,omitempty"`
+	OrderBy      string   `json:"order_by,omitempty"`
 }
 
 type Metric struct {

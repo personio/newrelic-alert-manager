@@ -82,7 +82,7 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 
 		result[0] = widget.Data{
 			ApmMetric: &widget.ApmMetric{
-				Duration:  data.ApmMetric.Duration,
+				Duration:  factory.getInt64WithDefault(data.ApmMetric.SinceSeconds, 1800) * 1000,
 				EntityIds: entities,
 				Metrics:   newMetrics(data.ApmMetric.Metrics),
 				Facet:     data.ApmMetric.Facet,
@@ -93,6 +93,14 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 	}
 
 	return result, nil
+}
+
+func (factory DashboardFactory) getInt64WithDefault(value int, defaultValue int) int64 {
+	if value == 0 {
+		return int64(defaultValue)
+	}
+
+	return int64(value)
 }
 
 func (factory DashboardFactory) getApplicationIds(entities []string) ([]int, error) {

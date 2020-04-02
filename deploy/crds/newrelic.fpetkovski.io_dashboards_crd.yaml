@@ -40,8 +40,6 @@ spec:
                     properties:
                       apm:
                         properties:
-                          duration:
-                            type: integer
                           entities:
                             items:
                               type: string
@@ -64,8 +62,9 @@ spec:
                             type: array
                           order_by:
                             type: string
+                          sinceSeconds:
+                            type: integer
                         required:
-                        - duration
                         - entities
                         type: object
                       nrql:

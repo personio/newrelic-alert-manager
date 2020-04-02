@@ -5,6 +5,7 @@ metadata:
 spec:
   title: First dashboard
   widgets:
+
   - title: Average cpu utilization per pods
     visualization: faceted_line_chart
     data:
@@ -14,11 +15,12 @@ spec:
       column: 1
       width: 2
       height: 1
+
   - title: Error rate
     visualization: metric_line_chart
     data:
       apm:
-        duration: 1800000
+        sinceSeconds: 1800
         metrics:
           - name: Errors/all
             values:
@@ -31,11 +33,12 @@ spec:
       column: 3
       width: 1
       height: 1
+
   - title: Apdex score
     visualization: metric_line_chart
     data:
       apm:
-        duration: 1800000
+        sinceSeconds: 1800
         metrics:
           - name: Apdex
             values:
@@ -47,11 +50,12 @@ spec:
       height: 1
       row: 2
       column: 1
+
   - title: Requests per minute
     visualization: metric_line_chart
     data:
       apm:
-        duration: 1800000
+        sinceSeconds: 1800
         metrics:
           - name: WebTransactionTotalTime
             values:
@@ -63,14 +67,14 @@ spec:
       column: 3
       width: 1
       height: 1
+
   - title: Average response time, by tier (ms)
     visualization: application_breakdown
     data:
       apm:
-        duration: 1800000
+        sinceSeconds: 1800
         entities:
           - application-name
-        metrics: []
     layout:
       row: 2
       column: 3

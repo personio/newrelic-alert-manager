@@ -7,7 +7,7 @@ import (
 )
 
 type ApmMetric struct {
-	Duration  int        `json:"duration"`
+	Duration  int64      `json:"duration"`
 	EntityIds []int      `json:"entity_ids"`
 	Metrics   MetricList `json:"metrics"`
 	Facet     string     `json:"facet,omitempty"`
