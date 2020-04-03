@@ -79,7 +79,7 @@ func TestRepository_Save_ExistingValidObject(t *testing.T) {
 			"GetJson",
 			"/dashboards/10.json",
 		).Return(
-			 newEmptyDashboardResponse(10, "existing-dashboard"),
+			newEmptyDashboardResponse(10, "existing-dashboard"),
 			nil,
 		)
 

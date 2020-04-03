@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"io/ioutil"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"net/http"

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget"
@@ -96,10 +96,13 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 }
 
 func (factory DashboardFactory) getInt64WithDefault(value int, defaultValue int) int64 {
+	fmt.Println(value, defaultValue)
 	if value == 0 {
+		fmt.Println("using default value")
 		return int64(defaultValue)
 	}
 
+	fmt.Println("using value")
 	return int64(value)
 }
 

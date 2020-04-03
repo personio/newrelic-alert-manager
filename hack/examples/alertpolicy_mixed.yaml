@@ -1,0 +1,65 @@
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: p3
+  labels:
+    team: dx
+spec:
+  name: "[NewRelic Operator] Mixed alerting conditions"
+  incident_preference: "per_policy"
+  nrqlConditions:
+    - name: High container memory usage
+      query: "SELECT sum(memoryUsedBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "80"
+        durationMinutes: 60
+      warningThreshold:
+        timeFunction: any
+        operator: above
+        value: "0.70"
+        durationMinutes: 20
+      valueFunction: single_value
+    - name: High container cpu usage
+      query: "SELECT average(cpuUsedCores/cpuLimitCores)*100 FROM K8sContainerSample FACET podName"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "80"
+        durationMinutes: 60
+      valueFunction: single_value
+  apmConditions:
+    - name: Low apdex score
+      type: apm_app_metric
+      metric: apdex
+      entities:
+        - "kotlin-microservice-template-qa"
+      alertThreshold:
+        timeFunction: any
+        operator: below
+        value: "0.85"
+        durationMinutes: 60
+      warningThreshold:
+        timeFunction: any
+        operator: below
+        value: "0.95"
+        durationMinutes: 20
+  infraConditions:
+    - name: Stale queue
+      violationCloseTimer: 60
+      integrationProvider: SqsQueue
+      eventType: QueueSample
+      selectValue: "provider.approximateAgeOfOldestMessage.Average"
+      comparison: above
+      alertThreshold:
+        timeFunction: any
+        value: 5
+        durationMinutes: 10
+      warningThreshold:
+        timeFunction: any
+        value: 3
+        durationMinutes: 5
+      whereClause: "(provider.queueName = 'documents-virus-scanner')"

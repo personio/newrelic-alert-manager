@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/domain"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"strconv"
 	"strings"

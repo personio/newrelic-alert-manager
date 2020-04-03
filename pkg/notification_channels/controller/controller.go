@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal"
-	iov1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	iov1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"

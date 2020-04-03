@@ -4,7 +4,7 @@ metadata:
   name: newrelic-alert-manager
 rules:
 - apiGroups:
-    - newrelic.fpetkovski.io
+    - alerts.newrelic.io
   resources:
     - alertpolicies
     - alertpolicies/status
@@ -12,6 +12,11 @@ rules:
     - slacknotificationchannels/status
     - emailnotificationchannels
     - emailnotificationchannels/status
+  verbs:
+    - "*"
+- apiGroups:
+    - dashboards.newrelic.io
+  resources:
     - dashboards
     - dashboards/status
   verbs:

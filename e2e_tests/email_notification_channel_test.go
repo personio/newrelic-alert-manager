@@ -2,7 +2,7 @@ package e2e_tests
 
 import (
 	"context"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"

@@ -24,7 +24,7 @@ type Policy struct {
 func (policy Policy) Equals(other Policy) bool {
 	equals :=
 		policy.Name == other.Name &&
-		policy.IncidentPreference == other.IncidentPreference
+			policy.IncidentPreference == other.IncidentPreference
 
 	return equals
 }

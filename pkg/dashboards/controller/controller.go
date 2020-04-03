@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"

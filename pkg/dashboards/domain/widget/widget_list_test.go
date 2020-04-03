@@ -158,7 +158,7 @@ func newApmWidget(id int) widget.Widget {
 func newEmptyWidget(id int) widget.Widget {
 	return widget.Widget{
 		Visualization: "v" + string(id),
-		Data: widget.DataList{},
+		Data:          widget.DataList{},
 		Layout: widget.Layout{
 			Width:  id,
 			Height: id,

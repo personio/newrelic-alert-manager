@@ -1,9 +1,9 @@
 ## New Relic alert manager
 
 newrelic-alert-manager is a Kubernetes operator which automates the management of 
-New Relic alert policies and notification channels.
+New Relic dashboards, alert policies and notification channels.
 
-It allows end users of a Kubernetes cluster to define alerting policies and channels as [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+It allows end users of a Kubernetes cluster to define these resources as [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 
 ### Project status
 The project is currently in an alpha state and might not be suitable for production usage.
@@ -33,10 +33,12 @@ In order to deploy the operator, execute the following steps:
 
 ### Example Usage
 Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
+The detailed API reference can be found [here]()
 
 ### Debugging resources
 If you applied an alert policy but it was not created in New Relic, you can check the 
 status of the policy using `kubectl describe alertpolicies <policy-name>`. If there was an error while creating the policy, it will be shown in the `Status.reason` field.
+Similarly, you can use `kubectl describe` to debug dashboards and notification channels as well.
 
 ### FAQ
 #### Where can I find a more information on how each alerting condition parameter affects the alert policy?  

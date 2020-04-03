@@ -13,7 +13,7 @@ type IsReadyFunc func(t *testing.T, object runtime.Object) bool
 
 var (
 	pollInterval = time.Second
-	pollTimeout = 10 * time.Second
+	pollTimeout  = 10 * time.Second
 )
 
 func waitForResource(t *testing.T, dynclient client.Client, obj runtime.Object, isReady IsReadyFunc) error {

@@ -1,0 +1,24 @@
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: p2
+  labels:
+    team: dx
+spec:
+  name: "[NewRelic Operator] Infrastructure conditions"
+  incident_preference: "per_policy"
+  infraConditions:
+    - name: Stale queue
+      violationCloseTimer: 60
+      integrationProvider: SqsQueue
+      selectValue: "provider.approximateAgeOfOldestMessage.Average"
+      comparison: above
+      alertThreshold:
+        timeFunction: any
+        value: 5
+        durationMinutes: 10
+      warningThreshold:
+        timeFunction: any
+        value: 3
+        durationMinutes: 5
+      whereClause: "(provider.queueName = 'documents-virus-scanner')"

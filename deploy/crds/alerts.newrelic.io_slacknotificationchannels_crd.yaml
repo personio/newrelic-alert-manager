@@ -1,0 +1,78 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: slacknotificationchannels.alerts.newrelic.io
+spec:
+  group: alerts.newrelic.io
+  names:
+    kind: SlackNotificationChannel
+    listKind: SlackNotificationChannelList
+    plural: slacknotificationchannels
+    singular: slacknotificationchannel
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: NotificationChannel is the Schema for the slacknotificationchannels
+        API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: SlackNotificationChannelSpec defines the desired state of NotificationChannel
+          properties:
+            channel:
+              description: Name of the Slack channel. Should start with `#`
+              type: string
+            name:
+              description: The name of the notification channel created in New Relic
+              type: string
+            policySelector:
+              additionalProperties:
+                type: string
+              description: A label selector defining the alert policies covered by
+                the notification channel
+              type: object
+            url:
+              description: The Slack webhook URL
+              type: string
+          required:
+          - channel
+          - name
+          - url
+          type: object
+        status:
+          description: NotificationChannelStatus defines the observed state of NotificationChannel
+          properties:
+            newrelicChannelId:
+              description: The channel id in New Relic
+              format: int64
+              type: integer
+            reason:
+              description: When a policy fails to be created, the value will be set
+                to the error message received from New Relic
+              type: string
+            status:
+              description: The value will be set to `created` once the policy has
+                been created in New Relic
+              type: string
+          required:
+          - status
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

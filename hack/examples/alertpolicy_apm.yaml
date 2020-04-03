@@ -1,0 +1,35 @@
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: p1
+  labels:
+    team: px
+spec:
+  name: "[NewRelic Operator] APM metric conditions"
+  incident_preference: "per_policy"
+  apmConditions:
+    - name: Low apdex score
+      type: apm_app_metric
+      metric: apdex
+      entities:
+        - "kotlin-microservice-template-qa"
+      alertThreshold:
+        timeFunction: any
+        operator: below
+        value: "0.9"
+        durationMinutes: 60
+    - name: High heap usage
+      type: apm_jvm_metric
+      metric: heap_memory_usage
+      entities:
+        - "kotlin-microservice-template-qa"
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "0.85"
+        durationMinutes: 10
+      violationCloseTimer: 12
+
+
+
+

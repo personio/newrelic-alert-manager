@@ -1,0 +1,33 @@
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  name: p4
+  labels:
+    team: dx
+spec:
+  name: "[NewRelic Operator] NRQL alert conditions"
+  incident_preference: "per_policy"
+  nrqlConditions:
+    - name: High container memory usage
+      query: "SELECT sum(memoryUsedBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "80"
+        durationMinutes: 60
+      warningThreshold:
+        timeFunction: any
+        operator: above
+        value: "0.70"
+        durationMinutes: 20
+      valueFunction: single_value
+    - name: High container cpu usage
+      query: "SELECT average(cpuUsedCores/cpuLimitCores)*100 FROM K8sContainerSample FACET podName"
+      sinceMinutes: 15
+      alertThreshold:
+        timeFunction: any
+        operator: above
+        value: "80"
+        durationMinutes: 60
+      valueFunction: single_value

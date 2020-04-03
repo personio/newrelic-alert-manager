@@ -83,7 +83,6 @@ func newEmptyDashboardResponse(id int64, title string) *http.Response {
 	}
 }
 
-
 func newApmDashboard(title string, metric string, entityId int) *domain.Dashboard {
 	var dashboard = &domain.Dashboard{
 		DashboardBody: domain.DashboardBody{

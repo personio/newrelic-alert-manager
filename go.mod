@@ -12,6 +12,8 @@ require (
 	github.com/mattn/go-runewidth v0.0.8 // indirect
 	github.com/operator-framework/operator-sdk v0.14.0
 	github.com/peterh/liner v1.1.0 // indirect
+	github.com/russross/blackfriday/v2 v2.0.1 // indirect
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	go.starlark.net v0.0.0-20200126005305-451bf671df23 // indirect

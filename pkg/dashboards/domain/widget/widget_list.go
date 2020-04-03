@@ -4,7 +4,7 @@ import "sort"
 
 type WidgetList []Widget
 
-func (list WidgetList) Equals (other WidgetList) bool {
+func (list WidgetList) Equals(other WidgetList) bool {
 	if len(list) != len(other) {
 		return false
 	}
@@ -24,7 +24,7 @@ func (list WidgetList) Equals (other WidgetList) bool {
 	return true
 }
 
-func (list WidgetList) comparer (i int, j int) bool {
+func (list WidgetList) comparer(i int, j int) bool {
 	return list[i].getSortKey() < list[j].getSortKey()
 }
 

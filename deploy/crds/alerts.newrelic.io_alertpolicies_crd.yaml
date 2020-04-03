@@ -1,0 +1,431 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: alertpolicies.alerts.newrelic.io
+spec:
+  group: alerts.newrelic.io
+  names:
+    kind: AlertPolicy
+    listKind: AlertPolicyList
+    plural: alertpolicies
+    singular: alertpolicy
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: AlertPolicy is the Schema for the newrelicalertpolicies API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: AlertPolicySpec defines the desired state of AlertPolicy. Detailed
+            parameter description can be found on the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/rest-api-calls-new-relic-alerts#policies)
+          properties:
+            apmConditions:
+              description: A list of APM alert conditions to attach to the policy
+              items:
+                properties:
+                  alertThreshold:
+                    description: Once the alertThreshold is breached, a critical incident
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br /> For more information, please
+                          refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
+                        type: integer
+                      operator:
+                        description: 'Available options are: <br /> - `above` <br
+                          /> - `below` <br /> - `equal` <br />'
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> * all
+                          - all data points are in violation within the given period
+                          <br /> * any - at least one data point is in violation within
+                          the given period <br /> For more information, please refer
+                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  conditionScope:
+                    enum:
+                    - instance
+                    - application
+                    type: string
+                  enabled:
+                    type: boolean
+                  entities:
+                    description: A list of application names from APM to monitor
+                    items:
+                      type: string
+                    type: array
+                  metric:
+                    description: The APM metric to monitor. Different metrics can
+                      be applied depending on the condition type. <br /> An example
+                      of a valid (type, metric) combination is (apm_app_metric, apdex).
+                      <br /> Please refer to the Alerts conditions section in the
+                      [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric)
+                      for more details
+                    type: string
+                  name:
+                    description: The name of the alert condition that will be created
+                      in New Relic
+                    type: string
+                  runbookUrl:
+                    type: string
+                  type:
+                    description: 'The type of the metric to monitor. Should be one
+                      of: <br /> - `apm_app_metric` <br /> - `apm_kt_metric` <br />
+                      - `apm_jvm_metric` <br /> - `browser_metric` <br /> - `mobile_metric`
+                      <br /> Please refer to the Alerts conditions section in the
+                      [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#type)
+                      for more details'
+                    enum:
+                    - apm_app_metric
+                    - apm_kt_metric
+                    - apm_jvm_metric
+                    - browser_metric
+                    - mobile_metric
+                    type: string
+                  userDefined:
+                    description: Used for tracking a user defined custom metric <br
+                      /> For more information, please refer to the [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_metric)
+                    properties:
+                      metric:
+                        description: The name of the user defined custom metric
+                        type: string
+                      value_function:
+                        description: 'Available options are: <br /> - `average` <br
+                          /> - `min` <br /> - `max` <br /> - `total` <br /> - `sample_size`
+                          <br /> For more information, please refer to the official
+                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_value_function)'
+                        enum:
+                        - average
+                        - min
+                        - max
+                        - total
+                        - sample_size
+                        type: string
+                    required:
+                    - metric
+                    - value_function
+                    type: object
+                  violationCloseTimer:
+                    type: integer
+                  warningThreshold:
+                    description: Once the warningThreshold is breached, a warning
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br /> For more information, please
+                          refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
+                        type: integer
+                      operator:
+                        description: 'Available options are: <br /> - `above` <br
+                          /> - `below` <br /> - `equal` <br />'
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> * all
+                          - all data points are in violation within the given period
+                          <br /> * any - at least one data point is in violation within
+                          the given period <br /> For more information, please refer
+                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                required:
+                - alertThreshold
+                - entities
+                - metric
+                - name
+                - type
+                type: object
+              type: array
+            incident_preference:
+              description: 'The incident preference defines when incident should be
+                created. <br /> Can be one of: <br /> - `per_policy` <br /> - `per_condition`
+                <br /> - `per_condition_and_target` <br />'
+              enum:
+              - per_policy
+              - per_condition
+              - per_condition_and_target
+              type: string
+            infraConditions:
+              description: A list of Infrastructure alert conditions to attach to
+                the policy
+              items:
+                properties:
+                  alertThreshold:
+                    description: Once the alertThreshold is breached, a critical incident
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br />
+                        type: integer
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> - `all`
+                          - all data points are in violation within the given period
+                          <br /> - `any` - at least one data point is in violation
+                          within the given period <br />'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: integer
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  comparison:
+                    description: 'Available options are: <br /> - `above` <br /> -
+                      `below` <br /> - `equal` <br />'
+                    enum:
+                    - equal
+                    - above
+                    - bellow
+                    type: string
+                  enabled:
+                    type: boolean
+                  eventType:
+                    description: Leave this parameter empty when creating conditions
+                      based on data from an integration provider For more information,
+                      please refer to the `event_type` field in the official [New
+                      Relic documentation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts#definitions)
+                    type: string
+                  integrationProvider:
+                    description: When setting up alerts on integrations, specify the
+                      corresponding integration provider. <br /> Examples can include
+                      SqsQueue, Kubernetes, RdsDbInstance etc. <br /> For more information,
+                      please refer to the `integration_provider` field in the official
+                      [New Relic documentation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts#definitions)
+                    type: string
+                  name:
+                    description: The name of the infra condition that will be created
+                      in New Relic
+                    type: string
+                  runbookUrl:
+                    type: string
+                  selectValue:
+                    description: The attribute name from the Event sample or Integration
+                      provider which identifies the metric to be tracked. Examples
+                      for Sqs include `provider.approximateAgeOfOldestMessage.Average`
+                      and `provider.numberOfEmptyReceives.Average`. For more information,
+                      please refer to the `select_value` field in the official [New
+                      Relic documentation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts#definitions)
+                    type: string
+                  violationCloseTimer:
+                    type: integer
+                  warningThreshold:
+                    description: Once the warningThreshold is breached, a warning
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br />
+                        type: integer
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> - `all`
+                          - all data points are in violation within the given period
+                          <br /> - `any` - at least one data point is in violation
+                          within the given period <br />'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: integer
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  whereClause:
+                    description: An expression used for filtering data from the IntegrationProvider
+                    type: string
+                required:
+                - alertThreshold
+                - comparison
+                - integrationProvider
+                - name
+                - selectValue
+                type: object
+              type: array
+            name:
+              description: The name of the alert policy that will be created in New
+                Relic
+              type: string
+            nrqlConditions:
+              description: A list of NRQL alert conditions to attach to the policy
+              items:
+                properties:
+                  alertThreshold:
+                    description: Once the alertThreshold is breached, a critical incident
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br /> For more information, please
+                          refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
+                        type: integer
+                      operator:
+                        description: 'Available options are: <br /> - `above` <br
+                          /> - `below` <br /> - `equal` <br />'
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> * all
+                          - all data points are in violation within the given period
+                          <br /> * any - at least one data point is in violation within
+                          the given period <br /> For more information, please refer
+                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                  enabled:
+                    type: boolean
+                  name:
+                    description: The name of the nrql policy that will be created
+                      in New Relic
+                    type: string
+                  query:
+                    description: The NRQL query associated with the condition
+                    type: string
+                  runbookUrl:
+                    type: string
+                  sinceMinutes:
+                    description: Defines the `SINCE` clause in the NRQL query
+                    type: integer
+                  valueFunction:
+                    description: 'Available options are: <br /> - `single_value` <br
+                      /> - `sum` <br /> For more information, please refer to the
+                      official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#value_function)'
+                    enum:
+                    - single_value
+                    - sum
+                    type: string
+                  warningThreshold:
+                    description: Once the warningThreshold is breached, a warning
+                      will be generated
+                    properties:
+                      durationMinutes:
+                        description: For how long the violation should be active before
+                          an incident is triggered <br /> For more information, please
+                          refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
+                        type: integer
+                      operator:
+                        description: 'Available options are: <br /> - `above` <br
+                          /> - `below` <br /> - `equal` <br />'
+                        enum:
+                        - above
+                        - below
+                        - equal
+                        type: string
+                      timeFunction:
+                        description: 'Defines when the threshold should be considered
+                          as breached. <br /> Available options are: <br /> * all
+                          - all data points are in violation within the given period
+                          <br /> * any - at least one data point is in violation within
+                          the given period <br /> For more information, please refer
+                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                        enum:
+                        - all
+                        - any
+                        type: string
+                      value:
+                        type: string
+                    required:
+                    - durationMinutes
+                    - timeFunction
+                    - value
+                    type: object
+                required:
+                - alertThreshold
+                - name
+                - query
+                - sinceMinutes
+                - valueFunction
+                type: object
+              type: array
+          required:
+          - incident_preference
+          - name
+          type: object
+        status:
+          description: AlertPolicySpec defines the observed state of AlertPolicy
+          properties:
+            newrelicPolicyId:
+              description: The policy id in New Relic
+              format: int64
+              type: integer
+            reason:
+              description: When a policy fails to be created, the value will be set
+                to the error message received from New Relic
+              type: string
+            status:
+              description: The value will be set to `created` once the policy has
+                been created in New Relic
+              type: string
+          required:
+          - status
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

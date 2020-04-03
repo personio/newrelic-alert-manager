@@ -1,0 +1,172 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: dashboards.dashboards.newrelic.io
+spec:
+  group: dashboards.newrelic.io
+  names:
+    kind: Dashboard
+    listKind: DashboardList
+    plural: dashboards
+    singular: dashboard
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: DashboardBody is the Schema for the dashboards API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: DashboardSpec defines the desired state of DashboardBody
+          properties:
+            title:
+              description: The name of the dashboard that will be created in New Relic
+              type: string
+            widgets:
+              description: A list of widgets to add to the dashboard
+              items:
+                properties:
+                  data:
+                    description: The data to plot on the widget
+                    properties:
+                      apm:
+                        description: The APM metric parameters which defines the data
+                          to plot in the widget. <br /> When using an APM metric for
+                          the data, visualization should be set to either `metric_line_chart`
+                          or `application_breakdown`. <br />
+                        properties:
+                          entities:
+                            description: A list of application names for which to
+                              get the metric
+                            items:
+                              type: string
+                            type: array
+                          facet:
+                            type: string
+                          metrics:
+                            description: A list of metrics to use
+                            items:
+                              description: Metric is the name of the metric as shown
+                                in Data Explorer
+                              properties:
+                                name:
+                                  description: Name of the metric
+                                  type: string
+                                values:
+                                  description: A list of values of the metric
+                                  items:
+                                    type: string
+                                  type: array
+                              required:
+                              - name
+                              - values
+                              type: object
+                            type: array
+                          order_by:
+                            type: string
+                          sinceSeconds:
+                            description: The time frame in seconds
+                            type: integer
+                        required:
+                        - entities
+                        type: object
+                      nrql:
+                        description: The NRQL query used which defines the data to
+                          plot in the widget
+                        type: string
+                    type: object
+                  layout:
+                    description: Defines the layout of the widget within the dashboard
+                    properties:
+                      column:
+                        type: integer
+                      height:
+                        type: integer
+                      row:
+                        type: integer
+                      width:
+                        type: integer
+                    required:
+                    - column
+                    - height
+                    - row
+                    - width
+                    type: object
+                  title:
+                    description: The title of the widget created in New Relic
+                    type: string
+                  visualization:
+                    description: 'Visualisation type to use for the widget. Available
+                      options are: <br /> - `application_breakdown` <br /> - `attribute_sheet`
+                      <br /> - `background_breakdown` <br /> - `billboard` <br />
+                      - `billboard_comparison` <br /> - `comparison_line_chart` <br
+                      /> - `event_table` <br /> - `facet_bar_chart` <br /> - `facet_pie_chart`
+                      <br /> - `facet_table` <br /> - `faceted_area_chart` <br />
+                      - `faceted_line_chart` <br /> - `funnel` <br /> - `gauge` <br
+                      /> - `heatmap` <br /> - `histogram` <br /> - `json` <br /> -
+                      `line_chart` <br /> - `list` <br /> - `metric_line_chart` (used
+                      for apm metrics) <br />'
+                    enum:
+                    - application_breakdown
+                    - attribute_sheet
+                    - background_breakdown
+                    - billboard
+                    - billboard_comparison
+                    - comparison_line_chart
+                    - event_table
+                    - facet_bar_chart
+                    - facet_pie_chart
+                    - facet_table
+                    - faceted_area_chart
+                    - faceted_line_chart
+                    - funnel
+                    - gauge
+                    - heatmap
+                    - histogram
+                    - json
+                    - line_chart
+                    - list
+                    - metric_line_chart
+                    type: string
+                required:
+                - data
+                - layout
+                - title
+                - visualization
+                type: object
+              type: array
+          required:
+          - title
+          - widgets
+          type: object
+        status:
+          description: DashboardStatus defines the observed state of DashboardBody
+          properties:
+            newrelicDashboardId:
+              format: int64
+              type: integer
+            reason:
+              type: string
+            status:
+              type: string
+          required:
+          - status
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

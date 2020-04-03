@@ -19,4 +19,3 @@ func (l Layout) Equals(other Layout) bool {
 		l.Row == other.Row &&
 		l.Column == other.Column
 }
-

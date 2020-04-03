@@ -2,7 +2,7 @@ package pkg
 
 import (
 	alertpolicycontroller "github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/controller"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	dashboardcontroller "github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/controller"
 	channelcontroller "github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/controller"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -44,4 +44,3 @@ func registerEmailController() RegisterControllerFunc {
 	}
 	return add
 }
-

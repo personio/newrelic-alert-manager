@@ -5,7 +5,7 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/domain"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/newrelic"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/newrelic/v1alpha1"
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"

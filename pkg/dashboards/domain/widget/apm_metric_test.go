@@ -140,52 +140,52 @@ func notEqualTestCases() []testCase {
 			first: ApmMetric{
 				Duration:  0,
 				EntityIds: []int{},
-				Metrics:   MetricList{
+				Metrics: MetricList{
 					{
 						Name:   "metric 1",
 						Values: nil,
 					},
 				},
-				Facet:     "",
-				OrderBy:   "",
+				Facet:   "",
+				OrderBy: "",
 			},
 			second: ApmMetric{
 				Duration:  0,
 				EntityIds: []int{},
-				Metrics:   MetricList{
+				Metrics: MetricList{
 					{
 						Name:   "metric 2",
 						Values: nil,
 					},
 				},
-				Facet:     "",
-				OrderBy:   "",
+				Facet:   "",
+				OrderBy: "",
 			},
 		},
 		{
 			first: ApmMetric{
 				Duration:  0,
 				EntityIds: []int{},
-				Metrics:   MetricList{
+				Metrics: MetricList{
 					{
 						Name:   "metric 1",
 						Values: []string{"value 1"},
 					},
 				},
-				Facet:     "",
-				OrderBy:   "",
+				Facet:   "",
+				OrderBy: "",
 			},
 			second: ApmMetric{
 				Duration:  0,
 				EntityIds: []int{},
-				Metrics:   MetricList{
+				Metrics: MetricList{
 					{
 						Name:   "metric 1",
 						Values: []string{"value 2"},
 					},
 				},
-				Facet:     "",
-				OrderBy:   "",
+				Facet:   "",
+				OrderBy: "",
 			},
 		},
 	}
