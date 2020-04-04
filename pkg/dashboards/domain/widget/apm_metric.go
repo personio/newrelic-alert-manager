@@ -49,16 +49,26 @@ func (list MetricList) Equals(other MetricList) bool {
 		return false
 	}
 
-	sort.Slice(list, list.comparer)
-	sort.Slice(other, other.comparer)
+	listCopy := list.copy()
+	otherCopy := other.copy()
+
+	sort.Slice(listCopy, list.comparer)
+	sort.Slice(otherCopy, other.comparer)
 
 	for i, _ := range list {
-		if !list[i].Equals(other[i]) {
+		if !listCopy[i].Equals(otherCopy[i]) {
 			return false
 		}
 	}
 
 	return true
+}
+
+func (list MetricList) copy() MetricList {
+	listCopy := make([]Metric, len(list))
+	copy(listCopy, list)
+
+	return listCopy
 }
 
 func (list MetricList) comparer(i int, j int) bool {
