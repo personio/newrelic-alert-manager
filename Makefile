@@ -11,4 +11,5 @@ release: build
 	docker push fpetkovski/newrelic-alert-manager:$(TAG)
 
 .PHONY: e2etest
+e2etest:
 	operator-sdk test local ./e2e_tests --up-local --namespace e2e-tests

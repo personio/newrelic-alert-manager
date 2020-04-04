@@ -5,6 +5,16 @@ import (
 	f "github.com/operator-framework/operator-sdk/pkg/test"
 	"k8s.io/apimachinery/pkg/runtime"
 	"testing"
+	"time"
+)
+
+var (
+	resourceName      = "e2e-test-channel"
+	resourceNamespace = "e2e-tests"
+
+	timeout              = time.Second * 60
+	cleanupRetryInterval = time.Second * 1
+	cleanupTimeout       = time.Second * 5
 )
 
 func TestMain(m *testing.M) {

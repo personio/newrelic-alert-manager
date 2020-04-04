@@ -10,17 +10,17 @@ import (
 	"testing"
 )
 
-func TestCreateNewSlackChannel(t *testing.T) {
+func TestCreateNewEmailChannel(t *testing.T) {
 	ctx := initializeTestResources(t, &v1alpha1.SlackNotificationChannelList{})
 
-	channel := newSlackChannel()
+	channel := newEmailChannel()
 	cleanupOptions := &framework.CleanupOptions{TestContext: ctx, Timeout: cleanupTimeout, RetryInterval: cleanupRetryInterval}
 	err := framework.Global.Client.Create(context.TODO(), channel, cleanupOptions)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 
-	err = waitForResource(t, framework.Global.Client.Client, channel, isSlackChannelReady)
+	err = waitForResource(t, framework.Global.Client.Client, channel, isEmailChannelReady)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -46,25 +46,24 @@ func TestCreateNewSlackChannel(t *testing.T) {
 	t.Log("Successfully deletes slack notification channel")
 }
 
-
-func newSlackChannel() *v1alpha1.SlackNotificationChannel {
-	return &v1alpha1.SlackNotificationChannel{
+func newEmailChannel() *v1alpha1.EmailNotificationChannel {
+	return &v1alpha1.EmailNotificationChannel{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      resourceName,
 			Namespace: resourceNamespace,
 		},
-		Spec: v1alpha1.SlackNotificationChannelSpec{
-			Name:           resourceName,
-			Url:            "http://e2etests",
-			Channel:        "#ete_tests",
-			PolicySelector: map[string]string{"label": "value"},
+		Spec: v1alpha1.EmailNotificationChannelSpec{
+			Name:                   resourceName,
+			Recipients:             "test@e2e.com",
+			IncludeJsonAttachments: false,
+			PolicySelector:         map[string]string{"label": "value"},
 		},
 		Status: v1alpha1.NotificationChannelStatus{},
 	}
 }
 
-func isSlackChannelReady(t *testing.T, obj runtime.Object) bool {
-	channel, ok := obj.(*v1alpha1.SlackNotificationChannel)
+func isEmailChannelReady(t *testing.T, obj runtime.Object) bool {
+	channel, ok := obj.(*v1alpha1.EmailNotificationChannel)
 	if !ok {
 		t.Fatal("Resource is not of type *v1alpha1.SlackNotificationChannel")
 		return false
