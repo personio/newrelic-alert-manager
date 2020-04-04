@@ -9,11 +9,14 @@ func (list WidgetList) Equals (other WidgetList) bool {
 		return false
 	}
 
-	sort.Slice(list, list.comparer)
-	sort.Slice(other, other.comparer)
+	listCopy := list.copy()
+	otherCopy := other.copy()
+
+	sort.Slice(listCopy, list.comparer)
+	sort.Slice(otherCopy, other.comparer)
 
 	for i, _ := range list {
-		if !list[i].Equals(other[i]) {
+		if !listCopy[i].Equals(otherCopy[i]) {
 			return false
 		}
 	}
@@ -23,4 +26,11 @@ func (list WidgetList) Equals (other WidgetList) bool {
 
 func (list WidgetList) comparer (i int, j int) bool {
 	return list[i].getSortKey() < list[j].getSortKey()
+}
+
+func (list WidgetList) copy() WidgetList {
+	listCopy := make([]Widget, len(list))
+	copy(listCopy, list)
+
+	return listCopy
 }

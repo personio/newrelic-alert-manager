@@ -4,7 +4,7 @@ TAG=latest
 
 .PHONY: build
 build:
-	operator-sdk build fpetkovski/newrelic-alert-manager:$(TAG)
+	operator-sdk build --go-build-args "-o build/_output/bin/newrelic-alert-manager" fpetkovski/newrelic-alert-manager:$(TAG)
 
 .PHONY: release
 release: build
