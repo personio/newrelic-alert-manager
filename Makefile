@@ -7,12 +7,16 @@ build:
 	operator-sdk build --go-build-args "-o build/_output/bin/newrelic-alert-manager" fpetkovski/newrelic-alert-manager:$(TAG)
 
 .PHONY: release
-release: genapi gendocs build
+release: genapi gendocs build unittest e2etest
 	docker push fpetkovski/newrelic-alert-manager:$(TAG)
 
 .PHONY: e2etest
 e2etest:
 	operator-sdk test local ./e2e_tests --up-local --namespace e2e-tests
+
+.PHONY: unittest
+unittest:
+	go test ./pkg/...
 
 .PHONY: gendocs
 gendocs:

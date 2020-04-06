@@ -37,15 +37,17 @@ spec:
             widgets:
               description: A list of widgets to add to the dashboard
               items:
+                description: Widget defines the widget parameters \ For more details,
+                  refer to the official [New Relic documentation](https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#widget-data)
                 properties:
                   data:
                     description: The data to plot on the widget
                     properties:
                       apm:
                         description: The APM metric parameters which defines the data
-                          to plot in the widget. <br /> When using an APM metric for
-                          the data, visualization should be set to either `metric_line_chart`
-                          or `application_breakdown`. <br />
+                          to plot in the widget. \ When using an APM metric for the
+                          data, visualization should be set to either `metric_line_chart`
+                          or `application_breakdown`. \
                         properties:
                           entities:
                             description: A list of application names for which to
@@ -65,7 +67,11 @@ spec:
                                   description: Name of the metric
                                   type: string
                                 values:
-                                  description: A list of values of the metric
+                                  description: List of metric values to plot. The
+                                    available values will depend on the metric you
+                                    choose. \ Check the Data Explorer in New Relic
+                                    to find out which values are available for which
+                                    metrics.
                                   items:
                                     type: string
                                   type: array
@@ -108,16 +114,14 @@ spec:
                     description: The title of the widget created in New Relic
                     type: string
                   visualization:
-                    description: 'Visualisation type to use for the widget. Available
-                      options are: <br /> - `application_breakdown` <br /> - `attribute_sheet`
-                      <br /> - `background_breakdown` <br /> - `billboard` <br />
-                      - `billboard_comparison` <br /> - `comparison_line_chart` <br
-                      /> - `event_table` <br /> - `facet_bar_chart` <br /> - `facet_pie_chart`
-                      <br /> - `facet_table` <br /> - `faceted_area_chart` <br />
-                      - `faceted_line_chart` <br /> - `funnel` <br /> - `gauge` <br
-                      /> - `heatmap` <br /> - `histogram` <br /> - `json` <br /> -
-                      `line_chart` <br /> - `list` <br /> - `metric_line_chart` (used
-                      for apm metrics) <br />'
+                    description: 'Visualization type to use for the widget. \ Available
+                      options are: \ - `application_breakdown` \ - `attribute_sheet`
+                      \ - `background_breakdown` \ - `billboard` \ - `billboard_comparison`
+                      \ - `comparison_line_chart` \ - `event_table` \ - `facet_bar_chart`
+                      \ - `facet_pie_chart` \ - `facet_table` \ - `faceted_area_chart`
+                      \ - `faceted_line_chart` \ - `funnel` \ - `gauge` \ - `heatmap`
+                      \ - `histogram` \ - `json` \ - `line_chart` \ - `list` \ - `metric_line_chart`
+                      (used for apm metrics) \'
                     enum:
                     - application_breakdown
                     - attribute_sheet

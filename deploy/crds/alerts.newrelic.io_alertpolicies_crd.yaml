@@ -42,12 +42,12 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br /> For more information, please
+                          an incident is triggered \ For more information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
                         type: integer
                       operator:
-                        description: 'Available options are: <br /> - `above` <br
-                          /> - `below` <br /> - `equal` <br />'
+                        description: 'Available options are: \ - `above` \ - `below`
+                          \ - `equal` \'
                         enum:
                         - above
                         - below
@@ -55,11 +55,11 @@ spec:
                         type: string
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> * all
-                          - all data points are in violation within the given period
-                          <br /> * any - at least one data point is in violation within
-                          the given period <br /> For more information, please refer
-                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                          as breached. \ Available options are: \ * all - all data
+                          points are in violation within the given period \ * any
+                          - at least one data point is in violation within the given
+                          period \ For more information, please refer to the official
+                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
                         enum:
                         - all
                         - any
@@ -85,10 +85,10 @@ spec:
                     type: array
                   metric:
                     description: The APM metric to monitor. Different metrics can
-                      be applied depending on the condition type. <br /> An example
-                      of a valid (type, metric) combination is (apm_app_metric, apdex).
-                      <br /> Please refer to the Alerts conditions section in the
-                      [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric)
+                      be applied depending on the condition type. \ An example of
+                      a valid (type, metric) combination is (apm_app_metric, apdex).
+                      \ Please refer to the Alerts conditions section in the [New
+                      Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric)
                       for more details
                     type: string
                   name:
@@ -99,10 +99,9 @@ spec:
                     type: string
                   type:
                     description: 'The type of the metric to monitor. Should be one
-                      of: <br /> - `apm_app_metric` <br /> - `apm_kt_metric` <br />
-                      - `apm_jvm_metric` <br /> - `browser_metric` <br /> - `mobile_metric`
-                      <br /> Please refer to the Alerts conditions section in the
-                      [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#type)
+                      of: \ - `apm_app_metric` \ - `apm_kt_metric` \ - `apm_jvm_metric`
+                      \ - `browser_metric` \ - `mobile_metric` \ Please refer to the
+                      Alerts conditions section in the [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#type)
                       for more details'
                     enum:
                     - apm_app_metric
@@ -112,17 +111,16 @@ spec:
                     - mobile_metric
                     type: string
                   userDefined:
-                    description: Used for tracking a user defined custom metric <br
-                      /> For more information, please refer to the [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_metric)
+                    description: Used for tracking a user defined custom metric \
+                      For more information, please refer to the [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_metric)
                     properties:
                       metric:
                         description: The name of the user defined custom metric
                         type: string
                       value_function:
-                        description: 'Available options are: <br /> - `average` <br
-                          /> - `min` <br /> - `max` <br /> - `total` <br /> - `sample_size`
-                          <br /> For more information, please refer to the official
-                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_value_function)'
+                        description: 'Available options are: \ - `average` \ - `min`
+                          \ - `max` \ - `total` \ - `sample_size` \ For more information,
+                          please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#user_defined_value_function)'
                         enum:
                         - average
                         - min
@@ -142,12 +140,12 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br /> For more information, please
+                          an incident is triggered \ For more information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
                         type: integer
                       operator:
-                        description: 'Available options are: <br /> - `above` <br
-                          /> - `below` <br /> - `equal` <br />'
+                        description: 'Available options are: \ - `above` \ - `below`
+                          \ - `equal` \'
                         enum:
                         - above
                         - below
@@ -155,11 +153,11 @@ spec:
                         type: string
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> * all
-                          - all data points are in violation within the given period
-                          <br /> * any - at least one data point is in violation within
-                          the given period <br /> For more information, please refer
-                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                          as breached. \ Available options are: \ * all - all data
+                          points are in violation within the given period \ * any
+                          - at least one data point is in violation within the given
+                          period \ For more information, please refer to the official
+                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
                         enum:
                         - all
                         - any
@@ -181,8 +179,8 @@ spec:
               type: array
             incident_preference:
               description: 'The incident preference defines when incident should be
-                created. <br /> Can be one of: <br /> - `per_policy` <br /> - `per_condition`
-                <br /> - `per_condition_and_target` <br />'
+                created. \ Can be one of: \ - `per_policy` \ - `per_condition` \ -
+                `per_condition_and_target` \'
               enum:
               - per_policy
               - per_condition
@@ -199,14 +197,14 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br />
+                          an incident is triggered \
                         type: integer
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> - `all`
-                          - all data points are in violation within the given period
-                          <br /> - `any` - at least one data point is in violation
-                          within the given period <br />'
+                          as breached. \ Available options are: \ - `all` - all data
+                          points are in violation within the given period \ - `any`
+                          - at least one data point is in violation within the given
+                          period \'
                         enum:
                         - all
                         - any
@@ -219,8 +217,8 @@ spec:
                     - value
                     type: object
                   comparison:
-                    description: 'Available options are: <br /> - `above` <br /> -
-                      `below` <br /> - `equal` <br />'
+                    description: 'Available options are: \ - `above` \ - `below` \
+                      - `equal` \'
                     enum:
                     - equal
                     - above
@@ -236,10 +234,10 @@ spec:
                     type: string
                   integrationProvider:
                     description: When setting up alerts on integrations, specify the
-                      corresponding integration provider. <br /> Examples can include
-                      SqsQueue, Kubernetes, RdsDbInstance etc. <br /> For more information,
-                      please refer to the `integration_provider` field in the official
-                      [New Relic documentation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts#definitions)
+                      corresponding integration provider. \ Examples can include SqsQueue,
+                      Kubernetes, RdsDbInstance etc. \ For more information, please
+                      refer to the `integration_provider` field in the official [New
+                      Relic documentation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/infrastructure-alert-conditions/rest-api-calls-new-relic-infrastructure-alerts#definitions)
                     type: string
                   name:
                     description: The name of the infra condition that will be created
@@ -263,14 +261,14 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br />
+                          an incident is triggered \
                         type: integer
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> - `all`
-                          - all data points are in violation within the given period
-                          <br /> - `any` - at least one data point is in violation
-                          within the given period <br />'
+                          as breached. \ Available options are: \ - `all` - all data
+                          points are in violation within the given period \ - `any`
+                          - at least one data point is in violation within the given
+                          period \'
                         enum:
                         - all
                         - any
@@ -307,12 +305,12 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br /> For more information, please
+                          an incident is triggered \ For more information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
                         type: integer
                       operator:
-                        description: 'Available options are: <br /> - `above` <br
-                          /> - `below` <br /> - `equal` <br />'
+                        description: 'Available options are: \ - `above` \ - `below`
+                          \ - `equal` \'
                         enum:
                         - above
                         - below
@@ -320,11 +318,11 @@ spec:
                         type: string
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> * all
-                          - all data points are in violation within the given period
-                          <br /> * any - at least one data point is in violation within
-                          the given period <br /> For more information, please refer
-                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                          as breached. \ Available options are: \ * all - all data
+                          points are in violation within the given period \ * any
+                          - at least one data point is in violation within the given
+                          period \ For more information, please refer to the official
+                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
                         enum:
                         - all
                         - any
@@ -351,9 +349,9 @@ spec:
                     description: Defines the `SINCE` clause in the NRQL query
                     type: integer
                   valueFunction:
-                    description: 'Available options are: <br /> - `single_value` <br
-                      /> - `sum` <br /> For more information, please refer to the
-                      official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#value_function)'
+                    description: 'Available options are: \ - `single_value` \ - `sum`
+                      \ For more information, please refer to the official [New Relic
+                      documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#value_function)'
                     enum:
                     - single_value
                     - sum
@@ -364,12 +362,12 @@ spec:
                     properties:
                       durationMinutes:
                         description: For how long the violation should be active before
-                          an incident is triggered <br /> For more information, please
+                          an incident is triggered \ For more information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration_minutes)
                         type: integer
                       operator:
-                        description: 'Available options are: <br /> - `above` <br
-                          /> - `below` <br /> - `equal` <br />'
+                        description: 'Available options are: \ - `above` \ - `below`
+                          \ - `equal` \'
                         enum:
                         - above
                         - below
@@ -377,11 +375,11 @@ spec:
                         type: string
                       timeFunction:
                         description: 'Defines when the threshold should be considered
-                          as breached. <br /> Available options are: <br /> * all
-                          - all data points are in violation within the given period
-                          <br /> * any - at least one data point is in violation within
-                          the given period <br /> For more information, please refer
-                          to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
+                          as breached. \ Available options are: \ * all - all data
+                          points are in violation within the given period \ * any
+                          - at least one data point is in violation within the given
+                          period \ For more information, please refer to the official
+                          [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function)'
                         enum:
                         - all
                         - any
