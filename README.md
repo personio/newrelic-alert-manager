@@ -33,7 +33,7 @@ In order to deploy the operator, execute the following steps:
 
 ### Example Usage
 Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
-The detailed API reference can be found [here]()
+The detailed API reference can be found [here](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/docs)
 
 ### Debugging resources
 If you applied an alert policy but it was not created in New Relic, you can check the 
