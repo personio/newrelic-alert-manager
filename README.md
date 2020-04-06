@@ -10,6 +10,7 @@ The project is currently in an alpha state and might not be suitable for product
 Additionally, we still cannot offer strong guarantees of API stability. 
 
 ### Supported features
+#### Alerts
 The newrelic-alert-manager currently supports the management of the following alerting conditions
 * [NRQL alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions-nrql-queries)
 * [APM alerting conditions](https://docs.newrelic.com/docs/alerts/new-relic-alerts/defining-conditions/create-alert-conditions)
@@ -19,7 +20,12 @@ If you are unable to create a particular alerting condition due to lack of suppo
 you can try to fall back to defining it as a NRQL alerting condition instead.
 One such example is given in the [FAQ](https://github.com/fpetkovski/newrelic-alert-manager#how-do-i-create-an-apm-condition-of-type-web-transaction-percentiles) section. 
 
+#### Notification channels
+
 With respect to notification channels, the currently supported types are Email and Slack channels.  
+
+#### Dashboards
+The dashboard API is fully covered by the operator.
 
 ### Deployment
 In order to deploy the operator, execute the following steps:
