@@ -8,11 +8,9 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
 	"github.com/go-logr/logr"
-	"os"
-	"time"
-
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"os"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -87,14 +85,12 @@ func (r *ReconcileDashboard) Reconcile(request reconcile.Request) (reconcile.Res
 		reqLogger.Error(err, "Error saving dashboard")
 		instance.Status.Status = "failed"
 		instance.Status.Reason = err.Error()
-		err2 := r.k8s.UpdateDashboardStatus(instance)
-		if err2 != nil {
-			return reconcile.Result{}, err2
+		err = r.k8s.UpdateDashboardStatus(instance)
+		if err != nil {
+			return reconcile.Result{}, err
 		}
 
-		return reconcile.Result{
-			RequeueAfter: 5 * time.Second,
-		}, nil
+		return reconcile.Result{}, nil
 	}
 
 	if instance.DeletionTimestamp != nil {
