@@ -58,6 +58,9 @@ spec:
               description: The channel id in New Relic
               format: int64
               type: integer
+            newrelicConfigVersion:
+              description: Configuration digest
+              type: string
             reason:
               description: When a policy fails to be created, the value will be set
                 to the error message received from New Relic

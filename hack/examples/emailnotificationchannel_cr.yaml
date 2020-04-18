@@ -3,7 +3,7 @@ kind: EmailNotificationChannel
 metadata:
   name: fp-test-123
 spec:
-  name: "[NewRelic operator ] Email channel test"
+  name: "[NewRelic operator] Email channel test"
   recipients: "filip.petkovski@personio.de"
   policySelector:
     team: dx

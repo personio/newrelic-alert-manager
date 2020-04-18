@@ -8,6 +8,7 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
 	"github.com/go-logr/logr"
+	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"
@@ -56,7 +57,7 @@ func Add(mgr manager.Manager) error {
 	}
 
 	// Watch for changes to primary resource Dashboard
-	err = c.Watch(&source.Kind{Type: &v1alpha1.Dashboard{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: &v1alpha1.Dashboard{}}, &handler.EnqueueRequestForObject{}, predicate.GenerationChangedPredicate{})
 	if err != nil {
 		return err
 	}

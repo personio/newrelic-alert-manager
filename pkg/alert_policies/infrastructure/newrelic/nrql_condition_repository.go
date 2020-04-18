@@ -23,8 +23,6 @@ func newNrqlConditionRepository(log logr.Logger, client internal.NewrelicClient)
 }
 
 func (repository nrqlConditionRepository) getConditions(policyId int64) (*domain.NrqlConditionList, error) {
-	repository.log.Info("Getting conditions for policy", "PolicyId", policyId)
-
 	endpoint := fmt.Sprintf("alerts_nrql_conditions.json?policy_id=%d", policyId)
 	response, err := repository.client.Get(endpoint)
 	if err != nil {
@@ -82,7 +80,7 @@ func (repository nrqlConditionRepository) deleteConditions(conditionId int64) er
 }
 
 func (repository nrqlConditionRepository) saveCondition(policyId int64, condition *domain.NrqlCondition) error {
-	repository.log.Info("Saving condition", "Policy Id", policyId, "NrqlConditionBody", condition)
+	repository.log.Info("Saving NRQL conditions", "Policy Id", policyId, "NrqlConditionBody", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {
 		return err

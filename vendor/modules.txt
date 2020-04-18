@@ -19,6 +19,8 @@ github.com/PuerkitoBio/urlesc
 github.com/beorn7/perks/quantile
 # github.com/cespare/xxhash/v2 v2.1.0
 github.com/cespare/xxhash/v2
+# github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224
+github.com/cnf/structhash
 # github.com/coreos/prometheus-operator v0.34.0
 github.com/coreos/prometheus-operator/pkg/apis/monitoring
 github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1
@@ -122,6 +124,7 @@ github.com/operator-framework/operator-sdk/pkg/kube-metrics
 github.com/operator-framework/operator-sdk/pkg/leader
 github.com/operator-framework/operator-sdk/pkg/log/zap
 github.com/operator-framework/operator-sdk/pkg/metrics
+github.com/operator-framework/operator-sdk/pkg/predicate
 github.com/operator-framework/operator-sdk/pkg/test
 github.com/operator-framework/operator-sdk/pkg/test/e2eutil
 github.com/operator-framework/operator-sdk/version

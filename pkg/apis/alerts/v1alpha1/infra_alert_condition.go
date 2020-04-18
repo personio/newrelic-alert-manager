@@ -43,8 +43,8 @@ type InfraThreshold struct {
 	// - `all` - all data points are in violation within the given period \
 	// - `any` - at least one data point is in violation within the given period \
 	// +kubebuilder:validation:Enum=all;any
-	TimeFunction    string `json:"timeFunction"`
-	Value           int    `json:"value"`
+	TimeFunction string `json:"timeFunction"`
+	Value        int    `json:"value"`
 	// For how long the violation should be active before an incident is triggered \
-	DurationMinutes int    `json:"durationMinutes"`
+	DurationMinutes int `json:"durationMinutes"`
 }

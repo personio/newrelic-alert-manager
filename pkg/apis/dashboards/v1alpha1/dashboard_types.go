@@ -7,7 +7,7 @@ import (
 // DashboardSpec defines the desired state of DashboardBody
 type DashboardSpec struct {
 	// The name of the dashboard that will be created in New Relic
-	Title   string   `json:"title"`
+	Title string `json:"title"`
 	// A list of widgets to add to the dashboard
 	Widgets []Widget `json:"widgets"`
 }

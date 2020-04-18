@@ -69,5 +69,5 @@ func isEmailChannelReady(t *testing.T, obj runtime.Object) bool {
 		return false
 	}
 
-	return channel.Status.Status == "created"
+	return channel.Status.Status == "Ready"
 }

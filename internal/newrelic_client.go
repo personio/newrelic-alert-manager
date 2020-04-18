@@ -28,7 +28,7 @@ type newrelicClient struct {
 func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicClient {
 	return newrelicClient{
 		client:   &http.Client{},
-		log:      log,
+		log:      log.V(3),
 		url:      url,
 		adminKey: adminKey,
 	}

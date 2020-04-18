@@ -5,6 +5,6 @@ metadata:
 spec:
   name: "[NewRelic operator] Slack channel test"
   channel: "#dx_playground"
-  url: "http://blabla.com"
+  url: "abc"
   policySelector:
-    team: dx
+    team: px
