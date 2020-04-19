@@ -82,7 +82,7 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 		"Get",
 		"alerts_channels.json",
 	).Return(
-		newSlackResponse(10, "test", "http://test", "#test"),
+		newSlackResponse(10, "test-updated", "", "#test"),
 		nil,
 	)
 
@@ -113,6 +113,13 @@ func TestSlackChannelRepository_SaveExistingChannel(t *testing.T) {
 	if *channel.Channel.Id != 10 {
 		t.Error("Channel id should be 10")
 	}
+
+	client.AssertCalled(
+		t,
+		"PostJson",
+		"alerts_channels.json",
+		newSlackRequestWithId(10, "test-updated", "http://test", "#test"),
+	)
 }
 
 func TestSlackChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testing.T) {

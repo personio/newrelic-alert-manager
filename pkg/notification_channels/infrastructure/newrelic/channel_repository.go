@@ -73,25 +73,24 @@ func (repository ChannelRepository) create(channel *domain.NotificationChannel) 
 }
 
 func (repository ChannelRepository) update(channel *domain.NotificationChannel) error {
-	repository.logr.Info("Updating channel", "Channels", channel)
-
 	existingChannel, err := repository.get(*channel.Channel.Id)
 	if err != nil {
 		return err
 	}
 
-	if existingChannel != nil && existingChannel.Equals(*channel) {
-		return nil
+	if existingChannel == nil {
+		return repository.create(channel)
 	}
 
-	if existingChannel != nil {
+	if channel.Channel.Configuration.IsModified() {
 		err = repository.Delete(*existingChannel)
 		if err != nil {
 			return err
 		}
+		return repository.create(channel)
 	}
 
-	return repository.create(channel)
+	return nil
 }
 
 func (repository *ChannelRepository) Delete(channel domain.NotificationChannel) error {

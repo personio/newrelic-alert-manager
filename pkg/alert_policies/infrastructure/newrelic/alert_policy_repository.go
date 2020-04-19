@@ -69,7 +69,6 @@ func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
 	response, err := repository.client.Delete(endpoint)
 	if response != nil && response.StatusCode == 404 {
-		fmt.Println(response.StatusCode)
 		return nil
 	}
 

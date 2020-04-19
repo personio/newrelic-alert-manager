@@ -7,6 +7,7 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/infrastructure/newrelic"
 	"github.com/go-logr/logr"
+	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"
@@ -16,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+	"time"
 )
 
 var log = logf.Log.WithName("controller-notification-channel")
@@ -38,7 +40,7 @@ func Add(mgr manager.Manager, controllerName string, channelType iov1alpha1.Noti
 		return err
 	}
 
-	err = c.Watch(&source.Kind{Type: channelType}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: channelType}, &handler.EnqueueRequestForObject{}, predicate.GenerationChangedPredicate{})
 	if err != nil {
 		return err
 	}
@@ -51,9 +53,7 @@ func Add(mgr manager.Manager, controllerName string, channelType iov1alpha1.Noti
 			}
 			requests := make([]reconcile.Request, channels.Size())
 			for i, namespacedName := range channels.GetNamespacedNames() {
-				requests[i] = reconcile.Request{
-					NamespacedName: namespacedName,
-				}
+				requests[i] = reconcile.Request{NamespacedName: namespacedName}
 			}
 
 			return requests
@@ -61,7 +61,7 @@ func Add(mgr manager.Manager, controllerName string, channelType iov1alpha1.Noti
 
 	err = c.Watch(&source.Kind{Type: &iov1alpha1.AlertPolicy{}}, &handler.EnqueueRequestsFromMapFunc{
 		ToRequests: mapFn,
-	})
+	}, k8s.StatusChangedPredicate{})
 	if err != nil {
 		return err
 	}
@@ -109,6 +109,8 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	}
 
 	channel := instance.NewChannel(policies)
+	channel.Channel.Configuration.PreviousVersion = instance.GetStatus().NewrelicConfigVersion
+
 	if instance.IsDeleted() {
 		return r.deleteChannel(*channel, instance)
 	} else {
@@ -118,17 +120,30 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 			return reconcile.Result{}, err
 		}
 
-		err = r.newrelic.Save(channel)
+		configVersion := channel.Channel.Configuration.Version()
+		status := iov1alpha1.NewPending(channel.Channel.Id, configVersion)
+		instance.SetStatus(status)
+		err := r.k8s.UpdateChannelStatus(instance)
 		if err != nil {
-			reqLogger.Error(err, "Error saving notification channel")
 			return reconcile.Result{}, err
 		}
 
-		status := iov1alpha1.NotificationChannelStatus{
-			Status:            "created",
-			Reason:            "",
-			NewrelicChannelId: channel.Channel.Id,
+		err = r.newrelic.Save(channel)
+		if err != nil {
+			status := iov1alpha1.NewError(channel.Channel.Id, err)
+			instance.SetStatus(status)
+			err2 := r.k8s.UpdateChannelStatus(instance)
+			if err2 != nil {
+				return reconcile.Result{}, err
+			}
+
+			reqLogger.Error(err, "Error saving notification channel")
+			return reconcile.Result{
+				RequeueAfter: 10 * time.Second,
+			}, nil
 		}
+
+		status = iov1alpha1.NewReady(channel.Channel.Id, configVersion)
 		instance.SetStatus(status)
 		err = r.k8s.UpdateChannelStatus(instance)
 		if err != nil {

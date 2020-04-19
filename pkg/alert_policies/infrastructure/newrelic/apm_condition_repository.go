@@ -23,8 +23,6 @@ func newApmConditionRepository(log logr.Logger, client internal.NewrelicClient) 
 }
 
 func (repository apmConditionRepository) getConditions(policyId int64) (*domain.ApmConditionList, error) {
-	repository.log.Info("Getting alert conditions for policy", "PolicyId", policyId)
-
 	endpoint := fmt.Sprintf("alerts_conditions.json?policy_id=%d", policyId)
 	response, err := repository.client.Get(endpoint)
 	if err != nil {
@@ -73,7 +71,7 @@ func (repository apmConditionRepository) saveConditions(policy *domain.AlertPoli
 }
 
 func (repository apmConditionRepository) deleteConditions(conditionId int64) error {
-	repository.log.Info("Deleting alerts condition", "ConditionId", conditionId)
+	repository.log.Info("Deleting alert condition", "ConditionId", conditionId)
 
 	endpoint := fmt.Sprintf("alerts_conditions/%d.json", conditionId)
 	_, err := repository.client.Delete(endpoint)
@@ -82,7 +80,7 @@ func (repository apmConditionRepository) deleteConditions(conditionId int64) err
 }
 
 func (repository apmConditionRepository) saveCondition(policyId int64, condition *domain.ApmCondition) error {
-	repository.log.Info("Saving alerts condition", "Policy Id", policyId, "NrqlConditionBody", condition)
+	repository.log.Info("Saving alert condition", "Policy Id", policyId, "NrqlConditionBody", condition)
 	payload, err := json.Marshal(&condition)
 	if err != nil {
 		return err

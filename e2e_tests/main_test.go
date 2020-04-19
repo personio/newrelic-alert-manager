@@ -32,3 +32,7 @@ func initializeTestResources(t *testing.T, obj runtime.Object) *f.TestCtx {
 
 	return ctx
 }
+
+func cleanupOptions(ctx *f.TestCtx) *f.CleanupOptions {
+	return &f.CleanupOptions{TestContext: ctx, Timeout: cleanupTimeout, RetryInterval: cleanupRetryInterval}
+}

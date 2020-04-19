@@ -23,8 +23,6 @@ func newInfraConditionRepository(log logr.Logger, client internal.NewrelicClient
 }
 
 func (repository infraConditionRepository) getConditions(policyId int64) (*domain.InfraConditionList, error) {
-	repository.log.Info("Getting infra conditions for policy", "PolicyId", policyId)
-
 	endpoint := fmt.Sprintf("alerts/conditions?policy_id=%d", policyId)
 	response, err := repository.client.Get(endpoint)
 	if err != nil {
@@ -73,7 +71,7 @@ func (repository infraConditionRepository) saveConditions(policy *domain.AlertPo
 }
 
 func (repository infraConditionRepository) deleteConditions(conditionId int64) error {
-	repository.log.Info("Deleting alerts condition", "ConditionId", conditionId)
+	repository.log.Info("Deleting infra condition", "ConditionId", conditionId)
 
 	endpoint := fmt.Sprintf("alerts/conditions/%d", conditionId)
 	_, err := repository.client.Delete(endpoint)
@@ -82,7 +80,7 @@ func (repository infraConditionRepository) deleteConditions(conditionId int64) e
 }
 
 func (repository infraConditionRepository) saveCondition(policyId int64, condition *domain.InfraCondition) error {
-	repository.log.Info("Saving alerts condition", "Policy Id", policyId, "InfraConditionBody", condition)
+	repository.log.Info("Saving infra condition", "Policy Id", policyId, "InfraConditionBody", condition)
 	condition.Condition.PolicyId = policyId
 	payload, err := json.Marshal(&condition)
 	if err != nil {

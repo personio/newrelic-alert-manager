@@ -43,9 +43,9 @@ type AlertPolicySpec struct {
 // AlertPolicySpec defines the observed state of AlertPolicy
 type AlertPolicyStatus struct {
 	// The value will be set to `created` once the policy has been created in New Relic
-	Status           string `json:"status"`
+	Status string `json:"status"`
 	// When a policy fails to be created, the value will be set to the error message received from New Relic
-	Reason           string `json:"reason,omitempty"`
+	Reason string `json:"reason,omitempty"`
 	// The policy id in New Relic
 	NewrelicPolicyId *int64 `json:"newrelicPolicyId,omitempty"`
 }

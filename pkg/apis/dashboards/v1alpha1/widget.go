@@ -30,11 +30,11 @@ type Widget struct {
 	// - `list` \
 	// - `metric_line_chart` (used for apm metrics) \
 	// +kubebuilder:validation:Enum=application_breakdown;attribute_sheet;background_breakdown;billboard;billboard_comparison;comparison_line_chart;event_table;facet_bar_chart;facet_pie_chart;facet_table;faceted_area_chart;faceted_line_chart;funnel;gauge;heatmap;histogram;json;line_chart;list;metric_line_chart
-	Visualization string        `json:"visualization"`
+	Visualization string `json:"visualization"`
 	// The data to plot on the widget
-	Data          Data          `json:"data"`
+	Data Data `json:"data"`
 	// Defines the layout of the widget within the dashboard
-	Layout        widget.Layout `json:"layout"`
+	Layout widget.Layout `json:"layout"`
 }
 
 // Data represents the data to plot inside the widget. \
@@ -46,31 +46,31 @@ type Widget struct {
 type Data struct {
 	// The NRQL query used which defines the data to plot in the widget
 	// +optional
-	Nrql      string `json:"nrql,omitempty"`
+	Nrql string `json:"nrql,omitempty"`
 	// The APM metric parameters which defines the data to plot in the widget. \
 	// When using an APM metric for the data, visualization should be set to either `metric_line_chart` or `application_breakdown`. \
 	// +optional
-	ApmMetric *Apm   `json:"apm,omitempty"`
+	ApmMetric *Apm `json:"apm,omitempty"`
 }
 
 // Apm is the set of metric parameters used for defining the data to plot in the widget
 type Apm struct {
 	// The time frame in seconds
-	SinceSeconds int      `json:"sinceSeconds,omitempty"`
+	SinceSeconds int `json:"sinceSeconds,omitempty"`
 	// A list of application names for which to get the metric
-	Entities     []string `json:"entities"`
+	Entities []string `json:"entities"`
 	// A list of metrics to use
-	Metrics      []Metric `json:"metrics,omitempty"`
+	Metrics []Metric `json:"metrics,omitempty"`
 	// +optional
-	Facet        string   `json:"facet,omitempty"`
+	Facet string `json:"facet,omitempty"`
 	// +optional
-	OrderBy      string   `json:"order_by,omitempty"`
+	OrderBy string `json:"order_by,omitempty"`
 }
 
 // Metric is the name of the metric as shown in Data Explorer
 type Metric struct {
 	// Name of the metric
-	Name   string   `json:"name"`
+	Name string `json:"name"`
 	// List of metric values to plot. The available values will depend on the metric you choose. \
 	// Check the Data Explorer in New Relic to find out which values are available for which metrics.
 	Values []string `json:"values"`

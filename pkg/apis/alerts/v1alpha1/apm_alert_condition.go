@@ -11,10 +11,10 @@ type ApmCondition struct {
 	// - `browser_metric` \
 	// - `mobile_metric` \
 	// Please refer to the Alerts conditions section in the [New Relic documentation](https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#type) for more details
-	Type    string `json:"type"`
+	Type string `json:"type"`
 	// +optional
 	// +default=true
-	Enabled *bool  `json:"enabled,omitempty"`
+	Enabled *bool `json:"enabled,omitempty"`
 	// +kubebuilder:validation:Enum=instance;application
 	// +optional
 	ConditionScope *string `json:"conditionScope,omitempty"`

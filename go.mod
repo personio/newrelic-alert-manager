@@ -3,6 +3,7 @@ module github.com/fpetkovski/newrelic-alert-manager
 go 1.13
 
 require (
+	github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224
 	github.com/cosiner/argv v0.0.1 // indirect
 	github.com/go-delve/delve v1.3.2 // indirect
 	github.com/go-logr/logr v0.1.0

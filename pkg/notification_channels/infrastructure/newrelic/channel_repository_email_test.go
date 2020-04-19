@@ -142,4 +142,11 @@ func TestEmailChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testin
 	if *channel.Channel.Id != 10 {
 		t.Error("Channel id should be 10")
 	}
+
+	client.AssertCalled(
+		t,
+		"PostJson",
+		"alerts_channels.json",
+		newEmailRequestWithId(10, "test-updated", "test@test.com"),
+	)
 }

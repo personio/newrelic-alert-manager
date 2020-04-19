@@ -869,6 +869,17 @@ int64
 <p>The channel id in New Relic</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>newrelicConfigVersion</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Configuration digest</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="alerts.newrelic.io/v1alpha1.NrqlCondition">NrqlCondition
@@ -1705,5 +1716,5 @@ github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>9a9b0d8</code>.
+on git commit <code>1519c86</code>.
 </em></p>

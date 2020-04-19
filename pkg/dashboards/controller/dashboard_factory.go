@@ -96,13 +96,10 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 }
 
 func (factory DashboardFactory) getInt64WithDefault(value int, defaultValue int) int64 {
-	fmt.Println(value, defaultValue)
 	if value == 0 {
-		fmt.Println("using default value")
 		return int64(defaultValue)
 	}
 
-	fmt.Println("using value")
 	return int64(value)
 }
 
