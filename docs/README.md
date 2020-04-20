@@ -1716,5 +1716,5 @@ github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>1519c86</code>.
+on git commit <code>6f39931</code>.
 </em></p>
