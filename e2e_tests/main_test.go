@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	resourceName      = "e2e-test-channel"
+	resourceName      = "e2e-test"
 	resourceNamespace = "e2e-tests"
 
 	timeout              = time.Second * 60

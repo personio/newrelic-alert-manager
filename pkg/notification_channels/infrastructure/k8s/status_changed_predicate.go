@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
+	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
@@ -27,13 +28,16 @@ func (p StatusChangedPredicate) Update(e event.UpdateEvent) bool {
 		return false
 	}
 
-	if objectNew.Status.NewrelicPolicyId == nil {
+	if objectNew.Status.NewrelicId == nil {
 		return false
 	}
 
-	if objectOld.Status.NewrelicPolicyId == nil && objectNew.Status.NewrelicPolicyId != nil {
+	if objectOld.Status.NewrelicId == nil && objectNew.Status.NewrelicId != nil {
 		return true
 	}
 
-	return *objectOld.Status.NewrelicPolicyId != *objectNew.Status.NewrelicPolicyId
+	policyIdChanged := *objectOld.Status.NewrelicId != *objectNew.Status.NewrelicId
+	policyLabelsChanged := !reflect.DeepEqual(objectOld.ObjectMeta.Labels, objectNew.ObjectMeta.Labels)
+
+	return policyIdChanged || policyLabelsChanged
 }

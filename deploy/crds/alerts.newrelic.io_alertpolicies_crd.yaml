@@ -404,10 +404,10 @@ spec:
           - name
           type: object
         status:
-          description: AlertPolicySpec defines the observed state of AlertPolicy
+          description: Status defines the observed state of a New Relic resource
           properties:
-            newrelicPolicyId:
-              description: The policy id in New Relic
+            newrelicId:
+              description: The resource id in New Relic
               format: int64
               type: integer
             reason:
@@ -415,8 +415,8 @@ spec:
                 to the error message received from New Relic
               type: string
             status:
-              description: The value will be set to `created` once the policy has
-                been created in New Relic
+              description: The value will be set to `Ready` once the policy has been
+                created in New Relic
               type: string
           required:
           - status

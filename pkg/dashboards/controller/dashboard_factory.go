@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"github.com/fpetkovski/newrelic-alert-manager/internal"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
@@ -19,23 +19,25 @@ func NewDashboardFactory(appRepository *applications.Repository) *DashboardFacto
 }
 
 func (factory DashboardFactory) NewDashboard(cr *v1alpha1.Dashboard) (*domain.Dashboard, error) {
-	widgets, err := factory.newWidgets(cr.Spec.Widgets)
-	if err != nil {
-		return nil, err
-	}
-
-	return &domain.Dashboard{
+	dashboard := &domain.Dashboard{
 		DashboardBody: domain.DashboardBody{
-			Id:         cr.Status.NewrelicDashboardId,
+			Id:         cr.Status.NewrelicId,
 			Title:      cr.Spec.Title,
 			Visibility: "all",
 			Editable:   "read_only",
 			Metadata: domain.Metadata{
 				Version: 1,
 			},
-			Widgets: widgets,
 		},
-	}, nil
+	}
+
+	widgets, err := factory.newWidgets(cr.Spec.Widgets)
+	if err != nil {
+		return dashboard, err
+	}
+
+	dashboard.DashboardBody.Widgets = widgets
+	return dashboard, nil
 }
 
 func (factory DashboardFactory) newWidgets(widgets []v1alpha1.Widget) (widget.WidgetList, error) {
@@ -63,11 +65,11 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 	var result widget.DataList
 
 	if data.Nrql != "" && data.ApmMetric != nil {
-		return result, fmt.Errorf("you can either set data.nrql or data.apm, but not both")
+		return result, internal.NewClientError("you can either set data.nrql or data.apm, but not both")
 	}
 
 	if data.Nrql == "" && data.ApmMetric == nil {
-		return result, fmt.Errorf("you must set either set data.nrql or data.apm")
+		return result, internal.NewClientError("you must set either set data.nrql or data.apm")
 	}
 
 	if data.Nrql != "" {

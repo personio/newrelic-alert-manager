@@ -30,8 +30,8 @@ func TestCreateNewEmailChannel(t *testing.T) {
 		t.Error("Resource's Status.Reason should be empty")
 	}
 
-	if channel.Status.NewrelicChannelId == nil {
-		t.Error("Resource's NewRelicChannelId should not be null")
+	if channel.Status.NewrelicId == nil {
+		t.Error("Resource's NewRelicId should not be null")
 	}
 
 	err = framework.Global.Client.Delete(context.TODO(), channel)
@@ -69,5 +69,5 @@ func isEmailChannelReady(t *testing.T, obj runtime.Object) bool {
 		return false
 	}
 
-	return channel.Status.Status == "Ready"
+	return channel.Status.IsReady()
 }

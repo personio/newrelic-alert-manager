@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/fpetkovski/newrelic-alert-manager/internal"
+	commonv1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
@@ -18,7 +19,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"time"
 )
 
 var log = logf.Log.WithName("controller_dashboard")
@@ -76,58 +76,53 @@ func (r *ReconcileDashboard) Reconcile(request reconcile.Request) (reconcile.Res
 	instance, err := r.k8s.GetDashboard(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			return reconcile.Result{}, nil
+			return internal.NewReconcileResult(nil)
 		}
+
 		reqLogger.Error(err, "Error talking to API server. Re-queueing request")
-		return reconcile.Result{}, err
+		return internal.NewReconcileResult(err)
 	}
 
 	dashboard, err := r.dashboardFactory.NewDashboard(instance)
 	if err != nil {
 		reqLogger.Error(err, "Error saving dashboard")
-		instance.Status.Status = "failed"
-		instance.Status.Reason = err.Error()
-		err = r.k8s.UpdateDashboardStatus(instance)
-		if err != nil {
-			return reconcile.Result{}, err
+		instance.Status = commonv1alpha1.NewError(dashboard.DashboardBody.Id, err)
+		statusErr := r.k8s.UpdateDashboardStatus(instance)
+		if statusErr != nil {
+			return internal.NewReconcileResult(statusErr)
 		}
 
-		return reconcile.Result{
-			RequeueAfter: 10 * time.Second,
-		}, nil
+		return internal.NewReconcileResult(err)
 	}
 
 	if instance.DeletionTimestamp != nil {
 		return r.deleteDashboard(dashboard, *instance)
-	} else {
-		err := r.k8s.SetFinalizer(*instance)
-		if err != nil {
-			reqLogger.Error(err, "Error setting finalizer on dashboard")
-			return reconcile.Result{}, err
-		}
-
-		err = r.newrelic.Save(dashboard)
-		if err != nil {
-			reqLogger.Error(err, "Error saving dashboard")
-			instance.Status.Status = "failed"
-			instance.Status.NewrelicDashboardId = dashboard.DashboardBody.Id
-			instance.Status.Reason = err.Error()
-			err = r.k8s.UpdateDashboardStatus(instance)
-
-			return reconcile.Result{}, err
-		}
-
-		instance.Status.Status = "created"
-		instance.Status.NewrelicDashboardId = dashboard.DashboardBody.Id
-		instance.Status.Reason = ""
-		err = r.k8s.UpdateDashboardStatus(instance)
-		if err != nil {
-			return reconcile.Result{}, nil
-		}
-
-		reqLogger.Info("Finished reconciling")
-		return reconcile.Result{}, nil
 	}
+
+	err = r.k8s.SetFinalizer(*instance)
+	if err != nil {
+		reqLogger.Error(err, "Error setting finalizer on dashboard")
+		return internal.NewReconcileResult(err)
+	}
+
+	err = r.newrelic.Save(dashboard)
+	if err != nil {
+		reqLogger.Error(err, "Error saving dashboard")
+		instance.Status = commonv1alpha1.NewError(dashboard.DashboardBody.Id, err)
+		err = r.k8s.UpdateDashboardStatus(instance)
+
+		return internal.NewReconcileResult(err)
+	}
+
+	instance.Status = commonv1alpha1.NewReady(dashboard.DashboardBody.Id)
+	err = r.k8s.UpdateDashboardStatus(instance)
+	if err != nil {
+		return internal.NewReconcileResult(err)
+	}
+
+	reqLogger.Info("Finished reconciling")
+	return internal.NewReconcileResult(nil)
+
 }
 
 func (r *ReconcileDashboard) deleteDashboard(dashboard *domain.Dashboard, instance v1alpha1.Dashboard) (reconcile.Result, error) {

@@ -82,7 +82,7 @@ func (repository ChannelRepository) update(channel *domain.NotificationChannel) 
 		return repository.create(channel)
 	}
 
-	if channel.Channel.Configuration.IsModified() {
+	if ! channel.Equals(*existingChannel) || channel.Channel.Configuration.IsModified() {
 		err = repository.Delete(*existingChannel)
 		if err != nil {
 			return err
