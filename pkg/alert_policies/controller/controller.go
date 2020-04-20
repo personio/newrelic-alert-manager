@@ -6,6 +6,7 @@ import (
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/k8s"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/infrastructure/newrelic"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
+	commonv1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
 	"github.com/go-logr/logr"
 	"github.com/operator-framework/operator-sdk/pkg/predicate"
@@ -18,7 +19,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"time"
 )
 
 var log = logf.Log.WithName("controller_newrelic_alert_policy")
@@ -79,24 +79,22 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 	instance, err := r.k8s.GetPolicy(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			return reconcile.Result{}, nil
+			return internal.NewReconcileResult(nil)
 		}
 		reqLogger.Error(err, "Error talking to API server. Re-queueing request")
-		return reconcile.Result{}, err
+		return internal.NewReconcileResult(err)
 	}
 
 	policy, err := r.policyFactory.NewAlertPolicy(instance)
 	if err != nil {
 		reqLogger.Error(err, "Error creating alerting policy")
-		instance.Status.Status = "failed"
-		instance.Status.Reason = err.Error()
-		err2 := r.k8s.UpdatePolicyStatus(instance)
-		if err2 != nil {
-			return reconcile.Result{}, err2
+		instance.Status = commonv1alpha1.NewError(policy.Policy.Id, err)
+		statisErr := r.k8s.UpdatePolicyStatus(instance)
+		if statisErr != nil {
+			return internal.NewReconcileResult(statisErr)
 		}
-		return reconcile.Result{
-			RequeueAfter: 5 * time.Second,
-		}, nil
+
+		return internal.NewReconcileResult(err)
 	}
 
 	if instance.DeletionTimestamp != nil {
@@ -105,35 +103,29 @@ func (r *ReconcileNewrelicPolicy) Reconcile(request reconcile.Request) (reconcil
 		err := r.k8s.SetFinalizer(*instance)
 		if err != nil {
 			reqLogger.Error(err, "Error setting finalizer on policy")
-			return reconcile.Result{}, err
+			return internal.NewReconcileResult(err)
 		}
 
 		err = r.newrelic.Save(policy)
 		if err != nil {
 			reqLogger.Error(err, "Error saving policy")
-			instance.Status.Status = "failed"
-			instance.Status.NewrelicPolicyId = policy.Policy.Id
-			instance.Status.Reason = err.Error()
-			err2 := r.k8s.UpdatePolicyStatus(instance)
-			if err2 != nil {
-				return reconcile.Result{}, err2
+			instance.Status = commonv1alpha1.NewError(policy.Policy.Id, err)
+			statusErr := r.k8s.UpdatePolicyStatus(instance)
+			if statusErr != nil {
+				return internal.NewReconcileResult(statusErr)
 			}
 
-			return reconcile.Result{
-				RequeueAfter: 5 * time.Second,
-			}, nil
+			return internal.NewReconcileResult(err)
 		}
 
-		instance.Status.Status = "created"
-		instance.Status.NewrelicPolicyId = policy.Policy.Id
-		instance.Status.Reason = ""
+		instance.Status = commonv1alpha1.NewReady(policy.Policy.Id)
 		err = r.k8s.UpdatePolicyStatus(instance)
 		if err != nil {
-			return reconcile.Result{}, nil
+			return internal.NewReconcileResult(err)
 		}
 
 		reqLogger.Info("Finished reconciling")
-		return reconcile.Result{}, nil
+		return internal.NewReconcileResult(nil)
 	}
 }
 

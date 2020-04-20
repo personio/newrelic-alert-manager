@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -13,8 +14,8 @@ type AlertPolicy struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AlertPolicySpec   `json:"spec,omitempty"`
-	Status AlertPolicyStatus `json:"status,omitempty"`
+	Spec   AlertPolicySpec `json:"spec,omitempty"`
+	Status v1alpha1.Status `json:"status,omitempty"`
 }
 
 // AlertPolicySpec defines the desired state of AlertPolicy.
@@ -38,16 +39,6 @@ type AlertPolicySpec struct {
 	// A list of Infrastructure alert conditions to attach to the policy
 	// +optional
 	InfraConditions []InfraCondition `json:"infraConditions,omitempty"`
-}
-
-// AlertPolicySpec defines the observed state of AlertPolicy
-type AlertPolicyStatus struct {
-	// The value will be set to `created` once the policy has been created in New Relic
-	Status string `json:"status"`
-	// When a policy fails to be created, the value will be set to the error message received from New Relic
-	Reason string `json:"reason,omitempty"`
-	// The policy id in New Relic
-	NewrelicPolicyId *int64 `json:"newrelicPolicyId,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -124,8 +124,7 @@ func (newrelic newrelicClient) executeWithStatusCheck(request *http.Request) (*h
 	}
 
 	if response != nil && response.StatusCode >= 300 {
-		responseContent, _ := ioutil.ReadAll(response.Body)
-		return nil, errors.New(string(responseContent))
+		return nil, newErrorResponse(response)
 	}
 
 	return response, nil
@@ -139,4 +138,13 @@ func (newrelic newrelicClient) execute(request *http.Request) (*http.Response, e
 	}
 
 	return response, nil
+}
+
+func newErrorResponse(response *http.Response) error {
+	responseContent, _ := ioutil.ReadAll(response.Body)
+	if 400 <= response.StatusCode && response.StatusCode <= 499 {
+		return NewClientError(string(responseContent))
+	}
+
+	return errors.New(string(responseContent))
 }

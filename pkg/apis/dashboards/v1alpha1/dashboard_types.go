@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -10,13 +11,6 @@ type DashboardSpec struct {
 	Title string `json:"title"`
 	// A list of widgets to add to the dashboard
 	Widgets []Widget `json:"widgets"`
-}
-
-// DashboardStatus defines the observed state of DashboardBody
-type DashboardStatus struct {
-	Status              string `json:"status"`
-	Reason              string `json:"reason,omitempty"`
-	NewrelicDashboardId *int64 `json:"newrelicDashboardId,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -29,7 +23,7 @@ type Dashboard struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	Spec   DashboardSpec   `json:"spec,omitempty"`
-	Status DashboardStatus `json:"status,omitempty"`
+	Status v1alpha1.Status `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

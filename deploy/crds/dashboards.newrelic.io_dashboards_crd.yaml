@@ -156,14 +156,19 @@ spec:
           - widgets
           type: object
         status:
-          description: DashboardStatus defines the observed state of DashboardBody
+          description: Status defines the observed state of a New Relic resource
           properties:
-            newrelicDashboardId:
+            newrelicId:
+              description: The resource id in New Relic
               format: int64
               type: integer
             reason:
+              description: When a policy fails to be created, the value will be set
+                to the error message received from New Relic
               type: string
             status:
+              description: The value will be set to `Ready` once the policy has been
+                created in New Relic
               type: string
           required:
           - status

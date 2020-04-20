@@ -58,7 +58,7 @@ func (channel SlackNotificationChannel) IsDeleted() bool {
 func (channel SlackNotificationChannel) NewChannel(policies AlertPolicyList) *domain.NotificationChannel {
 	return &domain.NotificationChannel{
 		Channel: domain.Channel{
-			Id:   channel.Status.NewrelicChannelId,
+			Id:   channel.Status.NewrelicId,
 			Name: channel.Spec.Name,
 			Type: "slack",
 			Configuration: domain.Configuration{
@@ -78,8 +78,8 @@ func GetPolicyIds(list AlertPolicyList) []int64 {
 		if policy.DeletionTimestamp != nil {
 			continue
 		}
-		if policy.Status.NewrelicPolicyId != nil {
-			result = append(result, *policy.Status.NewrelicPolicyId)
+		if policy.Status.NewrelicId != nil {
+			result = append(result, *policy.Status.NewrelicId)
 		}
 	}
 

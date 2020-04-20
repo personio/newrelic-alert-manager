@@ -17,7 +17,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"time"
 )
 
 var log = logf.Log.WithName("controller-notification-channel")
@@ -96,16 +95,16 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	instance, err := r.k8s.GetChannel(request.NamespacedName)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			return reconcile.Result{}, nil
+			return internal.NewReconcileResult(nil)
 		}
 		r.logr.Error(err, "Error reading object, requeueing request")
-		return reconcile.Result{}, err
+		return internal.NewReconcileResult(err)
 	}
 
 	policies, err := r.k8s.GetPolicies(instance)
 	if err != nil {
 		r.logr.Error(err, "Error getting policies for channel, requeueing request")
-		return reconcile.Result{}, err
+		return internal.NewReconcileResult(err)
 	}
 
 	channel := instance.NewChannel(policies)
@@ -117,41 +116,36 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 		err = r.k8s.SetFinalizer(instance)
 		if err != nil {
 			reqLogger.Error(err, "Error setting finalizer on channel")
-			return reconcile.Result{}, err
+			return internal.NewReconcileResult(err)
 		}
 
 		configVersion := channel.Channel.Configuration.Version()
-		status := iov1alpha1.NewPending(channel.Channel.Id, configVersion)
-		instance.SetStatus(status)
+		instance.SetStatus(iov1alpha1.NewChannelPending(channel.Channel.Id, configVersion))
 		err := r.k8s.UpdateChannelStatus(instance)
 		if err != nil {
-			return reconcile.Result{}, err
+			return internal.NewReconcileResult(err)
 		}
 
 		err = r.newrelic.Save(channel)
 		if err != nil {
-			status := iov1alpha1.NewError(channel.Channel.Id, err)
-			instance.SetStatus(status)
-			err2 := r.k8s.UpdateChannelStatus(instance)
-			if err2 != nil {
-				return reconcile.Result{}, err
+			instance.SetStatus(iov1alpha1.NewChannelError(channel.Channel.Id, err))
+			statusErr := r.k8s.UpdateChannelStatus(instance)
+			if statusErr != nil {
+				return internal.NewReconcileResult(statusErr)
 			}
 
 			reqLogger.Error(err, "Error saving notification channel")
-			return reconcile.Result{
-				RequeueAfter: 10 * time.Second,
-			}, nil
+			return internal.NewReconcileResult(err)
 		}
 
-		status = iov1alpha1.NewReady(channel.Channel.Id, configVersion)
-		instance.SetStatus(status)
+		instance.SetStatus(iov1alpha1.NewChannelReady(channel.Channel.Id, configVersion))
 		err = r.k8s.UpdateChannelStatus(instance)
 		if err != nil {
-			return reconcile.Result{}, nil
+			return internal.NewReconcileResult(err)
 		}
 
 		reqLogger.Info("Finished reconciling")
-		return reconcile.Result{}, nil
+		return internal.NewReconcileResult(nil)
 	}
 }
 

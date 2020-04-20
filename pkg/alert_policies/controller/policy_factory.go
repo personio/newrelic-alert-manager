@@ -19,21 +19,24 @@ func NewPolicyFactory(appRepository *applications.Repository) *PolicyFactory {
 }
 
 func (policyFactory PolicyFactory) NewAlertPolicy(cr *v1alpha1.AlertPolicy) (*domain.AlertPolicy, error) {
-	apmConditions, err := policyFactory.newApmConditions(cr.Spec.ApmConditions)
-	if err != nil {
-		return nil, err
-	}
-
-	return &domain.AlertPolicy{
+	policy := &domain.AlertPolicy{
 		Policy: domain.Policy{
-			Id:                 cr.Status.NewrelicPolicyId,
+			Id:                 cr.Status.NewrelicId,
 			Name:               cr.Spec.Name,
 			IncidentPreference: strings.ToUpper(cr.Spec.IncidentPreference),
 		},
-		ApmConditions:   apmConditions,
+		ApmConditions:   []*domain.ApmCondition{},
 		NrqlConditions:  policyFactory.newNrqlConditions(cr.Spec.NrqlConditions),
 		InfraConditions: policyFactory.newInfraConditions(cr.Spec.InfraConditions),
-	}, nil
+	}
+
+	apmConditions, err := policyFactory.newApmConditions(cr.Spec.ApmConditions)
+	if err != nil {
+		return policy, err
+	}
+
+	policy.ApmConditions = apmConditions
+	return policy, nil
 }
 
 func (policyFactory PolicyFactory) newApmConditions(conditions []v1alpha1.ApmCondition) ([]*domain.ApmCondition, error) {

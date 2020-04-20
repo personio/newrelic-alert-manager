@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/cnf/structhash"
+	"sort"
 )
 
 type NotificationChannelList struct {
@@ -10,6 +11,16 @@ type NotificationChannelList struct {
 
 type NotificationChannel struct {
 	Channel Channel `json:"channel"`
+}
+
+func (channel NotificationChannel) Equals(other NotificationChannel) bool {
+	equals :=
+		channel.Channel.Type == other.Channel.Type &&
+			channel.Channel.Name == other.Channel.Name &&
+			channel.Channel.Configuration.Equals(other.Channel.Configuration) &&
+			channel.Channel.Links.Equals(other.Channel.Links)
+
+	return equals
 }
 
 type Channel struct {
@@ -46,3 +57,21 @@ func (c Configuration) Equals(other Configuration) bool {
 type Links struct {
 	PolicyIds []int64 `json:"policy_ids"`
 }
+
+func (links Links) Equals(other Links) bool {
+	sort.Slice(links.PolicyIds, func(i, j int) bool { return links.PolicyIds[i] < links.PolicyIds[j] })
+	sort.Slice(other.PolicyIds, func(i, j int) bool { return other.PolicyIds[i] < other.PolicyIds[j] })
+
+	if len(links.PolicyIds) != len(other.PolicyIds) {
+		return false
+	}
+
+	for idx, _ := range links.PolicyIds {
+		if links.PolicyIds[idx] != other.PolicyIds[idx] {
+			return false
+		}
+	}
+
+	return true
+}
+

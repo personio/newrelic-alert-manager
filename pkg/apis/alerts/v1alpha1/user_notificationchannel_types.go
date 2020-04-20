@@ -60,7 +60,7 @@ func (channel EmailNotificationChannel) IsDeleted() bool {
 func (channel EmailNotificationChannel) NewChannel(policies AlertPolicyList) *domain.NotificationChannel {
 	return &domain.NotificationChannel{
 		Channel: domain.Channel{
-			Id:   channel.Status.NewrelicChannelId,
+			Id:   channel.Status.NewrelicId,
 			Name: channel.Spec.Name,
 			Type: "email",
 			Configuration: domain.Configuration{
