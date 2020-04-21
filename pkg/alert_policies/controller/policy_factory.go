@@ -66,8 +66,20 @@ func (policyFactory PolicyFactory) newApmAlertCondition(condition v1alpha1.ApmCo
 			ViolationCloseTimer: condition.ViolationCloseTimer,
 			RunbookUrl:          condition.RunbookUrl,
 			Terms:               newThresholds(condition.CriticalThreshold, condition.WarningThreshold),
+			UserDefined:         newUserDefined(condition),
 		},
 	}, nil
+}
+
+func newUserDefined(condition v1alpha1.ApmCondition) *domain.UserDefined {
+	if condition.UserDefined == nil {
+		return nil
+	}
+
+	return &domain.UserDefined{
+		Metric:        condition.UserDefined.Metric,
+		ValueFunction: condition.UserDefined.ValueFunction,
+	}
 }
 
 func (policyFactory PolicyFactory) newNrqlConditions(conditions []v1alpha1.NrqlCondition) []*domain.NrqlCondition {

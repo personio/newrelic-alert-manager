@@ -17,16 +17,17 @@ type ApmConditionBody struct {
 	Enabled  bool     `json:"enabled,omitempty"`
 	Entities []string `json:"entities"`
 
-	Metric              string `json:"metric"`
-	ConditionScope      string `json:"condition_scope"`
-	ViolationCloseTimer int    `json:"violation_close_timer"`
-	RunbookUrl          string `json:"runbook_url,omitempty"`
-	Terms               []Term `json:"terms"`
+	Metric              string       `json:"metric"`
+	ConditionScope      string       `json:"condition_scope"`
+	ViolationCloseTimer int          `json:"violation_close_timer"`
+	RunbookUrl          string       `json:"runbook_url,omitempty"`
+	Terms               []Term       `json:"terms"`
+	UserDefined         *UserDefined `json:"user_defined,omitempty"`
 }
 
 func (b ApmConditionBody) getHashKey() string {
 	return fmt.Sprintf(
-		"%s-%s-%t-%s-%s-%s-%d-%s-%s",
+		"%s-%s-%t-%s-%s-%s-%d-%s-%s-%s",
 		b.Name,
 		b.Type,
 		b.Enabled,
@@ -36,6 +37,7 @@ func (b ApmConditionBody) getHashKey() string {
 		b.ViolationCloseTimer,
 		b.RunbookUrl,
 		b.getTermsHash(),
+		b.getUserDefinedHashKey(),
 	)
 }
 
@@ -45,4 +47,17 @@ func (b ApmConditionBody) getTermsHash() string {
 	}
 
 	return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
+}
+
+type UserDefined struct {
+	Metric        string `json:"metric"`
+	ValueFunction string `json:"value_function"`
+}
+
+func (b ApmConditionBody) getUserDefinedHashKey() string {
+	if b.UserDefined == nil {
+		return ""
+
+	}
+	return b.UserDefined.Metric + "$" + b.UserDefined.ValueFunction
 }
