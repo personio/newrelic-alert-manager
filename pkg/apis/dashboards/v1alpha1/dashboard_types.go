@@ -18,6 +18,10 @@ type DashboardSpec struct {
 // DashboardBody is the Schema for the dashboards API
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:path=dashboards,scope=Namespaced
+// +kubebuilder:printcolumn:name="NR Name",type="string",JSONPath=".spec.title",description="The New Relic name this dashboard"
+// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.status",description="The status of this dashboard"
+// +kubebuilder:printcolumn:name="Newrelic ID",type="string",JSONPath=".status.newrelicId",description="The New Relic ID of this dashboard"
+// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description="The age of this dashboard"
 type Dashboard struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

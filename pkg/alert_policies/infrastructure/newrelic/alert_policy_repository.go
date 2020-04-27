@@ -65,7 +65,6 @@ func (repository AlertPolicyRepository) Delete(policy *domain.AlertPolicy) error
 	}
 
 	repository.log.Info("Deleting policy", "PolicyId", *policy.Policy.Id)
-
 	endpoint := fmt.Sprintf("%s/%d.json", "alerts_policies", *policy.Policy.Id)
 	response, err := repository.client.Delete(endpoint)
 	if response != nil && response.StatusCode == 404 {
@@ -96,8 +95,6 @@ func (repository AlertPolicyRepository) createPolicy(policy *domain.AlertPolicy)
 }
 
 func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy) error {
-	repository.log.Info("Updating policy", "Policy", policy)
-
 	existingPolicy, err := repository.getPolicy(*policy.Policy.Id)
 	if err != nil {
 		return err
@@ -117,6 +114,7 @@ func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy)
 		return err
 	}
 
+	repository.log.Info("Updating policy", "Policy", policy)
 	response, err := repository.client.PutJson(endpoint, payload)
 	if err != nil {
 		return err

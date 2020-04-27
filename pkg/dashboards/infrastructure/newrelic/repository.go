@@ -29,13 +29,12 @@ func (repository Repository) Save(dashboard *domain.Dashboard) error {
 }
 
 func (repository Repository) create(dashboard *domain.Dashboard) error {
-	repository.logr.Info("Creating dashboard", "DashboardBody", dashboard)
-
 	payload, err := marshal(*dashboard)
 	if err != nil {
 		return err
 	}
 
+	repository.logr.Info("Creating dashboard", "DashboardBody", dashboard)
 	response, err := repository.client.PostJson("/dashboards.json", payload)
 	if err != nil {
 		return err
@@ -50,8 +49,6 @@ func (repository Repository) create(dashboard *domain.Dashboard) error {
 }
 
 func (repository Repository) update(dashboard *domain.Dashboard) error {
-	repository.logr.Info("Updating dashboard", "DashboardBody", dashboard)
-
 	existingDashboard, err := repository.get(*dashboard.DashboardBody.Id)
 	if err != nil {
 		return err
@@ -70,6 +67,7 @@ func (repository Repository) update(dashboard *domain.Dashboard) error {
 		return err
 	}
 
+	repository.logr.Info("Updating dashboard", "DashboardBody", dashboard)
 	endpoint := fmt.Sprintf("/dashboards/%d.json", *dashboard.DashboardBody.Id)
 	_, err = repository.client.PutJson(endpoint, payload)
 	if err != nil {
@@ -106,11 +104,11 @@ func (repository Repository) get(channelId int64) (*domain.Dashboard, error) {
 }
 
 func (repository *Repository) Delete(dashboard domain.Dashboard) error {
-	repository.logr.Info("Deleting dashboard", "DashboardBody", dashboard)
 	if dashboard.DashboardBody.Id == nil {
 		return nil
 	}
 
+	repository.logr.Info("Deleting dashboard", "DashboardBody", dashboard)
 	endpoint := fmt.Sprintf("/dashboards/%d.json", *dashboard.DashboardBody.Id)
 	_, err := repository.client.Delete(endpoint)
 
