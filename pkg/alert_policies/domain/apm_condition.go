@@ -1,6 +1,8 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type ApmConditionList struct {
 	Condition []ApmConditionBody `json:"conditions"`
@@ -46,7 +48,11 @@ func (b ApmConditionBody) getTermsHash() string {
 		return b.Terms[0].getHashKey()
 	}
 
-	return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
+	if b.Terms[0].Priority == "critical" {
+		return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
+	} else {
+		return b.Terms[1].getHashKey() + "-" + b.Terms[0].getHashKey()
+	}
 }
 
 type UserDefined struct {

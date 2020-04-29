@@ -62,6 +62,23 @@ func newSlackChannel() *v1alpha1.SlackNotificationChannel {
 	}
 }
 
+
+func newSlackChannelWithSelector(name string, selector map[string]string) *v1alpha1.SlackNotificationChannel {
+	return &v1alpha1.SlackNotificationChannel{
+		ObjectMeta: v1.ObjectMeta{
+			Name:      name,
+			Namespace: resourceNamespace,
+		},
+		Spec: v1alpha1.SlackNotificationChannelSpec{
+			Name:           name,
+			Url:            "http://e2etests",
+			Channel:        "#ete_tests",
+			PolicySelector: selector,
+		},
+		Status: v1alpha1.NotificationChannelStatus{},
+	}
+}
+
 func isSlackChannelReady(t *testing.T, obj runtime.Object) bool {
 	channel, ok := obj.(*v1alpha1.SlackNotificationChannel)
 	if !ok {

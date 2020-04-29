@@ -116,7 +116,7 @@ func newThresholds(criticalThreshold v1alpha1.Threshold, warningThreshold *v1alp
 	criticalTerm := domain.Term{
 		Duration:     strconv.Itoa(criticalThreshold.DurationMinutes),
 		Operator:     criticalThreshold.Operator,
-		Priority:     "critical",
+		Priority:     domain.PriorityCritical,
 		Threshold:    criticalThreshold.Value,
 		TimeFunction: criticalThreshold.TimeFunction,
 	}
@@ -126,7 +126,7 @@ func newThresholds(criticalThreshold v1alpha1.Threshold, warningThreshold *v1alp
 		warningTerm := domain.Term{
 			Duration:     strconv.Itoa(warningThreshold.DurationMinutes),
 			Operator:     warningThreshold.Operator,
-			Priority:     "warning",
+			Priority:     domain.PriorityWarning,
 			Threshold:    warningThreshold.Value,
 			TimeFunction: warningThreshold.TimeFunction,
 		}

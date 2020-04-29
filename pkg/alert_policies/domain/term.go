@@ -2,6 +2,11 @@ package domain
 
 import "fmt"
 
+var (
+	PriorityCritical = "critical"
+	PriorityWarning  = "warning"
+)
+
 type Term struct {
 	Duration     string `json:"duration"`
 	Operator     string `json:"operator"`
