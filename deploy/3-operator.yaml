@@ -16,9 +16,9 @@ spec:
       serviceAccountName: newrelic-alert-manager
       containers:
         - name: newrelic-alert-manager
-          image: fpetkovski/newrelic-alert-manager:0.18
+          image: fpetkovski/newrelic-alert-manager:0.19
           command:
-          - newrelic-alert-manager
+            - newrelic-alert-manager
           imagePullPolicy: Always
           env:
             - name: OPERATOR_NAME
@@ -32,6 +32,11 @@ spec:
                 secretKeyRef:
                   name: newrelic-alert-manager
                   key: adminKey
+            - name: DEFAULT_SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: newrelic-alert-manager
+                  key: defaultSlackWebhookUrl
           resources:
             requests:
               cpu: "0.5"

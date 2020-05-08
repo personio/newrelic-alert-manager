@@ -62,12 +62,12 @@ spec:
                 the notification channel
               type: object
             url:
-              description: The Slack webhook URL
+              description: The Slack webhook URL. If left empty, the default URL specified
+                when deploying the operator will be used
               type: string
           required:
           - channel
           - name
-          - url
           type: object
         status:
           description: NotificationChannelStatus defines the observed state of NotificationChannel

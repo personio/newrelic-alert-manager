@@ -31,7 +31,9 @@ The dashboard API is fully covered by the operator.
 In order to deploy the operator, execute the following steps:
 
 * Clone this repository
-* Add your base64 encoded New Relic admin password to `deploy/1-secret.yaml`
+* Add your secrets to `deploy/1-secret.yaml`
+    * Add the base64 encoded New Relic admin password 
+    * Optionally, add the default Slack webhook URL for `SlackNotificationChannel`s.
 * Deploy the custom resource definitions by running
 ```kubectl apply -f deploy/crds/```
 * Deploy the operator manifests by running
