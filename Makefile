@@ -12,14 +12,12 @@ release: genapi unittest e2etest gendocs build
 
 .PHONY: e2etest
 e2etest:
+	kubectl create ns e2e-tests
 	operator-sdk test local ./e2e_tests --up-local --namespace e2e-tests
 
 .PHONY: e2etest-clean
 e2etest-clean:
-	kubectl delete --all alertpolicies.alerts.newrelic.io -n e2e-tests
-	kubectl delete --all dashboards.dashboards.newrelic.io -n e2e-tests
-	kubectl delete --all emailnotificationchannels.alerts.newrelic.io -n e2e-tests
-	kubectl delete --all slacknotificationchannels.alerts.newrelic.io -n e2e-tests
+	kubectl delete ns e2e-tests
 
 .PHONY: unittest
 unittest:

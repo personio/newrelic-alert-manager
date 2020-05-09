@@ -5,6 +5,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
+	"os"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -28,8 +29,10 @@ type SlackNotificationChannel struct {
 type SlackNotificationChannelSpec struct {
 	// The name of the notification channel created in New Relic
 	Name string `json:"name"`
-	// The Slack webhook URL
-	Url string `json:"url"`
+	// The Slack webhook URL.
+	// If left empty, the default URL specified when deploying the operator will be used
+	// +optional
+	Url string `json:"url,omitempty"`
 	// Name of the Slack channel. Should start with `#`
 	Channel string `json:"channel"`
 	// A label selector defining the alert policies covered by the notification channel
@@ -66,7 +69,7 @@ func (channel SlackNotificationChannel) NewChannel(policies AlertPolicyList) *do
 			Name: channel.Spec.Name,
 			Type: "slack",
 			Configuration: domain.Configuration{
-				Url:     channel.Spec.Url,
+				Url:     channel.getUrl(),
 				Channel: channel.Spec.Channel,
 			},
 			Links: domain.Links{
@@ -74,6 +77,14 @@ func (channel SlackNotificationChannel) NewChannel(policies AlertPolicyList) *do
 			},
 		},
 	}
+}
+
+func (channel SlackNotificationChannel) getUrl() string {
+	if channel.Spec.Url != "" {
+		return channel.Spec.Url
+	}
+
+	return os.Getenv("DEFAULT_SLACK_WEBHOOK_URL")
 }
 
 func GetPolicyIds(list AlertPolicyList) []int64 {
