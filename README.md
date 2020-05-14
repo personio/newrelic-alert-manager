@@ -1,4 +1,6 @@
-## New Relic alert manager
+# New Relic alert manager
+
+[![Build Status](https://travis-ci.org/personio/newrelic-alert-manager.svg?branch=master)](https://travis-ci.org/personio/newrelic-alert-manager)
 
 newrelic-alert-manager is a Kubernetes operator which automates the management of 
 New Relic dashboards, alert policies and notification channels.
