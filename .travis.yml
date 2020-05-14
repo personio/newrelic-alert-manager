@@ -3,7 +3,7 @@ language: go
 go:
 - 1.14.x
 
-install: false
+install: true
 
 env:
   - GO111MODULE=on GOFLAGS='-mod=vendor'
