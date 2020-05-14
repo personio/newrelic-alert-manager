@@ -1,31 +1,18 @@
-module github.com/fpetkovski/newrelic-alert-manager
+module github.com/personio/newrelic-alert-manager
 
 go 1.13
 
 require (
 	github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224
-	github.com/cosiner/argv v0.0.1 // indirect
-	github.com/go-delve/delve v1.3.2 // indirect
+	github.com/fpetkovski/newrelic-alert-manager v0.0.0-20200514094304-8b7f7dc8fe2a // indirect
 	github.com/go-logr/logr v0.1.0
-	github.com/golang/mock v1.4.0 // indirect
-	github.com/mattn/go-colorable v0.1.4 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
-	github.com/mattn/go-runewidth v0.0.8 // indirect
 	github.com/operator-framework/operator-sdk v0.14.0
-	github.com/peterh/liner v1.1.0 // indirect
-	github.com/russross/blackfriday/v2 v2.0.1 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
-	go.starlark.net v0.0.0-20200126005305-451bf671df23 // indirect
-	golang.org/x/arch v0.0.0-20191126211547-368ea8f32fff // indirect
-	golang.org/x/sys v0.0.0-20200124204421-9fbb57f87de9 // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 	k8s.io/api v0.0.0
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v12.0.0+incompatible
 	sigs.k8s.io/controller-runtime v0.4.0
-	sigs.k8s.io/kind v0.7.0 // indirect
 )
 
 // Pinned to kubernetes-1.16.2

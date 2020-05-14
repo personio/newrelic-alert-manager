@@ -1,7 +1,7 @@
 package v1alpha1
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

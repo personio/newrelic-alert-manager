@@ -2,7 +2,7 @@ package k8s
 
 import (
 	"context"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"

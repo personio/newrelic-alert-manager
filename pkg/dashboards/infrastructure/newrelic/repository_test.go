@@ -1,9 +1,9 @@
 package newrelic_test
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/internal/mocks"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
+	"github.com/personio/newrelic-alert-manager/internal/mocks"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
 	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"testing"

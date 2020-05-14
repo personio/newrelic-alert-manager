@@ -1,7 +1,7 @@
 package v1alpha1
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/notification_channels/domain"
+	"github.com/personio/newrelic-alert-manager/pkg/notification_channels/domain"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"

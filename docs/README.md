@@ -1649,7 +1649,7 @@ Data
 <td>
 <code>layout</code></br>
 <em>
-github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
+github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 </em>
 </td>
 <td>
@@ -1661,5 +1661,5 @@ github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>7cefac8</code>.
+on git commit <code>8b7f7dc</code>.
 </em></p>

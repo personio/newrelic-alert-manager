@@ -1,7 +1,7 @@
 package k8s
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"

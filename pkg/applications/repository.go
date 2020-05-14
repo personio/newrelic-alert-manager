@@ -3,7 +3,7 @@ package applications
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/internal"
+	"github.com/personio/newrelic-alert-manager/internal"
 )
 
 type Repository struct {

@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget"
+import "github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget"
 
 type Dashboard struct {
 	DashboardBody DashboardBody `json:"dashboard"`

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget"
 	"io/ioutil"
 	"net/http"
 )

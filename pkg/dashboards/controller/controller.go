@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/internal"
-	commonv1alpha1 "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/common/v1alpha1"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
+	"github.com/personio/newrelic-alert-manager/internal"
+	commonv1alpha1 "github.com/personio/newrelic-alert-manager/pkg/apis/common/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/applications"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/infrastructure/k8s"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/infrastructure/newrelic"
 	"github.com/go-logr/logr"
 	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"k8s.io/apimachinery/pkg/api/errors"

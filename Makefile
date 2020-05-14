@@ -4,11 +4,11 @@ TAG=latest
 
 .PHONY: build
 build:
-	operator-sdk build --go-build-args "-o build/_output/bin/newrelic-alert-manager" fpetkovski/newrelic-alert-manager:$(TAG)
+	operator-sdk build --go-build-args "-o build/_output/bin/newrelic-alert-manager" personio/newrelic-alert-manager:$(TAG)
 
 .PHONY: release
 release: genapi unittest e2etest gendocs build
-	docker push fpetkovski/newrelic-alert-manager:$(TAG)
+	docker push personio/newrelic-alert-manager:$(TAG)
 
 .PHONY: e2etest
 e2etest:
@@ -25,7 +25,7 @@ unittest:
 
 .PHONY: gendocs
 gendocs:
-	./hack/docs/gen-crd-api-reference-docs  -template-dir hack/docs/templates -config hack/docs/config.json -api-dir "github.com/fpetkovski/newrelic-alert-manager/pkg/apis/" -out-file docs/README.md
+	./hack/docs/gen-crd-api-reference-docs  -template-dir hack/docs/templates -config hack/docs/config.json -api-dir "github.com/personio/newrelic-alert-manager/pkg/apis/" -out-file docs/README.md
 
 .PHONY: genapi
 genapi:

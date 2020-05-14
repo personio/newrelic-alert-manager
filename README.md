@@ -19,7 +19,7 @@ The newrelic-alert-manager currently supports the management of the following al
 
 If you are unable to create a particular alerting condition due to lack of support by the operator or the New Relic API,
 you can try to fall back to defining it as a NRQL alerting condition instead.
-One such example is given in the [FAQ](https://github.com/fpetkovski/newrelic-alert-manager#how-do-i-create-an-apm-condition-of-type-web-transaction-percentiles) section. 
+One such example is given in the [FAQ](https://github.com/personio/newrelic-alert-manager#how-do-i-create-an-apm-condition-of-type-web-transaction-percentiles) section. 
 
 ### Notification channels
 
@@ -41,9 +41,9 @@ In order to deploy the operator, execute the following steps:
 ```kubectl apply -f deploy/```
 
 ## Example Usage
-Please check the [examples](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
+Please check the [examples](https://github.com/personio/newrelic-alert-manager/tree/master/hack/examples) folder to find out how to deploy alert policies together with notification channels.
 
-For more detailed information, you can take a look at the [complete API reference](https://github.com/fpetkovski/newrelic-alert-manager/tree/master/docs).
+For more detailed information, you can take a look at the [complete API reference](https://github.com/personio/newrelic-alert-manager/tree/master/docs).
 
 ## Debugging resources
 If you applied an alert policy but it was not created in New Relic, you can check the 

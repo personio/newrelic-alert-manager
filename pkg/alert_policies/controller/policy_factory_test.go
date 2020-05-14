@@ -1,9 +1,9 @@
 package controller_test
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/internal/mocks"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/controller"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/applications"
+	"github.com/personio/newrelic-alert-manager/internal/mocks"
+	"github.com/personio/newrelic-alert-manager/pkg/alert_policies/controller"
+	"github.com/personio/newrelic-alert-manager/pkg/applications"
 	"testing"
 )
 

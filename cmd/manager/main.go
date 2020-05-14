@@ -5,15 +5,15 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg"
+	"github.com/personio/newrelic-alert-manager/pkg"
 	"os"
 	"runtime"
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
 
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis"
-	"github.com/fpetkovski/newrelic-alert-manager/version"
+	"github.com/personio/newrelic-alert-manager/pkg/apis"
+	"github.com/personio/newrelic-alert-manager/version"
 
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	kubemetrics "github.com/operator-framework/operator-sdk/pkg/kube-metrics"

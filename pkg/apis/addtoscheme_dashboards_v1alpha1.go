@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/dashboards/v1alpha1"
 )
 
 func init() {

@@ -1,6 +1,6 @@
 package v1alpha1
 
-import "github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget"
+import "github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget"
 
 // Widget defines the widget parameters \
 // For more details, refer to the official [New Relic documentation](https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#widget-data)

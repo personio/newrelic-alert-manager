@@ -1,7 +1,7 @@
 package widget_test
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain/widget"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget"
 	"testing"
 )
 

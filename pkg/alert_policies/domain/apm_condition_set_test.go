@@ -2,7 +2,7 @@ package domain_test
 
 import (
 	"encoding/json"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/alert_policies/domain"
+	"github.com/personio/newrelic-alert-manager/pkg/alert_policies/domain"
 	"testing"
 )
 

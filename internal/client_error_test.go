@@ -2,7 +2,7 @@ package internal_test
 
 import (
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/internal"
+	"github.com/personio/newrelic-alert-manager/internal"
 	"testing"
 )
 

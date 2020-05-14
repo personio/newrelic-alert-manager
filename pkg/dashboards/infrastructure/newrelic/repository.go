@@ -3,8 +3,8 @@ package newrelic
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fpetkovski/newrelic-alert-manager/internal"
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/dashboards/domain"
+	"github.com/personio/newrelic-alert-manager/internal"
+	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/go-logr/logr"
 )
 

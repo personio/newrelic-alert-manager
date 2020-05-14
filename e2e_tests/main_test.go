@@ -1,7 +1,7 @@
 package e2e_tests
 
 import (
-	"github.com/fpetkovski/newrelic-alert-manager/pkg/apis"
+	"github.com/personio/newrelic-alert-manager/pkg/apis"
 	f "github.com/operator-framework/operator-sdk/pkg/test"
 	"k8s.io/apimachinery/pkg/runtime"
 	"testing"
