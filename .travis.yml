@@ -9,5 +9,5 @@ env:
   - GO111MODULE=on GOFLAGS='-mod=vendor'
 
 script:
-  - go test ./...
+  - go test ./pkg/...
 
