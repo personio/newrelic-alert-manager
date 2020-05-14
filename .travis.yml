@@ -3,11 +3,10 @@ language: go
 go:
 - 1.14.x
 
-install: true
+install: false
 
 env:
-  - GO111MODULE=on
-  - GOFLAGS='-mod vendor'
+  - GO111MODULE=on GOFLAGS='-mod vendor'
 
 test:
   script:
