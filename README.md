@@ -6,7 +6,7 @@ New Relic dashboards, alert policies and notification channels.
 It allows end users of a Kubernetes cluster to define these resources as [Kubernetes Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 
 ### Project status
-The project is currently considered to be stable and suitable for production use.
+The project is currently considered stable and suitable for production use.
 
 ### Supported features
 #### Alerts
