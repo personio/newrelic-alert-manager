@@ -6,3 +6,4 @@ go:
 test:
   script:
     - go test -mod=vendor ./...
+
