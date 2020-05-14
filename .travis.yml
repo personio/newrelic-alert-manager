@@ -6,9 +6,8 @@ go:
 install: false
 
 env:
-  - GO111MODULE=on GOFLAGS='-mod vendor'
+  - GO111MODULE=on GOFLAGS='-mod=vendor'
 
-test:
-  script:
-    - go test ./...
+script:
+  - go test ./...
 
