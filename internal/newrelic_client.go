@@ -7,6 +7,7 @@ import (
 	"github.com/go-logr/logr"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type NewrelicClient interface {
@@ -27,7 +28,9 @@ type newrelicClient struct {
 
 func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicClient {
 	return newrelicClient{
-		client:   &http.Client{},
+		client:   &http.Client{
+			Timeout: time.Second * 3,
+		},
 		log:      log.V(3),
 		url:      url,
 		adminKey: adminKey,

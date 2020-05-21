@@ -1661,5 +1661,5 @@ github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>8b7f7dc</code>.
+on git commit <code>ba2386b</code>.
 </em></p>
