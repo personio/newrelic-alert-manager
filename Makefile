@@ -31,3 +31,7 @@ gendocs:
 genapi:
 	operator-sdk generate k8s
 	operator-sdk generate crds
+
+.PHONY: archive
+archive:
+	tar -zcvf build/_output/deploy.tar.gz deploy
