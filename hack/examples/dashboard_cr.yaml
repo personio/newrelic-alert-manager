@@ -23,8 +23,7 @@ spec:
         metrics:
           - name: Errors/all
             values:
-              - errors_per_minute
-              - error_count
+              - error_rate
         entities:
           - kotlin-microservice-template-qa
     layout:
