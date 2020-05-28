@@ -12,6 +12,7 @@ func TestConfiguration_Version_ShouldBeEqualForEqualStructs(t *testing.T) {
 		Recipients:             "recipient",
 		IncludeJsonAttachments: false,
 		PreviousVersion:        "15",
+		Teams:                  "team1",
 	}
 
 	config2 := domain.Configuration{
@@ -20,13 +21,13 @@ func TestConfiguration_Version_ShouldBeEqualForEqualStructs(t *testing.T) {
 		Recipients:             "recipient",
 		IncludeJsonAttachments: false,
 		PreviousVersion:        "10",
+		Teams:                  "team1",
 	}
 
 	if config1.Version() != config2.Version() {
 		t.Error("Version should be equal")
 	}
 }
-
 
 func TestSlackNotificationChannel_Equals_WithoutPolicyIdsAttached(t *testing.T) {
 	first := domain.NotificationChannel{

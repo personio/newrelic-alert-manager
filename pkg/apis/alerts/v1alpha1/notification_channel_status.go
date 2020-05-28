@@ -6,7 +6,7 @@ import (
 
 // NotificationChannelStatus defines the observed state of NotificationChannel
 type NotificationChannelStatus struct {
-	v1alpha1.Status       `json:","`
+	v1alpha1.Status       `json:",inline"`
 	NewrelicConfigVersion string `json:"newrelicConfigVersion,omitempty"`
 }
 

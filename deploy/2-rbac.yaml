@@ -12,6 +12,8 @@ rules:
     - slacknotificationchannels/status
     - emailnotificationchannels
     - emailnotificationchannels/status
+    - opsgenienotificationchannels
+    - opsgenienotificationchannels/status
   verbs:
     - "*"
 - apiGroups:

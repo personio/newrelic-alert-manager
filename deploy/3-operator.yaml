@@ -37,6 +37,11 @@ spec:
                 secretKeyRef:
                   name: newrelic-alert-manager
                   key: defaultSlackWebhookUrl
+            - name: DEFAULT_OPS_GENIE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: newrelic-alert-manager
+                  key: defaultOpsgenieApiKey
           resources:
             requests:
               cpu: "0.5"

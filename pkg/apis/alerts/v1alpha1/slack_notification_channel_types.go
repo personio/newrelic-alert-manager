@@ -18,11 +18,11 @@ import (
 // +kubebuilder:printcolumn:name="Newrelic ID",type="string",JSONPath=".status.newrelicId",description="The New Relic ID of this channel"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description="The age of this channel"
 type SlackNotificationChannel struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	AbstractNotificationChannel `json:",inline"`
+	metav1.TypeMeta             `json:",inline"`
+	metav1.ObjectMeta           `json:"metadata,omitempty"`
 
-	Spec   SlackNotificationChannelSpec `json:"spec,omitempty"`
-	Status NotificationChannelStatus    `json:"status,omitempty"`
+	Spec SlackNotificationChannelSpec `json:"spec,omitempty"`
 }
 
 // SlackNotificationChannelSpec defines the desired state of NotificationChannel
@@ -39,27 +39,8 @@ type SlackNotificationChannelSpec struct {
 	PolicySelector labels.Set `json:"policySelector,omitempty"`
 }
 
-func (channel SlackNotificationChannel) GetNamespacedName() types.NamespacedName {
-	return types.NamespacedName{
-		Namespace: channel.Namespace,
-		Name:      channel.Name,
-	}
-}
-
 func (channel SlackNotificationChannel) GetPolicySelector() labels.Selector {
 	return channel.Spec.PolicySelector.AsSelector()
-}
-
-func (channel SlackNotificationChannel) GetStatus() NotificationChannelStatus {
-	return channel.Status
-}
-
-func (channel *SlackNotificationChannel) SetStatus(status NotificationChannelStatus) {
-	channel.Status = status
-}
-
-func (channel SlackNotificationChannel) IsDeleted() bool {
-	return channel.DeletionTimestamp != nil
 }
 
 func (channel SlackNotificationChannel) NewChannel(policies AlertPolicyList) *domain.NotificationChannel {
@@ -73,7 +54,7 @@ func (channel SlackNotificationChannel) NewChannel(policies AlertPolicyList) *do
 				Channel: channel.Spec.Channel,
 			},
 			Links: domain.Links{
-				PolicyIds: GetPolicyIds(policies),
+				PolicyIds: getPolicyIds(policies),
 			},
 		},
 	}
@@ -87,22 +68,7 @@ func (channel SlackNotificationChannel) getUrl() string {
 	return os.Getenv("DEFAULT_SLACK_WEBHOOK_URL")
 }
 
-func GetPolicyIds(list AlertPolicyList) []int64 {
-	var result []int64
-	for _, policy := range list.Items {
-		if policy.DeletionTimestamp != nil {
-			continue
-		}
-		if policy.Status.NewrelicId != nil {
-			result = append(result, *policy.Status.NewrelicId)
-		}
-	}
-
-	return result
-}
-
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 // NotificationChannelList contains a list of NotificationChannel
 type SlackNotificationChannelList struct {
 	metav1.TypeMeta `json:",inline"`
@@ -117,10 +83,7 @@ func (list SlackNotificationChannelList) Size() int {
 func (list SlackNotificationChannelList) GetNamespacedNames() []types.NamespacedName {
 	result := make([]types.NamespacedName, len(list.Items))
 	for idx, item := range list.Items {
-		result[idx] = types.NamespacedName{
-			Namespace: item.Namespace,
-			Name:      item.Name,
-		}
+		result[idx] = GetNamespacedName(&item)
 	}
 
 	return result

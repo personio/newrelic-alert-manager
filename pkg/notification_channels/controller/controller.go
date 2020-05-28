@@ -110,7 +110,7 @@ func (r *Reconcile) Reconcile(request reconcile.Request) (reconcile.Result, erro
 	channel := instance.NewChannel(policies)
 	channel.Channel.Configuration.PreviousVersion = instance.GetStatus().NewrelicConfigVersion
 
-	if instance.IsDeleted() {
+	if iov1alpha1.IsDeleted(instance) {
 		return r.deleteChannel(*channel, instance)
 	} else {
 		err = r.k8s.SetFinalizer(instance)

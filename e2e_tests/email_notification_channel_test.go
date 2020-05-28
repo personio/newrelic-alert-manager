@@ -2,9 +2,9 @@ package e2e_tests
 
 import (
 	"context"
-	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"testing"
@@ -48,6 +48,9 @@ func TestCreateNewEmailChannel(t *testing.T) {
 
 func newEmailChannel() *v1alpha1.EmailNotificationChannel {
 	return &v1alpha1.EmailNotificationChannel{
+		AbstractNotificationChannel: v1alpha1.AbstractNotificationChannel{
+			Status: v1alpha1.NotificationChannelStatus{},
+		},
 		ObjectMeta: v1.ObjectMeta{
 			Name:      resourceName,
 			Namespace: resourceNamespace,
@@ -58,7 +61,6 @@ func newEmailChannel() *v1alpha1.EmailNotificationChannel {
 			IncludeJsonAttachments: false,
 			PolicySelector:         map[string]string{"label": "value"},
 		},
-		Status: v1alpha1.NotificationChannelStatus{},
 	}
 }
 

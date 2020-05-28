@@ -32,11 +32,19 @@ type Channel struct {
 }
 
 type Configuration struct {
-	Url                    string `json:"url,omitempty"`
-	Channel                string `json:"channel,omitempty"`
+	// Slack
+	Url     string `json:"url,omitempty"`
+	Channel string `json:"channel,omitempty"`
+	// Email
 	Recipients             string `json:"recipients,omitempty"`
 	IncludeJsonAttachments bool   `json:"include_json_attachment,omitempty"`
-	PreviousVersion        string `json:"-" hash:"-"`
+	// OpsGenie
+	ApiKey string `json:"api_key,omitempty"`
+	Teams  string `json:"teams,omitempty"`
+	Tags   string `json:"tags,omitempty"`
+	// NewRelic does not return API keys, so we need to keep a hash
+	// of the config to know if it has been modified
+	PreviousVersion string `json:"-" hash:"-"`
 }
 
 func (c Configuration) IsModified() bool {
@@ -50,8 +58,10 @@ func (c Configuration) Version() string {
 
 func (c Configuration) Equals(other Configuration) bool {
 	return c.Channel == other.Channel &&
+		c.Recipients == other.Recipients &&
 		c.IncludeJsonAttachments == other.IncludeJsonAttachments &&
-		c.Recipients == other.Recipients
+		c.Teams == other.Teams &&
+		c.Tags == other.Tags
 }
 
 type Links struct {
@@ -74,4 +84,3 @@ func (links Links) Equals(other Links) bool {
 
 	return true
 }
-
