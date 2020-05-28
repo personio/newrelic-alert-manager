@@ -1,0 +1,20 @@
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: OpsgenieNotificationChannel
+metadata:
+  name: fp-test-123
+spec:
+  name: "[NewRelic operator] Opsgenie channel test"
+  # spec.api_key can be left empty if the defaultOpsgenieApiKey is defined
+  # when deploying the operator
+  api_key: "abc"
+  teams: #optional
+    - team 1
+    - team 2
+  tags: #optional
+    - tag 1
+    - tag 2
+  recipients: #optional
+    - fstehle1@personio.de
+    - fstehle2@personio.de
+  policySelector:
+    team: px

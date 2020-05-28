@@ -15,6 +15,7 @@ func RegisterControllers(m manager.Manager) error {
 	registerControllerFuncs := []RegisterControllerFunc{
 		registerEmailController(),
 		registerSlackController(),
+		registerOpsgenieController(),
 		alertpolicycontroller.Add,
 		dashboardcontroller.Add,
 	}
@@ -25,6 +26,14 @@ func RegisterControllers(m manager.Manager) error {
 		}
 	}
 	return nil
+}
+func registerOpsgenieController() RegisterControllerFunc {
+	add := func(mgr manager.Manager) error {
+		channelType := &v1alpha1.OpsgenieNotificationChannel{}
+		factory := v1alpha1.NewOpsgenieNotificationChannelFactory()
+		return channelcontroller.Add(mgr, "ops-genie-notification-channel-controller", channelType, factory)
+	}
+	return add
 }
 
 func registerSlackController() RegisterControllerFunc {

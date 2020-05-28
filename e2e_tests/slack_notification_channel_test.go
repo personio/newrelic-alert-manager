@@ -2,9 +2,9 @@ package e2e_tests
 
 import (
 	"context"
-	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"testing"
@@ -48,23 +48,28 @@ func TestCreateNewSlackChannel(t *testing.T) {
 
 func newSlackChannel() *v1alpha1.SlackNotificationChannel {
 	return &v1alpha1.SlackNotificationChannel{
+		AbstractNotificationChannel: v1alpha1.AbstractNotificationChannel{
+			Status: v1alpha1.NotificationChannelStatus{},
+		},
 		ObjectMeta: v1.ObjectMeta{
 			Name:      resourceName,
 			Namespace: resourceNamespace,
 		},
 		Spec: v1alpha1.SlackNotificationChannelSpec{
+
 			Name:           resourceName,
 			Url:            "http://e2etests",
 			Channel:        "#ete_tests",
 			PolicySelector: map[string]string{"label": "value"},
 		},
-		Status: v1alpha1.NotificationChannelStatus{},
 	}
 }
 
-
 func newSlackChannelWithSelector(name string, selector map[string]string) *v1alpha1.SlackNotificationChannel {
 	return &v1alpha1.SlackNotificationChannel{
+		AbstractNotificationChannel: v1alpha1.AbstractNotificationChannel{
+			Status: v1alpha1.NotificationChannelStatus{},
+		},
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
 			Namespace: resourceNamespace,
@@ -75,7 +80,6 @@ func newSlackChannelWithSelector(name string, selector map[string]string) *v1alp
 			Channel:        "#ete_tests",
 			PolicySelector: selector,
 		},
-		Status: v1alpha1.NotificationChannelStatus{},
 	}
 }
 

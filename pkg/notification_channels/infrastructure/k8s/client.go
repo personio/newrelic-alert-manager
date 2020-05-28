@@ -68,7 +68,7 @@ func (c *Client) DeleteChannel(channel v1alpha1.NotificationChannel) error {
 }
 
 func (c *Client) UpdateChannelStatus(channel v1alpha1.NotificationChannel) error {
-	return c.updateWithRetries(channel.GetNamespacedName(), channel)
+	return c.updateWithRetries(v1alpha1.GetNamespacedName(channel), channel)
 }
 
 func (c *Client) updateWithRetries(key types.NamespacedName, channel v1alpha1.NotificationChannel) error {

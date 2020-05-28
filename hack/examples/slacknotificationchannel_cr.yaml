@@ -5,7 +5,7 @@ metadata:
 spec:
   name: "[NewRelic operator] Slack channel test"
   channel: "#dx_playground"
-  # spec.url can be left empty if the defaultSlackWebhookUrl is specified
+  # spec.url can be left empty if the defaultSlackWebhookUrl is defined
   # when deploying the operator
   url: "abc"
   policySelector:

@@ -22,7 +22,6 @@ type EmailNotificationChannelSpec struct {
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 // EmailNotificationChannel is the Schema for the EmailNotificationChannels API
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:path=emailnotificationchannels,scope=Namespaced
@@ -31,34 +30,15 @@ type EmailNotificationChannelSpec struct {
 // +kubebuilder:printcolumn:name="Newrelic ID",type="string",JSONPath=".status.newrelicId",description="The New Relic ID of this channel"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description="The age of this channel"
 type EmailNotificationChannel struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	AbstractNotificationChannel `json:",inline"`
+	metav1.TypeMeta             `json:",inline"`
+	metav1.ObjectMeta           `json:"metadata,omitempty"`
 
-	Spec   EmailNotificationChannelSpec `json:"spec,omitempty"`
-	Status NotificationChannelStatus    `json:"status,omitempty"`
-}
-
-func (channel EmailNotificationChannel) GetNamespacedName() types.NamespacedName {
-	return types.NamespacedName{
-		Namespace: channel.Namespace,
-		Name:      channel.Name,
-	}
+	Spec EmailNotificationChannelSpec `json:"spec,omitempty"`
 }
 
 func (channel EmailNotificationChannel) GetPolicySelector() labels.Selector {
 	return channel.Spec.PolicySelector.AsSelector()
-}
-
-func (channel EmailNotificationChannel) GetStatus() NotificationChannelStatus {
-	return channel.Status
-}
-
-func (channel *EmailNotificationChannel) SetStatus(status NotificationChannelStatus) {
-	channel.Status = status
-}
-
-func (channel EmailNotificationChannel) IsDeleted() bool {
-	return channel.DeletionTimestamp != nil
 }
 
 func (channel EmailNotificationChannel) NewChannel(policies AlertPolicyList) *domain.NotificationChannel {
@@ -72,7 +52,7 @@ func (channel EmailNotificationChannel) NewChannel(policies AlertPolicyList) *do
 				IncludeJsonAttachments: channel.Spec.IncludeJsonAttachments,
 			},
 			Links: domain.Links{
-				PolicyIds: GetPolicyIds(policies),
+				PolicyIds: getPolicyIds(policies),
 			},
 		},
 	}
@@ -93,8 +73,7 @@ func (factory emailNotificationChannelFactory) NewList() NotificationChannelList
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
-// EmailNotificationChannelList contains a list of EmailNotificationChannel
+// NotificationChannelList contains a list of NotificationChannel
 type EmailNotificationChannelList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -108,10 +87,7 @@ func (list EmailNotificationChannelList) Size() int {
 func (list EmailNotificationChannelList) GetNamespacedNames() []types.NamespacedName {
 	result := make([]types.NamespacedName, len(list.Items))
 	for idx, item := range list.Items {
-		result[idx] = types.NamespacedName{
-			Namespace: item.Namespace,
-			Name:      item.Name,
-		}
+		result[idx] = GetNamespacedName(&item)
 	}
 
 	return result
