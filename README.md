@@ -23,7 +23,7 @@ One such example is given in the [FAQ](https://github.com/personio/newrelic-aler
 
 ### Notification channels
 
-With respect to notification channels, the currently supported types are Email and Slack channels.  
+With respect to notification channels, the currently supported types are Email, Slack and Opsgenie channels.  
 
 ### Dashboards
 The dashboard API is fully covered by the operator.
