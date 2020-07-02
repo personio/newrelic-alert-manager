@@ -6,7 +6,6 @@ spec:
   name: "[NewRelic operator] Opsgenie channel test"
   # spec.api_key can be left empty if the defaultOpsgenieApiKey is defined
   # when deploying the operator
-  api_key: "abc"
   teams: #optional
     - team 1
     - team 2

@@ -1,0 +1,165 @@
+{{- if (not .Values.isDev) }}
+apiVersion: dashboards.newrelic.io/v1alpha1
+kind: Dashboard
+metadata:
+  name: {{.Release.Name}}
+spec:
+  # The name of the dashboard that will appear in New Relic
+  title: "[{{.Values.env}}] {{ .Release.Name }}"
+  widgets:
+    # Name of the widget
+  - title: Average response time, by tier (ms)
+    # A visualization type to use for the widget.
+    # The type will depend on the metric being plotted
+    visualization: application_breakdown
+    data:
+      # Defines an APM metric
+      apm:
+        # How far in the past should the metric be plotted
+        sinceSeconds: 1800
+        # A list of New Relic applications to plot the metric for
+        entities:
+          - {{ .Release.Name }}
+        # A list of metrics to plot.
+        # If empty, the default application breakdown widget will be plotted
+        metrics: []
+    # Defines where to place the widget on the dashboard
+    layout:
+      row: 1
+      column: 1
+      width: 1
+      height: 1
+
+  - title: Throughput (rpm)
+    visualization: metric_line_chart
+    data:
+      apm:
+        sinceSeconds: 1800
+        entities:
+          - {{ .Release.Name }}
+        # To find out how to discover application metrics,
+        # see: https://personio.atlassian.net/wiki/spaces/PER/pages/1638630321/New+Relic+monitoring+guidelines#Step-4%3A-Plot-additional-metrics
+        metrics:
+          - name: HttpDispatcher
+            values: 
+              - requests_per_minute
+    layout:
+      row: 1
+      column: 2
+      width: 1
+      height: 1
+  
+  - title: Error rate
+    visualization: metric_line_chart
+    data:
+      apm:
+        sinceSeconds: 1800
+        metrics:
+          - name: Errors/all
+            values:
+              - errors_per_minute
+              - error_count
+        entities:
+          - '{{.Release.Name}}'
+    layout:
+      row: 1
+      column: 3
+      width: 1
+      height: 1
+
+  - title: Thread pool size
+    visualization: metric_line_chart
+    data:
+      apm:
+        sinceSeconds: 18000
+        metrics:
+          - name: JmxBuiltIn/Threads/Thread Count
+            values:
+              - max_value
+        entities:
+          - {{.Release.Name}}
+        facet: host
+    layout:
+      row: 2
+      column: 1
+      width: 1
+      height: 1
+  
+  - title: Average CPU utilization
+    visualization: faceted_line_chart
+    data:
+      nrql: "SELECT average(cpuUsedCores/cpuLimitCores) * 100 FROM K8sContainerSample WHERE deploymentName = '{{ .Release.Name }}' FACET podName TIMESERIES"
+    layout:
+      row: 2
+      column: 2
+      width: 1
+      height: 1
+  
+  - title: Average Memory utilization
+    visualization: faceted_line_chart
+    data:
+      nrql: "SELECT average(memoryUsedBytes/memoryLimitBytes) * 100 FROM K8sContainerSample WHERE deploymentName = '{{ .Release.Name }}' FACET podName TIMESERIES"
+    layout:
+      row: 2
+      column: 3
+      width: 1
+      height: 1
+  
+  - title: Database CPU utilization
+    visualization: line_chart
+    data:
+      nrql: SELECT average(provider.cpuUtilization.Average) FROM DatastoreSample WHERE displayName = 'microservices-{{ .Values.env }}' TIMESERIES SINCE 1 hour ago
+    layout:
+      row: 3
+      column: 1
+      width: 1
+      height: 1
+  
+  - title: Number of RDS connections
+    visualization: faceted_line_chart
+    data:
+      nrql: SELECT average(`provider.databaseConnections.Average`) as 'connections in use' From DatastoreSample WHERE provider = 'RdsDbInstance' and displayName IN ('microservices-dev', 'dev') FACET displayName TIMESERIES Since 1 hour ago Until 10 minutes ago
+    layout:
+      row: 3
+      column: 2
+      width: 1
+      height: 1
+
+  - title: Database calls per minute
+    visualization: metric_line_chart
+    data:
+      apm:
+        sinceSeconds: 18000
+        metrics:
+          - name: Database/all
+            values:
+              - call_count
+        entities:
+          - {{.Release.Name}}
+    layout:
+      row: 3
+      column: 3
+      width: 1
+      height: 1
+
+  - title: Duration per transaction (95th percentile)
+    visualization: facet_table
+    data:
+      nrql: SELECT percentile(duration) FROM Transaction FACET name WHERE appName = '{{.Release.Name}}'
+    layout:
+      row: 4
+      column: 1
+      width: 2
+      height: 1 
+
+  - title: Total number of restarts
+    visualization: facet_table
+    data:
+      nrql: SELECT max(restartCount) - min(restartCount) FROM K8sContainerSample WHERE deploymentName = '{{.Release.Name}}' FACET podName, containerName 
+    layout:
+      row: 5
+      column: 1
+      width: 2
+      height: 1
+
+{{ end }}

@@ -1,0 +1,127 @@
+{{- if (not .Values.isDev) }}
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: AlertPolicy
+metadata:
+  # The name of the Kubernetes resource
+  name: {{.Release.Name}}
+  labels:
+    service: {{ .Release.Name }}
+    env: {{.Values.env}}
+spec:
+  # The name of policy that will appear in https://alerts.newrelic.com/
+  name: "[{{.Values.env}}] {{ .Release.Name }}"
+  # Defines when New Relic will raise an alert.
+  # For more information, see https://docs.newrelic.com/docs/alerts/new-relic-alerts/configuring-alert-policies/specify-when-new-relic-creates-incidents#preference-options
+  incident_preference: "per_policy"
+  # A list of conditions based on APM metrics
+  apmConditions:
+    # The name of the alert condition that will appear in New Relic
+    - name: High error percentage
+      # A list of all available types can be found here:
+      # https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#type
+      type: apm_app_metric
+      # A list of all available metrics can be found here: 
+      # https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#metric
+      metric: error_percentage
+      # A list of entities to monitor
+      entities:
+        - "{{.Release.Name}}"
+      # Defines the critical alert threshold for the metric.
+      # Once this threshold is breached, an incident will be generated
+      alertThreshold:
+        # See: https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_time_function
+        timeFunction: all
+        # See: https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_operator
+        operator: above
+        # See: https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_threshold
+        value: "0"
+        # See: https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#terms_duration
+        durationMinutes: 5
+
+    - name: High thread pool saturation
+      type: apm_app_metric
+      metric: user_defined
+      userDefined:
+        # For discovering user-defined metrics,
+        # see: https://insights.newrelic.com/accounts/2088954/explorer/metrics#view=ENTITY_TYPES&timeWindow=30
+        metric: "JmxBuiltIn/Threads/Thread Count"
+        value_function: max
+      entities:
+        - "{{.Release.Name}}"
+      alertThreshold:
+        timeFunction: all
+        operator: above
+        value: "150"
+        durationMinutes: 5
+      warningThreshold:
+        timeFunction: all
+        operator: above
+        value: "120"
+        durationMinutes: 5
+
+    - name: High latency
+      type: apm_app_metric
+      metric: response_time_web
+      entities:
+        - "{{.Release.Name}}"
+      alertThreshold:
+        timeFunction: all
+        operator: above
+        value: "0.1"
+        durationMinutes: 5
+
+  nrqlConditions:
+    - name: Pods not ready for longer than 10 minutes
+      # The query which will be used to evaluate the alert condition
+      query: SELECT latest(isReady) + 1 FROM K8sPodSample WHERE status = 'Running' and isReady = 0 AND deploymentName = '{{ .Release.Name }}' FACET podName
+      # The SINCE clause in the NRQL query
+      sinceMinutes: 3
+      alertThreshold:
+        timeFunction: all
+        operator: equal
+        value: "1"
+        durationMinutes: 10
+      # See: https://docs.newrelic.com/docs/alerts/rest-api-alerts/new-relic-alerts-rest-api/alerts-conditions-api-field-names#value_function
+      valueFunction: single_value
+
+    - name: High memory usage
+      query: "SELECT average(memoryUsedBytes/memoryLimitBytes) FROM K8sContainerSample WHERE deploymentName = '{{.Release.Name}}'"
+      sinceMinutes: 3
+      alertThreshold:
+        operator: above
+        timeFunction: all
+        value: "0.8"
+        durationMinutes: 2
+      valueFunction: single_value
+
+    - name: High CPU usage
+      query: "SELECT average(cpuUsedCores/cpuLimitCores) FROM K8sContainerSample WHERE deploymentName = '{{.Release.Name}}'"
+      sinceMinutes: 3
+      alertThreshold:
+        operator: above
+        timeFunction: all
+        value: "0.8"
+        durationMinutes: 2
+      valueFunction: single_value
+
+    - name: Low replica count
+      query: SELECT latest(podsAvailable) FROM K8sDeploymentSample WHERE deploymentName = '{{ .Release.Name }}'
+      sinceMinutes: 3
+      alertThreshold:
+        operator: below
+        timeFunction: all
+        value: "2"
+        durationMinutes: 10
+      valueFunction: single_value
+---
+apiVersion: alerts.newrelic.io/v1alpha1
+kind: SlackNotificationChannel
+metadata:
+  name: {{.Release.Name}}
+spec:
+  name: "[{{.Values.env}}] {{ .Release.Name }}"
+  channel: "#dx_playground"
+  policySelector:
+    service: {{ .Release.Name }}
+    env: {{.Values.env}}
+{{ end }}
