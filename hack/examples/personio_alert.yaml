@@ -85,7 +85,7 @@ spec:
       valueFunction: single_value
 
     - name: High memory usage
-      query: "SELECT average(memoryUsedBytes/memoryLimitBytes) FROM K8sContainerSample WHERE deploymentName = '{{.Release.Name}}'"
+      query: "SELECT average(memoryWorkingSetBytes/memoryLimitBytes) FROM K8sContainerSample WHERE deploymentName = '{{.Release.Name}}'"
       sinceMinutes: 3
       alertThreshold:
         operator: above
