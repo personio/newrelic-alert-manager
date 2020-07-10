@@ -98,7 +98,7 @@ spec:
   - title: Average Memory utilization
     visualization: faceted_line_chart
     data:
-      nrql: "SELECT average(memoryUsedBytes/memoryLimitBytes) * 100 FROM K8sContainerSample WHERE deploymentName = '{{ .Release.Name }}' FACET podName TIMESERIES"
+      nrql: "SELECT average(memoryWorkingSetBytes/memoryLimitBytes) * 100 FROM K8sContainerSample WHERE deploymentName = '{{ .Release.Name }}' FACET podName TIMESERIES"
     layout:
       row: 2
       column: 3

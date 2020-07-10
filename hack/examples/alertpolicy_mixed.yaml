@@ -9,7 +9,7 @@ spec:
   incident_preference: "per_policy"
   nrqlConditions:
     - name: High container memory usage
-      query: "SELECT sum(memoryUsedBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
+      query: "SELECT sum(memoryWorkingSetBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
       sinceMinutes: 15
       alertThreshold:
         timeFunction: any
