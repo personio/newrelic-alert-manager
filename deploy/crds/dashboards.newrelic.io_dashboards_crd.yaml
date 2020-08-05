@@ -127,6 +127,9 @@ spec:
                     - row
                     - width
                     type: object
+                  notes:
+                    description: Notes to add to the widget
+                    type: string
                   title:
                     description: The title of the widget created in New Relic
                     type: string

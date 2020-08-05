@@ -54,6 +54,7 @@ func (factory DashboardFactory) newWidgets(widgets []v1alpha1.Widget) (widget.Wi
 			Layout:        w.Layout,
 			Presentation: widget.Presentation{
 				Title: w.Title,
+				Notes: w.Notes,
 			},
 		}
 	}

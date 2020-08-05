@@ -112,6 +112,10 @@ func TestWidgetList_Equals_ValidTestCases(t *testing.T) {
 func newWidget(id int) widget.Widget {
 	return widget.Widget{
 		Visualization: "v" + string(id),
+		Presentation: widget.Presentation{
+			Title: "title" + string(id),
+			Notes: "notes" + string(id),
+		},
 		Data: widget.DataList{
 			{
 				Nrql: "query " + string(id),
@@ -129,6 +133,10 @@ func newWidget(id int) widget.Widget {
 func newApmWidget(id int) widget.Widget {
 	return widget.Widget{
 		Visualization: "v" + string(id),
+		Presentation: widget.Presentation{
+			Title: "title" + string(id),
+			Notes: "notes" + string(id),
+		},
 		Data: widget.DataList{
 			{
 				ApmMetric: &widget.ApmMetric{
