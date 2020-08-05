@@ -57,7 +57,7 @@ func newEmailChannel() *v1alpha1.EmailNotificationChannel {
 		},
 		Spec: v1alpha1.EmailNotificationChannelSpec{
 			Name:                   resourceName,
-			Recipients:             "test@e2e.com",
+			Recipients:             "test@personio.de",
 			IncludeJsonAttachments: false,
 			PolicySelector:         map[string]string{"label": "value"},
 		},

@@ -31,6 +31,8 @@ type Widget struct {
 	// - `metric_line_chart` (used for apm metrics) \
 	// +kubebuilder:validation:Enum=application_breakdown;attribute_sheet;background_breakdown;billboard;billboard_comparison;comparison_line_chart;event_table;facet_bar_chart;facet_pie_chart;facet_table;faceted_area_chart;faceted_line_chart;funnel;gauge;heatmap;histogram;json;line_chart;list;metric_line_chart
 	Visualization string `json:"visualization"`
+	// Notes to add to the widget
+	Notes string `json:"notes,omitempty"`
 	// The data to plot on the widget
 	Data Data `json:"data"`
 	// Defines the layout of the widget within the dashboard
