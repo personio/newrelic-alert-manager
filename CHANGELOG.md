@@ -18,3 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enables the management of New Relic alerts, notifications channels and dashboards as Kubernetes custom resources.
 
 [1.0.0]: https://github.com/personio/newrelic-alert-manager/releases/tag/v1.0.0
+[1.0.1]: https://github.com/personio/newrelic-alert-manager/releases/tag/v1.0.1
+[1.1.0]: https://github.com/personio/newrelic-alert-manager/releases/tag/v1.1.0
+[1.1.0]: https://github.com/personio/newrelic-alert-manager/releases/tag/v1.1.0
