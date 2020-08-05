@@ -1,15 +1,76 @@
 <p>Packages:</p>
 <ul>
 <li>
+<a href="#common.newrelic.io%2fv1alpha1">common.newrelic.io/v1alpha1</a>
+</li>
+<li>
 <a href="#dashboards.newrelic.io%2fv1alpha1">dashboards.newrelic.io/v1alpha1</a>
 </li>
 <li>
 <a href="#alerts.newrelic.io%2fv1alpha1">alerts.newrelic.io/v1alpha1</a>
 </li>
-<li>
-<a href="#common.newrelic.io%2fv1alpha1">common.newrelic.io/v1alpha1</a>
-</li>
 </ul>
+<h2 id="common.newrelic.io/v1alpha1">common.newrelic.io/v1alpha1</h2>
+<p>
+<p>Package v1alpha1 contains API Schema definitions for the dashboards v1alpha1 API group</p>
+</p>
+Resource Types:
+<ul></ul>
+<h3 id="common.newrelic.io/v1alpha1.Status">Status
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#alerts.newrelic.io/v1alpha1.AlertPolicy">AlertPolicy</a>, 
+<a href="#dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard</a>, 
+<a href="#alerts.newrelic.io/v1alpha1.NotificationChannelStatus">NotificationChannelStatus</a>)
+</p>
+<p>
+<p>Status defines the observed state of a New Relic resource</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>status</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>The value will be set to <code>Ready</code> once the policy has been created in New Relic</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>reason</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>When a policy fails to be created, the value will be set to the error message received from New Relic</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>newrelicId</code></br>
+<em>
+int64
+</em>
+</td>
+<td>
+<p>The resource id in New Relic</p>
+</td>
+</tr>
+</tbody>
+</table>
+<hr/>
 <h2 id="dashboards.newrelic.io/v1alpha1">dashboards.newrelic.io/v1alpha1</h2>
 <p>
 <p>Package v1alpha1 contains API Schema definitions for the dashboards v1alpha1 API group</p>
@@ -368,6 +429,17 @@ Available options are: <br />
 - <code>line_chart</code> <br />
 - <code>list</code> <br />
 - <code>metric_line_chart</code> (used for apm metrics) </p>
+</td>
+</tr>
+<tr>
+<td>
+<code>notes</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Notes to add to the widget</p>
 </td>
 </tr>
 <tr>
@@ -1859,68 +1931,7 @@ For more information, please refer to the official <a href="https://docs.newreli
 </tbody>
 </table>
 <hr/>
-<h2 id="common.newrelic.io/v1alpha1">common.newrelic.io/v1alpha1</h2>
-<p>
-<p>Package v1alpha1 contains API Schema definitions for the dashboards v1alpha1 API group</p>
-</p>
-Resource Types:
-<ul></ul>
-<h3 id="common.newrelic.io/v1alpha1.Status">Status
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#alerts.newrelic.io/v1alpha1.AlertPolicy">AlertPolicy</a>, 
-<a href="#dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard</a>, 
-<a href="#alerts.newrelic.io/v1alpha1.NotificationChannelStatus">NotificationChannelStatus</a>)
-</p>
-<p>
-<p>Status defines the observed state of a New Relic resource</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>status</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>The value will be set to <code>Ready</code> once the policy has been created in New Relic</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>reason</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>When a policy fails to be created, the value will be set to the error message received from New Relic</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>newrelicId</code></br>
-<em>
-int64
-</em>
-</td>
-<td>
-<p>The resource id in New Relic</p>
-</td>
-</tr>
-</tbody>
-</table>
-<hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>1f27d2d</code>.
+on git commit <code>c102e95</code>.
 </em></p>
