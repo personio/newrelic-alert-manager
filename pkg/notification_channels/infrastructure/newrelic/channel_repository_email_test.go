@@ -77,9 +77,16 @@ func TestEmailChannelRepository_SaveExistingChannel(t *testing.T) {
 
 	client.On(
 		"Get",
-		"alerts_channels.json",
+		"alerts_channels.json?page=1",
 	).Return(
 		newEmailResponse(10, "test", "test@test.com"),
+		nil,
+	)
+	client.On(
+		"Get",
+		"alerts_channels.json?page=2",
+	).Return(
+		newEmptyResponse(),
 		nil,
 	)
 
@@ -117,9 +124,16 @@ func TestEmailChannelRepository_SaveExistingChannelDeletedFromNewrelic(t *testin
 
 	client.On(
 		"Get",
-		"alerts_channels.json",
+		"alerts_channels.json?page=1",
 	).Return(
 		newEmailResponse(20, "test", "test@test.com"),
+		nil,
+	)
+	client.On(
+		"Get",
+		"alerts_channels.json?page=2",
+	).Return(
+		newEmptyResponse(),
 		nil,
 	)
 

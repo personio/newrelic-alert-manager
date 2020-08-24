@@ -149,3 +149,20 @@ func newEmailResponse(id int64, name string, recipients string) *http.Response {
 		Close:      false,
 	}
 }
+
+func newEmptyResponse() *http.Response {
+	request := map[string][]string{
+		"channels": {},
+	}
+
+	body, err := json.Marshal(request)
+	if err != nil {
+		panic(err)
+	}
+
+	return &http.Response{
+		StatusCode: 200,
+		Body:       ioutil.NopCloser(bytes.NewReader(body)),
+		Close:      false,
+	}
+}

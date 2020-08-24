@@ -8,6 +8,7 @@ import (
 	"github.com/personio/newrelic-alert-manager/pkg/notification_channels/domain"
 	"github.com/go-logr/logr"
 	"io/ioutil"
+	"strconv"
 )
 
 type ChannelRepository struct {
@@ -106,27 +107,50 @@ func (repository *ChannelRepository) Delete(channel domain.NotificationChannel) 
 }
 
 func (repository *ChannelRepository) get(channelId int64) (*domain.NotificationChannel, error) {
-	response, err := repository.client.Get("alerts_channels.json")
+	channels, err := repository.getAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var channels domain.NotificationChannelList
-	err = json.NewDecoder(response.Body).Decode(&channels)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, channel := range channels.Channels {
-		if *channel.Id == channelId {
-			return &domain.NotificationChannel{
-				Channel: channel,
-			}, nil
+	for _, channel := range channels {
+		if *channel.Channel.Id == channelId {
+			return &channel, nil
 		}
 	}
 
 	return nil, nil
 }
+
+func (repository *ChannelRepository) getAll() ([]domain.NotificationChannel, error) {
+	var result []domain.NotificationChannel
+	page := 1
+	for {
+		response, err := repository.client.Get("alerts_channels.json?page=" + strconv.Itoa(page))
+		if err != nil {
+			return nil, err
+		}
+
+		var channels domain.NotificationChannelList
+		err = json.NewDecoder(response.Body).Decode(&channels)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(channels.Channels) == 0 {
+			break
+		}
+
+		for _, channel := range channels.Channels {
+			result = append(result, domain.NotificationChannel{
+				Channel: channel,
+			})
+		}
+		page += 1
+	}
+
+	return result, nil
+}
+
 
 func marshal(channel domain.NotificationChannel) ([]byte, error) {
 	payload, err := json.Marshal(channel)
