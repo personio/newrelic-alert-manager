@@ -7,7 +7,7 @@ build:
 	operator-sdk build --go-build-args "-o build/_output/bin/newrelic-alert-manager" personio/newrelic-alert-manager:$(TAG)
 
 .PHONY: release
-release: genapi unittest e2etest gendocs build
+release: genapi unittest e2etest gendocs build archive
 	docker push personio/newrelic-alert-manager:$(TAG)
 
 .PHONY: e2etest
