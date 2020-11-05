@@ -11,6 +11,14 @@ spec:
     - name: High container memory usage
       query: "SELECT sum(memoryWorkingSetBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
       sinceMinutes: 15
+      signal:
+        aggregationWindowSeconds: 90
+        evaluationOffset: 15
+        fillOption: static
+        fillValue: "15"
+      expiration:
+        expirationDurationSeconds: 60
+        openViolationOnExpiration: true
       alertThreshold:
         timeFunction: any
         operator: above
@@ -22,12 +30,4 @@ spec:
         value: "0.70"
         durationMinutes: 20
       valueFunction: single_value
-    - name: High container cpu usage
-      query: "SELECT average(cpuUsedCores/cpuLimitCores)*100 FROM K8sContainerSample FACET podName"
-      sinceMinutes: 15
-      alertThreshold:
-        timeFunction: any
-        operator: above
-        value: "80"
-        durationMinutes: 60
-      valueFunction: single_value
+   

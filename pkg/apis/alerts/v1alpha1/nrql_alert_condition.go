@@ -33,28 +33,42 @@ type NrqlCondition struct {
 
 type Signal struct {
 	// Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#aggregation_window)
-	AggregationWindow string `json:"aggregationWindow"`
+	// +kubebuilder:validation:Maximum=900
+	// +kubebuilder:validation:Minimum=30
+	// +optional
+	AggregationWindow *int `json:"aggregationWindowSeconds,omitempty"`
 	// The offset is how long we wait for late data before evaluating each aggregation window
 	// For additional information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_offset)
-	EvaluationOffset string `json:"evaluationOffset"`
+	// +kubebuilder:validation:Maximum=20
+	// +kubebuilder:validation:Minimum=1
+	// +optional
+	EvaluationOffset *int `json:"evaluationOffset,omitempty"`
 	// For sporadic data, you can avoid false alerts by filling the gaps (empty windows) with synthetic data. The default is None.
 	// For additional information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_option)
-	FillOption string `json:"fillOption"`
+	// +kubebuilder:validation:Enum=none;static;last_value
+	// +optional
+	FillOption *string `json:"fillOption,omitempty"`
 	// This is the value used by the fill_option custom value. The default is 0.
 	// For additional information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_value)
-	FillValue string `json:"fillValue"`
+	// +optional
+	FillValue *string `json:"fillValue,omitempty"`
 }
 
 type Expiration struct {
 	// How long to wait, in seconds, after the last data point is received by our platform before considering the signal as lost.
 	// For more information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_duration)
-	ExpirationDuration string `json:"expirationDuration"`
+	// +kubebuilder:validation:Maximum=172800
+	// +kubebuilder:validation:Minimum=30
+	// +optional
+	ExpirationDuration *int `json:"expirationDurationSeconds,omitempty"`
 	// When true, this closes all currently open violations when no signal is heard within the expiration_duration time.
 	// For more information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#open_violation_on_expiration)
-	OpenViolationOnExpiration bool `json:"openViolationOnExpiration"`
+	// +optional
+	OpenViolationOnExpiration *bool `json:"openViolationOnExpiration,omitempty"`
 	// When true, this opens a loss of signal violation when no signal within the expiration_duration time.
 	// For more information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#close_violations_on_expiration)
-	CloseViolationsOnExpiration bool `json:"closeViolationsOnExpiration"`
+	// +optional
+	CloseViolationsOnExpiration *bool `json:"closeViolationsOnExpiration,omitempty"`
 }
 
 type Threshold struct {
