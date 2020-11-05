@@ -362,22 +362,20 @@ spec:
                           more information, please refer to the official [New Relic
                           documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#close_violations_on_expiration)
                         type: boolean
-                      expirationDuration:
+                      expirationDurationSeconds:
                         description: How long to wait, in seconds, after the last
                           data point is received by our platform before considering
                           the signal as lost. For more information, please refer to
                           the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_duration)
-                        type: string
+                        maximum: 172800
+                        minimum: 30
+                        type: integer
                       openViolationOnExpiration:
                         description: When true, this closes all currently open violations
                           when no signal is heard within the expiration_duration time.
                           For more information, please refer to the official [New
                           Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#open_violation_on_expiration)
                         type: boolean
-                    required:
-                    - closeViolationsOnExpiration
-                    - expirationDuration
-                    - openViolationOnExpiration
                     type: object
                   name:
                     description: The name of the nrql policy that will be created
@@ -391,30 +389,33 @@ spec:
                   signal:
                     description: Used to specify signal properties for missing data
                     properties:
-                      aggregationWindow:
+                      aggregationWindowSeconds:
                         description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#aggregation_window)
-                        type: string
+                        maximum: 900
+                        minimum: 30
+                        type: integer
                       evaluationOffset:
                         description: The offset is how long we wait for late data
                           before evaluating each aggregation window For additional
                           information, please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_offset)
-                        type: string
+                        maximum: 20
+                        minimum: 1
+                        type: integer
                       fillOption:
                         description: For sporadic data, you can avoid false alerts
                           by filling the gaps (empty windows) with synthetic data.
                           The default is None. For additional information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_option)
+                        enum:
+                        - none
+                        - static
+                        - last_value
                         type: string
                       fillValue:
                         description: This is the value used by the fill_option custom
                           value. The default is 0. For additional information, please
                           refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_value)
                         type: string
-                    required:
-                    - aggregationWindow
-                    - evaluationOffset
-                    - fillOption
-                    - fillValue
                     type: object
                   sinceMinutes:
                     description: Defines the `SINCE` clause in the NRQL query

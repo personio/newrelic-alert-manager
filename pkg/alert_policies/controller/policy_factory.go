@@ -118,10 +118,18 @@ func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 		return nil
 	}
 
+	var expiration *string
+	if e.ExpirationDuration == nil {
+		expiration = nil
+	} else {
+		tmp := strconv.Itoa(*e.ExpirationDuration)
+		expiration = &tmp
+	}
+
 	return &domain.Expiration{
-		ExpirationDuration:          e.ExpirationDuration,
-		OpenViolationOnExpiration:   e.OpenViolationOnExpiration,
-		CloseViolationsOnExpiration: e.CloseViolationsOnExpiration,
+		ExpirationDuration:          expiration,
+		OpenViolationOnExpiration:   boolWithDefault(e.OpenViolationOnExpiration, false),
+		CloseViolationsOnExpiration: boolWithDefault(e.CloseViolationsOnExpiration, false),
 	}
 }
 
@@ -136,10 +144,10 @@ func newSignal(s *v1alpha1.Signal) *domain.Signal {
 	}
 
 	return &domain.Signal{
-		AggregationWindow: s.AggregationWindow,
-		EvaluationOffset:  s.EvaluationOffset,
-		FillOption:        s.FillOption,
-		FillValue:         s.FillValue,
+		AggregationWindow: intToStringWithDefault(s.AggregationWindow, 60),
+		EvaluationOffset:  intToStringWithDefault(s.EvaluationOffset, 3),
+		FillOption:        stringWithDefault(s.FillOption, "none"),
+		FillValue:         stringWithDefault(s.FillValue, ""),
 	}
 }
 
@@ -225,6 +233,14 @@ func stringWithDefault(scope *string, defaultValue string) string {
 	}
 
 	return *scope
+}
+
+func intToStringWithDefault(val *int, defaultValue int) string {
+	if val == nil {
+		return strconv.Itoa(defaultValue)
+	}
+
+	return strconv.Itoa(*val)
 }
 
 func (policyFactory PolicyFactory) getApplicationIds(condition v1alpha1.ApmCondition) ([]string, error) {

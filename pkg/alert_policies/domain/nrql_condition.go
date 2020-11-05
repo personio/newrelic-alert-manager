@@ -73,9 +73,9 @@ func (s *Signal) getHashKey() string {
 }
 
 type Expiration struct {
-	ExpirationDuration          string `json:"expiration_duration"`
-	OpenViolationOnExpiration   bool   `json:"open_violation_on_expiration"`
-	CloseViolationsOnExpiration bool   `json:"close_violations_on_expiration"`
+	ExpirationDuration          *string `json:"expiration_duration"`
+	OpenViolationOnExpiration   bool    `json:"open_violation_on_expiration"`
+	CloseViolationsOnExpiration bool    `json:"close_violations_on_expiration"`
 }
 
 func (e *Expiration) getHashKey() string {
@@ -83,5 +83,5 @@ func (e *Expiration) getHashKey() string {
 		return ""
 	}
 
-	return fmt.Sprintf("%s-%t-%t", e.ExpirationDuration, e.OpenViolationOnExpiration, e.CloseViolationsOnExpiration)
+	return fmt.Sprintf("%v-%t-%t", e.ExpirationDuration, e.OpenViolationOnExpiration, e.CloseViolationsOnExpiration)
 }
