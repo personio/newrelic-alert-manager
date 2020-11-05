@@ -107,7 +107,33 @@ func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.Nrql
 				Query:      condition.Query,
 				SinceValue: strconv.Itoa(condition.Since),
 			},
+			Signal:     newSignal(condition.Signal),
+			Expiration: newExpiration(condition.Expiration),
 		},
+	}
+}
+
+func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
+	if e == nil {
+		return nil
+	}
+	return &domain.Expiration{
+		ExpirationDuration:          e.ExpirationDuration,
+		OpenViolationOnExpiration:   e.OpenViolationOnExpiration,
+		CloseViolationsOnExpiration: e.CloseViolationsOnExpiration,
+	}
+}
+
+func newSignal(s *v1alpha1.Signal) *domain.Signal {
+	if s == nil {
+		return nil
+	}
+
+	return &domain.Signal{
+		AggregationWindow: s.AggregationWindow,
+		EvaluationOffset:  s.EvaluationOffset,
+		FillOption:        s.FillOption,
+		FillValue:         s.FillValue,
 	}
 }
 

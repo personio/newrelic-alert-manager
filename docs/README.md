@@ -593,6 +593,57 @@ k8s.io/apimachinery/pkg/labels.Set
 </tr>
 </tbody>
 </table>
+<h3 id="alerts.newrelic.io/v1alpha1.Expiration">Expiration
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#alerts.newrelic.io/v1alpha1.NrqlCondition">NrqlCondition</a>)
+</p>
+<p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>expirationDuration</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_duration">New Relic documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>openViolationOnExpiration</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#open_violation_on_expiration">New Relic documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>closeViolationsOnExpiration</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#close_violations_on_expiration">New Relic documentation</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="alerts.newrelic.io/v1alpha1.InfraCondition">InfraCondition
 </h3>
 <p>
@@ -961,6 +1012,34 @@ string
 <em>optional</em>
 </td>
 </tr>
+<tr>
+<td>
+<code>signal</code></br>
+<em>
+<a href="#alerts.newrelic.io/v1alpha1.Signal">
+Signal
+</a>
+</em>
+</td>
+<td>
+<em>optional</em>
+<p>Used to specify signal properties for missing data</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>expiration</code></br>
+<em>
+<a href="#alerts.newrelic.io/v1alpha1.Expiration">
+Expiration
+</a>
+</em>
+</td>
+<td>
+<em>optional</em>
+<p>Used to define actions on signal expiration</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="alerts.newrelic.io/v1alpha1.OpsgenieNotificationChannel">OpsgenieNotificationChannel
@@ -1180,6 +1259,68 @@ k8s.io/apimachinery/pkg/labels.Set
 </td>
 <td>
 <p>A label selector defining the alert policies covered by the notification channel</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="alerts.newrelic.io/v1alpha1.Signal">Signal
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#alerts.newrelic.io/v1alpha1.NrqlCondition">NrqlCondition</a>)
+</p>
+<p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>aggregationWindow</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#aggregation_window">New Relic documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>evaluationOffset</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_offset">New Relic documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>fillOption</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_option">New Relic documentation</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>fillValue</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Please refer to the official <a href="https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_value">New Relic documentation</a></p>
 </td>
 </tr>
 </tbody>
@@ -1933,5 +2074,5 @@ github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>24049b5</code>.
+on git commit <code>4a116ae</code>.
 </em></p>

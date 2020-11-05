@@ -353,6 +353,23 @@ spec:
                     type: object
                   enabled:
                     type: boolean
+                  expiration:
+                    description: Used to define actions on signal expiration
+                    properties:
+                      closeViolationsOnExpiration:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#close_violations_on_expiration)
+                        type: boolean
+                      expirationDuration:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_duration)
+                        type: string
+                      openViolationOnExpiration:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#open_violation_on_expiration)
+                        type: boolean
+                    required:
+                    - closeViolationsOnExpiration
+                    - expirationDuration
+                    - openViolationOnExpiration
+                    type: object
                   name:
                     description: The name of the nrql policy that will be created
                       in New Relic
@@ -362,6 +379,27 @@ spec:
                     type: string
                   runbookUrl:
                     type: string
+                  signal:
+                    description: Used to specify signal properties for missing data
+                    properties:
+                      aggregationWindow:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#aggregation_window)
+                        type: string
+                      evaluationOffset:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#evaluation_offset)
+                        type: string
+                      fillOption:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_option)
+                        type: string
+                      fillValue:
+                        description: Please refer to the official [New Relic documentation](https://docs.newrelic.com/docs/alerts-applied-intelligence/new-relic-alerts/rest-api-alerts/alerts-conditions-api-field-names#fill_value)
+                        type: string
+                    required:
+                    - aggregationWindow
+                    - evaluationOffset
+                    - fillOption
+                    - fillValue
+                    type: object
                   sinceMinutes:
                     description: Defines the `SINCE` clause in the NRQL query
                     type: integer
