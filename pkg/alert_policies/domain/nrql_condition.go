@@ -58,10 +58,10 @@ func (q Nrql) getHashKey() string {
 }
 
 type Signal struct {
-	AggregationWindow string `json:"aggregation_window"`
+	AggregationWindow string `json:"aggregation_window,omitempty"`
 	EvaluationOffset  string `json:"evaluation_offset"`
 	FillOption        string `json:"fill_option"`
-	FillValue         string `json:"fill_value"`
+	FillValue         string `json:"fill_value,omitempty"`
 }
 
 func (s *Signal) getHashKey() string {
