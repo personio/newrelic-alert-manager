@@ -3,9 +3,9 @@ package e2e_tests
 import (
 	"context"
 	"fmt"
-	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
+	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"testing"
@@ -45,6 +45,43 @@ func TestCreateAlertPolicy(t *testing.T) {
 	}
 	t.Log("Successfully deleted alert policy")
 }
+
+
+func TestCreateNRQLAlertPolicy(t *testing.T) {
+	ctx := initializeTestResources(t, &v1alpha1.AlertPolicyList{})
+
+	policy := newNRQLAlertPolicy("test-policy-nrql")
+	err := framework.Global.Client.Create(context.TODO(), policy, cleanupOptions(ctx))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	err = waitForResource(t, framework.Global.Client.Client, policy, isAlertPolicyReady)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	t.Log("Successfully created alert policy")
+
+	if policy.Status.Reason != "" {
+		t.Error("Resource's Status.Reason should be empty")
+	}
+
+	if policy.Status.NewrelicId == nil {
+		t.Error("Resource's NewrelicId should not be null")
+	}
+
+	err = framework.Global.Client.Delete(context.TODO(), policy)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	err = e2eutil.WaitForDeletion(t, framework.Global.Client.Client, policy, pollInterval, pollTimeout)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("Successfully deleted alert policy")
+}
+
 
 func TestCreateAlertPolicy_ApplicationDoesNotExist(t *testing.T) {
 	ctx := initializeTestResources(t, &v1alpha1.AlertPolicyList{})
@@ -212,6 +249,35 @@ func newApmAlertPolicy() *v1alpha1.AlertPolicy {
 				},
 			},
 			NrqlConditions:  nil,
+			InfraConditions: nil,
+		},
+	}
+}
+
+func newNRQLAlertPolicy(name string) *v1alpha1.AlertPolicy {
+	return &v1alpha1.AlertPolicy{
+		ObjectMeta: v1.ObjectMeta{
+			Name:      name,
+			Namespace: resourceNamespace,
+		},
+		Spec: v1alpha1.AlertPolicySpec{
+			Name:               "test-policy",
+			IncidentPreference: "per_policy",
+			ApmConditions:      nil,
+			NrqlConditions: []v1alpha1.NrqlCondition{
+				{
+					Name:          "test-condition",
+					Query:         `SELECT latest(isReady) + 1 FROM K8sPodSample WHERE status = 'Running' and isReady = 0 FACET podName`,
+					ValueFunction: "single_value",
+					Since: 10,
+					AlertThreshold: v1alpha1.Threshold{
+						TimeFunction:    "any",
+						Operator:        "above",
+						Value:           "30",
+						DurationMinutes: 30,
+					},
+				},
+			},
 			InfraConditions: nil,
 		},
 	}

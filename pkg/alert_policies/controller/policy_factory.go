@@ -117,6 +117,7 @@ func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 	if e == nil {
 		return nil
 	}
+
 	return &domain.Expiration{
 		ExpirationDuration:          e.ExpirationDuration,
 		OpenViolationOnExpiration:   e.OpenViolationOnExpiration,
@@ -126,7 +127,12 @@ func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 
 func newSignal(s *v1alpha1.Signal) *domain.Signal {
 	if s == nil {
-		return nil
+		return &domain.Signal{
+			AggregationWindow: "60",
+			EvaluationOffset:  "3",
+			FillOption:        "none",
+			FillValue:         "",
+		}
 	}
 
 	return &domain.Signal{
