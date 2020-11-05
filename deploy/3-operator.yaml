@@ -16,7 +16,7 @@ spec:
       serviceAccountName: newrelic-alert-manager
       containers:
         - name: newrelic-alert-manager
-          image: personio/newrelic-alert-manager:1.2.1
+          image: personio/newrelic-alert-manager:1.3.0
           command:
             - newrelic-alert-manager
           imagePullPolicy: Always
