@@ -255,6 +255,7 @@ func newApmAlertPolicy() *v1alpha1.AlertPolicy {
 }
 
 func newNRQLAlertPolicy(name string) *v1alpha1.AlertPolicy {
+	since := 10
 	return &v1alpha1.AlertPolicy{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
@@ -269,7 +270,7 @@ func newNRQLAlertPolicy(name string) *v1alpha1.AlertPolicy {
 					Name:          "test-condition",
 					Query:         `SELECT latest(isReady) + 1 FROM K8sPodSample WHERE status = 'Running' and isReady = 0 FACET podName`,
 					ValueFunction: "single_value",
-					Since: 10,
+					Since: &since,
 					AlertThreshold: v1alpha1.Threshold{
 						TimeFunction:    "any",
 						Operator:        "above",

@@ -349,6 +349,11 @@ func (in *NrqlCondition) DeepCopyInto(out *NrqlCondition) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.Since != nil {
+		in, out := &in.Since, &out.Since
+		*out = new(int)
+		**out = **in
+	}
 	out.AlertThreshold = in.AlertThreshold
 	if in.WarningThreshold != nil {
 		in, out := &in.WarningThreshold, &out.WarningThreshold
