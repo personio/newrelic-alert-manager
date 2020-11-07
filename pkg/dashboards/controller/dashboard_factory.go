@@ -6,6 +6,7 @@ import (
 	"github.com/personio/newrelic-alert-manager/pkg/applications"
 	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
 	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget"
+	"regexp"
 )
 
 type DashboardFactory struct {
@@ -75,7 +76,7 @@ func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, er
 
 	if data.Nrql != "" {
 		result[0] = widget.Data{
-			Nrql: data.Nrql,
+			Nrql: regexp.MustCompile(`\s+`).ReplaceAllString(data.Nrql, " "),
 		}
 	} else {
 		entities, err := factory.getApplicationIds(data.ApmMetric.Entities)

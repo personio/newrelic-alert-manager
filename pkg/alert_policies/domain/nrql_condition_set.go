@@ -27,7 +27,8 @@ func NewNrqlConditionSetFromSlice(conditions []*NrqlCondition) *NrqlConditionSet
 }
 
 func (set NrqlConditionSet) put(condition NrqlConditionBody) {
-	set.conditions[condition.getHashKey()] = condition
+	key := condition.getHashKey()
+	set.conditions[key] = condition
 }
 
 func (set NrqlConditionSet) Contains(condition NrqlConditionBody) bool {

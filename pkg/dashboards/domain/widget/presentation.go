@@ -5,10 +5,6 @@ type Presentation struct {
 	Notes string `json:"notes,omitempty"`
 }
 
-func (p Presentation) getSortKey() string {
-	return p.Title + "-" + p.Notes
-}
-
 func (p Presentation) Equals(other Presentation) bool {
 	return p.Title == other.Title && p.Notes == other.Notes
 }

@@ -43,9 +43,12 @@ func (b NrqlConditionBody) getHashKey() string {
 func (b NrqlConditionBody) getTermsHash() string {
 	if len(b.Terms) == 1 {
 		return b.Terms[0].getHashKey()
+	} else if b.Terms[0].Priority == "critical" {
+		return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
+	} else {
+		return b.Terms[1].getHashKey() + "-" + b.Terms[0].getHashKey()
 	}
 
-	return b.Terms[0].getHashKey() + "-" + b.Terms[1].getHashKey()
 }
 
 type Nrql struct {
@@ -83,5 +86,10 @@ func (e *Expiration) getHashKey() string {
 		return ""
 	}
 
-	return fmt.Sprintf("%v-%t-%t", e.ExpirationDuration, e.OpenViolationOnExpiration, e.CloseViolationsOnExpiration)
+	exp := ""
+	if e.ExpirationDuration != nil {
+		exp = *e.ExpirationDuration
+	}
+
+	return fmt.Sprintf("%v-%t-%t", exp, e.OpenViolationOnExpiration, e.CloseViolationsOnExpiration)
 }

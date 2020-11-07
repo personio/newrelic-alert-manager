@@ -1,6 +1,8 @@
 package widget
 
-import "sort"
+import (
+	"sort"
+)
 
 type WidgetList []Widget
 
@@ -12,8 +14,8 @@ func (list WidgetList) Equals(other WidgetList) bool {
 	listCopy := list.copy()
 	otherCopy := other.copy()
 
-	sort.Slice(listCopy, list.comparer)
-	sort.Slice(otherCopy, other.comparer)
+	sort.Slice(listCopy, listCopy.comparer)
+	sort.Slice(otherCopy, otherCopy.comparer)
 
 	for i, _ := range list {
 		if !listCopy[i].Equals(otherCopy[i]) {
@@ -25,7 +27,7 @@ func (list WidgetList) Equals(other WidgetList) bool {
 }
 
 func (list WidgetList) comparer(i int, j int) bool {
-	return list[i].getSortKey() < list[j].getSortKey()
+	return list[i].getComparisonKey() < list[j].getComparisonKey()
 }
 
 func (list WidgetList) copy() WidgetList {

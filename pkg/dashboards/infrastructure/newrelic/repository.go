@@ -3,9 +3,9 @@ package newrelic
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-logr/logr"
 	"github.com/personio/newrelic-alert-manager/internal"
 	"github.com/personio/newrelic-alert-manager/pkg/dashboards/domain"
-	"github.com/go-logr/logr"
 )
 
 type Repository struct {

@@ -107,7 +107,7 @@ func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.Nrql
 				Query:      condition.Query,
 				SinceValue: strconv.Itoa(condition.Since),
 			},
-			Signal:     newSignal(condition.Signal),
+			Signal:     newSignal(condition),
 			Expiration: newExpiration(condition.Expiration),
 		},
 	}
@@ -115,7 +115,11 @@ func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.Nrql
 
 func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 	if e == nil {
-		return nil
+		return &domain.Expiration{
+			ExpirationDuration:          nil,
+			OpenViolationOnExpiration:   false,
+			CloseViolationsOnExpiration: false,
+		}
 	}
 
 	var expiration *string
@@ -133,11 +137,17 @@ func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 	}
 }
 
-func newSignal(s *v1alpha1.Signal) *domain.Signal {
+func newSignal(c v1alpha1.NrqlCondition) *domain.Signal {
+	s := c.Signal
+
 	if s == nil {
+		offset := c.Since
+		if offset == 0 {
+			offset = 3
+		}
 		return &domain.Signal{
 			AggregationWindow: "60",
-			EvaluationOffset:  "3",
+			EvaluationOffset:  strconv.Itoa(offset),
 			FillOption:        "none",
 			FillValue:         "",
 		}
@@ -145,7 +155,7 @@ func newSignal(s *v1alpha1.Signal) *domain.Signal {
 
 	return &domain.Signal{
 		AggregationWindow: intToStringWithDefault(s.AggregationWindow, 60),
-		EvaluationOffset:  intToStringWithDefault(s.EvaluationOffset, 3),
+		EvaluationOffset:  intToStringWithDefault(s.EvaluationOffset, c.Since),
 		FillOption:        stringWithDefault(s.FillOption, "none"),
 		FillValue:         stringWithDefault(s.FillValue, ""),
 	}
