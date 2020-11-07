@@ -419,6 +419,8 @@ spec:
                     type: object
                   sinceMinutes:
                     description: Defines the `SINCE` clause in the NRQL query
+                    maximum: 20
+                    minimum: 1
                     type: integer
                   valueFunction:
                     description: 'Available options are: \ - `single_value` \ - `sum`
@@ -467,7 +469,6 @@ spec:
                 - alertThreshold
                 - name
                 - query
-                - sinceMinutes
                 - valueFunction
                 type: object
               type: array

@@ -95,6 +95,8 @@ func (policyFactory PolicyFactory) newNrqlConditions(conditions []v1alpha1.NrqlC
 }
 
 func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.NrqlCondition) *domain.NrqlCondition {
+	sinceValue := getSinceValue(condition)
+
 	return &domain.NrqlCondition{
 		Condition: domain.NrqlConditionBody{
 			Type:          "static",
@@ -105,12 +107,22 @@ func (policyFactory PolicyFactory) newNrqlAlertCondition(condition v1alpha1.Nrql
 			ValueFunction: condition.ValueFunction,
 			Nrql: domain.Nrql{
 				Query:      condition.Query,
-				SinceValue: strconv.Itoa(condition.Since),
+				SinceValue: strconv.Itoa(sinceValue),
 			},
 			Signal:     newSignal(condition),
 			Expiration: newExpiration(condition.Expiration),
 		},
 	}
+}
+
+func getSinceValue(condition v1alpha1.NrqlCondition) int {
+	sinceValue := 3
+	if condition.Signal != nil && condition.Signal.EvaluationOffset != nil {
+		sinceValue = *condition.Signal.EvaluationOffset
+	} else if condition.Since != nil {
+		sinceValue = *condition.Since
+	}
+	return sinceValue
 }
 
 func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
@@ -139,12 +151,8 @@ func newExpiration(e *v1alpha1.Expiration) *domain.Expiration {
 
 func newSignal(c v1alpha1.NrqlCondition) *domain.Signal {
 	s := c.Signal
-
+	offset := getSinceValue(c)
 	if s == nil {
-		offset := c.Since
-		if offset == 0 {
-			offset = 3
-		}
 		return &domain.Signal{
 			AggregationWindow: "60",
 			EvaluationOffset:  strconv.Itoa(offset),
@@ -155,7 +163,7 @@ func newSignal(c v1alpha1.NrqlCondition) *domain.Signal {
 
 	return &domain.Signal{
 		AggregationWindow: intToStringWithDefault(s.AggregationWindow, 60),
-		EvaluationOffset:  intToStringWithDefault(s.EvaluationOffset, c.Since),
+		EvaluationOffset:  strconv.Itoa(offset),
 		FillOption:        stringWithDefault(s.FillOption, "none"),
 		FillValue:         stringWithDefault(s.FillValue, ""),
 	}
@@ -243,6 +251,14 @@ func stringWithDefault(scope *string, defaultValue string) string {
 	}
 
 	return *scope
+}
+
+func intWithDefault(val *int, defaultValue int) int {
+	if val == nil {
+		return defaultValue
+	}
+
+	return *val
 }
 
 func intToStringWithDefault(val *int, defaultValue int) string {

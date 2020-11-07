@@ -53,7 +53,7 @@ func (b NrqlConditionBody) getTermsHash() string {
 
 type Nrql struct {
 	Query      string `json:"query"`
-	SinceValue string `json:"since_value"`
+	SinceValue string `json:"since_value,omitempty"`
 }
 
 func (q Nrql) getHashKey() string {

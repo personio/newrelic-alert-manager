@@ -9,7 +9,10 @@ type NrqlCondition struct {
 	// The NRQL query associated with the condition
 	Query string `json:"query"`
 	// Defines the `SINCE` clause in the NRQL query
-	Since int `json:"sinceMinutes"`
+	// +optional
+	// +kubebuilder:validation:Maximum=20
+	// +kubebuilder:validation:Minimum=1
+	Since *int `json:"sinceMinutes,omitempty"`
 	// Available options are: \
 	// - `single_value` \
 	// - `sum` \

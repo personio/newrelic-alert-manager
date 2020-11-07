@@ -10,12 +10,7 @@ spec:
   nrqlConditions:
     - name: High container memory usage
       query: "SELECT sum(memoryWorkingSetBytes/memoryLimitBytes)*100 FROM K8sContainerSample FACET podName"
-      sinceMinutes: 15
-      signal:
-        aggregationWindowSeconds: 90
-        evaluationOffset: 15
-        fillOption: static
-        fillValue: "15"
+      sinceMinutes: 3
       expiration:
         expirationDurationSeconds: 60
         openViolationOnExpiration: true
