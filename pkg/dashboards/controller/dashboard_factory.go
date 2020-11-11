@@ -66,17 +66,21 @@ func (factory DashboardFactory) newWidgets(widgets []v1alpha1.Widget) (widget.Wi
 func (factory DashboardFactory) newData(data v1alpha1.Data) (widget.DataList, error) {
 	var result widget.DataList
 
-	if data.Nrql != "" && data.ApmMetric != nil {
-		return result, internal.NewClientError("you can either set data.nrql or data.apm, but not both")
+	if data.Nrql != "" && data.Source != "" && data.ApmMetric != nil {
+		return result, internal.NewClientError("you can exactly one of data.source, data.nrql or data.apm")
 	}
 
-	if data.Nrql == "" && data.ApmMetric == nil {
-		return result, internal.NewClientError("you must set either set data.nrql or data.apm")
+	if data.Nrql == "" && data.Source == "" && data.ApmMetric == nil {
+		return result, internal.NewClientError("you must set one of data.source, data.nrql or data.apm")
 	}
 
 	if data.Nrql != "" {
 		result[0] = widget.Data{
 			Nrql: regexp.MustCompile(`\s+`).ReplaceAllString(data.Nrql, " "),
+		}
+	} else if data.Source != "" {
+		result[0] = widget.Data{
+			Source: data.Source,
 		}
 	} else {
 		entities, err := factory.getApplicationIds(data.ApmMetric.Entities)
