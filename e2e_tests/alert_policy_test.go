@@ -2,7 +2,6 @@ package e2e_tests
 
 import (
 	"context"
-	"fmt"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
 	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
@@ -122,96 +121,11 @@ func TestCreateAlertPolicy_ApplicationDoesNotExist(t *testing.T) {
 	t.Log("Successfully deleted alert policy")
 }
 
-func TestCreateMultipleAlertPolicies(t *testing.T) {
-	ctx := initializeTestResources(t, &v1alpha1.AlertPolicyList{})
-
-	labels := map[string]string{"e2e": "e2e"}
-	channel := newSlackChannelWithSelector("channel-with-selector", labels)
-	err := framework.Global.Client.Create(context.TODO(), channel, cleanupOptions(ctx))
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	policies := newPolicyArray(10, labels)
-	for _, policy := range policies {
-		err := framework.Global.Client.Create(context.TODO(), policy, cleanupOptions(ctx))
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-	}
-
-	for _, policy := range policies {
-		err := waitForResource(t, framework.Global.Client.Client, policy, isAlertPolicyReady)
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-		t.Log("Successfully created alert policy")
-
-		if policy.Status.Reason != "" {
-			t.Error("Resource's Status.Reason should be empty")
-		}
-
-		if policy.Status.NewrelicId == nil {
-			t.Error("Resource's NewrelicId should not be null")
-		}
-	}
-
-	for _, policy := range policies {
-		err := framework.Global.Client.Delete(context.TODO(), policy)
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-
-		err = e2eutil.WaitForDeletion(t, framework.Global.Client.Client, policy, pollInterval, pollTimeout)
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Log("Successfully deleted alert policy")
-	}
-
-	err = framework.Global.Client.Delete(context.TODO(), channel)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	err = e2eutil.WaitForDeletion(t, framework.Global.Client.Client, channel, pollInterval, pollTimeout)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log("Successfully deleted channel")
-}
-
-func newPolicyArray(sampleSize int, labels map[string]string) []*v1alpha1.AlertPolicy {
-	policies := make([]*v1alpha1.AlertPolicy, sampleSize)
-	for i := 0; i < sampleSize; i++ {
-		policyName := fmt.Sprintf("test-policy%d", i)
-		policies[i] = newAlertPolicyWithLabels(policyName, labels)
-	}
-	return policies
-}
-
 func newAlertPolicy(name string) *v1alpha1.AlertPolicy {
 	return &v1alpha1.AlertPolicy{
 		ObjectMeta: v1.ObjectMeta{
 			Name:      name,
 			Namespace: resourceNamespace,
-		},
-		Spec: v1alpha1.AlertPolicySpec{
-			Name:               name,
-			IncidentPreference: "per_policy",
-			ApmConditions:      nil,
-			NrqlConditions:     nil,
-			InfraConditions:    nil,
-		},
-	}
-}
-
-func newAlertPolicyWithLabels(name string, labels map[string]string) *v1alpha1.AlertPolicy {
-	return &v1alpha1.AlertPolicy{
-		ObjectMeta: v1.ObjectMeta{
-			Name:      name,
-			Namespace: resourceNamespace,
-			Labels:    labels,
 		},
 		Spec: v1alpha1.AlertPolicySpec{
 			Name:               name,

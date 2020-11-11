@@ -27,9 +27,10 @@ type Widget struct {
 	// - `histogram` \
 	// - `json` \
 	// - `line_chart` \
+	// - `markdown` \
 	// - `list` \
 	// - `metric_line_chart` (used for apm metrics) \
-	// +kubebuilder:validation:Enum=application_breakdown;attribute_sheet;background_breakdown;billboard;billboard_comparison;comparison_line_chart;event_table;facet_bar_chart;facet_pie_chart;facet_table;faceted_area_chart;faceted_line_chart;funnel;gauge;heatmap;histogram;json;line_chart;list;metric_line_chart
+	// +kubebuilder:validation:Enum=application_breakdown;attribute_sheet;background_breakdown;billboard;billboard_comparison;comparison_line_chart;event_table;facet_bar_chart;facet_pie_chart;facet_table;faceted_area_chart;faceted_line_chart;funnel;gauge;heatmap;histogram;json;line_chart;list;markdown;metric_line_chart
 	Visualization string `json:"visualization"`
 	// Notes to add to the widget
 	Notes string `json:"notes,omitempty"`
@@ -40,12 +41,15 @@ type Widget struct {
 }
 
 // Data represents the data to plot inside the widget. \
-// Either Nrql or ApmMetric should be specified, but not both. \
+// Exactly one of Source, Nrql or ApmMetric should be specified. \
 // \
-// Leave both fields empty if you want to plot the application breakdown data, \
+// Leave all fields empty if you want to plot the application breakdown data, \
 // also present in the main widget that comes with the default application dashboard. \
 // For more information refer to the official [New Relic documentation](https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#dashboard-data)
 type Data struct {
+	// The text shown on the widget. Use in conjunction with visualization: markdown
+	// +optional
+	Source string `json:"source,omitempty"`
 	// The NRQL query used which defines the data to plot in the widget
 	// +optional
 	Nrql string `json:"nrql,omitempty"`

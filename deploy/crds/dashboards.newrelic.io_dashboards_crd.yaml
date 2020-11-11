@@ -109,6 +109,10 @@ spec:
                         description: The NRQL query used which defines the data to
                           plot in the widget
                         type: string
+                      source:
+                        description: 'The text shown on the widget. Use in conjunction
+                          with visualization: markdown'
+                        type: string
                     type: object
                   layout:
                     description: Defines the layout of the widget within the dashboard
@@ -140,8 +144,8 @@ spec:
                       \ - `comparison_line_chart` \ - `event_table` \ - `facet_bar_chart`
                       \ - `facet_pie_chart` \ - `facet_table` \ - `faceted_area_chart`
                       \ - `faceted_line_chart` \ - `funnel` \ - `gauge` \ - `heatmap`
-                      \ - `histogram` \ - `json` \ - `line_chart` \ - `list` \ - `metric_line_chart`
-                      (used for apm metrics) \'
+                      \ - `histogram` \ - `json` \ - `line_chart` \ - `markdown` \
+                      - `list` \ - `metric_line_chart` (used for apm metrics) \'
                     enum:
                     - application_breakdown
                     - attribute_sheet
@@ -162,6 +166,7 @@ spec:
                     - json
                     - line_chart
                     - list
+                    - markdown
                     - metric_line_chart
                     type: string
                 required:
