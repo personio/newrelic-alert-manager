@@ -3,9 +3,10 @@ package newrelic
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-logr/logr"
 	"github.com/personio/newrelic-alert-manager/internal"
 	"github.com/personio/newrelic-alert-manager/pkg/alert_policies/domain"
-	"github.com/go-logr/logr"
+	"strconv"
 )
 
 type AlertPolicyRepository struct {
@@ -129,27 +130,48 @@ func (repository AlertPolicyRepository) updatePolicy(policy *domain.AlertPolicy)
 }
 
 func (repository AlertPolicyRepository) getPolicy(policyId int64) (*domain.AlertPolicy, error) {
-	var policyList domain.NewrelicPolicyList
-
-	response, err := repository.client.GetJson("alerts_policies.json")
+	policyList, err := repository.getAllPolicies()
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.NewDecoder(response.Body).Decode(&policyList)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, policy := range policyList.Policies {
-		if *policy.Id == policyId {
-			return &domain.AlertPolicy{
-				Policy: policy,
-			}, nil
+	for _, policy := range policyList {
+		if *policy.Policy.Id == policyId {
+			return &policy, nil
 		}
 	}
 
 	return nil, nil
+}
+
+func (repository *AlertPolicyRepository) getAllPolicies() ([]domain.AlertPolicy, error) {
+	var result []domain.AlertPolicy
+	page := 1
+	for {
+		response, err := repository.client.Get("alerts_policies.json?page=" + strconv.Itoa(page))
+		if err != nil {
+			return nil, err
+		}
+
+		var policies domain.NewrelicPolicyList
+		err = json.NewDecoder(response.Body).Decode(&policies)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(policies.Policies) == 0 {
+			break
+		}
+
+		for _, channel := range policies.Policies {
+			result = append(result, domain.AlertPolicy{
+				Policy: channel,
+			})
+		}
+		page += 1
+	}
+
+	return result, nil
 }
 
 func marshal(policy domain.AlertPolicy) ([]byte, error) {
