@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"github.com/go-logr/logr"
+	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"github.com/personio/newrelic-alert-manager/internal"
 	"github.com/personio/newrelic-alert-manager/pkg/alert_policies/domain"
 	"github.com/personio/newrelic-alert-manager/pkg/alert_policies/infrastructure/k8s"
@@ -8,8 +10,6 @@ import (
 	"github.com/personio/newrelic-alert-manager/pkg/apis/alerts/v1alpha1"
 	commonv1alpha1 "github.com/personio/newrelic-alert-manager/pkg/apis/common/v1alpha1"
 	"github.com/personio/newrelic-alert-manager/pkg/applications"
-	"github.com/go-logr/logr"
-	"github.com/operator-framework/operator-sdk/pkg/predicate"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"os"

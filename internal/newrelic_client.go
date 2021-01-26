@@ -29,7 +29,7 @@ type newrelicClient struct {
 func NewNewrelicClient(log logr.Logger, url string, adminKey string) NewrelicClient {
 	return newrelicClient{
 		client:   &http.Client{
-			Timeout: time.Second * 3,
+			Timeout: time.Second * 10,
 		},
 		log:      log.V(3),
 		url:      url,
