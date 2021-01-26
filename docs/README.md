@@ -1,15 +1,426 @@
 <p>Packages:</p>
 <ul>
 <li>
+<a href="#dashboards.newrelic.io%2fv1alpha1">dashboards.newrelic.io/v1alpha1</a>
+</li>
+<li>
 <a href="#alerts.newrelic.io%2fv1alpha1">alerts.newrelic.io/v1alpha1</a>
 </li>
 <li>
 <a href="#common.newrelic.io%2fv1alpha1">common.newrelic.io/v1alpha1</a>
 </li>
-<li>
-<a href="#dashboards.newrelic.io%2fv1alpha1">dashboards.newrelic.io/v1alpha1</a>
-</li>
 </ul>
+<h2 id="dashboards.newrelic.io/v1alpha1">dashboards.newrelic.io/v1alpha1</h2>
+<p>
+<p>Package v1alpha1 contains API Schema definitions for the dashboards v1alpha1 API group</p>
+</p>
+Resource Types:
+<ul></ul>
+<h3 id="dashboards.newrelic.io/v1alpha1.Apm">Apm
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#dashboards.newrelic.io/v1alpha1.Data">Data</a>)
+</p>
+<p>
+<p>Apm is the set of metric parameters used for defining the data to plot in the widget</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>sinceSeconds</code></br>
+<em>
+int
+</em>
+</td>
+<td>
+<p>The time frame in seconds</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>entities</code></br>
+<em>
+[]string
+</em>
+</td>
+<td>
+<p>A list of application names for which to get the metric</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>metrics</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.Metric">
+[]Metric
+</a>
+</em>
+</td>
+<td>
+<p>A list of metrics to use</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>facet</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>optional</em>
+</td>
+</tr>
+<tr>
+<td>
+<code>order_by</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>optional</em>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard
+</h3>
+<p>
+<p>DashboardBody is the Schema for the dashboards API</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>metadata</code></br>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#objectmeta-v1-meta">
+Kubernetes meta/v1.ObjectMeta
+</a>
+</em>
+</td>
+<td>
+Refer to the Kubernetes API documentation for the fields of the
+<code>metadata</code> field.
+</td>
+</tr>
+<tr>
+<td>
+<code>spec</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.DashboardSpec">
+DashboardSpec
+</a>
+</em>
+</td>
+<td>
+<br/>
+<br/>
+<table>
+<tr>
+<td>
+<code>title</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>The name of the dashboard that will be created in New Relic</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>widgets</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.Widget">
+[]Widget
+</a>
+</em>
+</td>
+<td>
+<p>A list of widgets to add to the dashboard</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<code>status</code></br>
+<em>
+<a href="#common.newrelic.io/v1alpha1.Status">
+Status
+</a>
+</em>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboards.newrelic.io/v1alpha1.DashboardSpec">DashboardSpec
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard</a>)
+</p>
+<p>
+<p>DashboardSpec defines the desired state of DashboardBody</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>title</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>The name of the dashboard that will be created in New Relic</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>widgets</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.Widget">
+[]Widget
+</a>
+</em>
+</td>
+<td>
+<p>A list of widgets to add to the dashboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboards.newrelic.io/v1alpha1.Data">Data
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#dashboards.newrelic.io/v1alpha1.Widget">Widget</a>)
+</p>
+<p>
+<p>Data represents the data to plot inside the widget. <br />
+Exactly one of Source, Nrql or ApmMetric should be specified. <br />
+<br />
+Leave all fields empty if you want to plot the application breakdown data, <br />
+also present in the main widget that comes with the default application dashboard. <br />
+For more information refer to the official <a href="https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#dashboard-data">New Relic documentation</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>source</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>optional</em>
+<p>The text shown on the widget. Use in conjunction with visualization: markdown</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>nrql</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>optional</em>
+<p>The NRQL query used which defines the data to plot in the widget</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>apm</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.Apm">
+Apm
+</a>
+</em>
+</td>
+<td>
+<em>optional</em>
+<p>The APM metric parameters which defines the data to plot in the widget. <br />
+When using an APM metric for the data, visualization should be set to either <code>metric_line_chart</code> or <code>application_breakdown</code>. </p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboards.newrelic.io/v1alpha1.Metric">Metric
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#dashboards.newrelic.io/v1alpha1.Apm">Apm</a>)
+</p>
+<p>
+<p>Metric is the name of the metric as shown in Data Explorer</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Name of the metric</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>values</code></br>
+<em>
+[]string
+</em>
+</td>
+<td>
+<p>List of metric values to plot. The available values will depend on the metric you choose. <br />
+Check the Data Explorer in New Relic to find out which values are available for which metrics.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboards.newrelic.io/v1alpha1.Widget">Widget
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#dashboards.newrelic.io/v1alpha1.DashboardSpec">DashboardSpec</a>)
+</p>
+<p>
+<p>Widget defines the widget parameters <br />
+For more details, refer to the official <a href="https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#widget-data">New Relic documentation</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>title</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>The title of the widget created in New Relic</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>visualization</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Visualization type to use for the widget. <br />
+Available options are: <br />
+- <code>application_breakdown</code> <br />
+- <code>attribute_sheet</code> <br />
+- <code>background_breakdown</code> <br />
+- <code>billboard</code> <br />
+- <code>billboard_comparison</code> <br />
+- <code>comparison_line_chart</code> <br />
+- <code>event_table</code> <br />
+- <code>facet_bar_chart</code> <br />
+- <code>facet_pie_chart</code> <br />
+- <code>facet_table</code> <br />
+- <code>faceted_area_chart</code> <br />
+- <code>faceted_line_chart</code> <br />
+- <code>funnel</code> <br />
+- <code>gauge</code> <br />
+- <code>heatmap</code> <br />
+- <code>histogram</code> <br />
+- <code>json</code> <br />
+- <code>line_chart</code> <br />
+- <code>markdown</code> <br />
+- <code>list</code> <br />
+- <code>metric_line_chart</code> (used for apm metrics) </p>
+</td>
+</tr>
+<tr>
+<td>
+<code>notes</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Notes to add to the widget</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>data</code></br>
+<em>
+<a href="#dashboards.newrelic.io/v1alpha1.Data">
+Data
+</a>
+</em>
+</td>
+<td>
+<p>The data to plot on the widget</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>layout</code></br>
+<em>
+github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
+</em>
+</td>
+<td>
+<p>Defines the layout of the widget within the dashboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+<hr/>
 <h2 id="alerts.newrelic.io/v1alpha1">alerts.newrelic.io/v1alpha1</h2>
 <p>
 <p>Package v1alpha1 contains API Schema definitions for the io v1alpha1 API group</p>
@@ -1688,418 +2099,7 @@ int64
 </tbody>
 </table>
 <hr/>
-<h2 id="dashboards.newrelic.io/v1alpha1">dashboards.newrelic.io/v1alpha1</h2>
-<p>
-<p>Package v1alpha1 contains API Schema definitions for the dashboards v1alpha1 API group</p>
-</p>
-Resource Types:
-<ul></ul>
-<h3 id="dashboards.newrelic.io/v1alpha1.Apm">Apm
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#dashboards.newrelic.io/v1alpha1.Data">Data</a>)
-</p>
-<p>
-<p>Apm is the set of metric parameters used for defining the data to plot in the widget</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>sinceSeconds</code></br>
-<em>
-int
-</em>
-</td>
-<td>
-<p>The time frame in seconds</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>entities</code></br>
-<em>
-[]string
-</em>
-</td>
-<td>
-<p>A list of application names for which to get the metric</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>metrics</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.Metric">
-[]Metric
-</a>
-</em>
-</td>
-<td>
-<p>A list of metrics to use</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>facet</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>optional</em>
-</td>
-</tr>
-<tr>
-<td>
-<code>order_by</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>optional</em>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard
-</h3>
-<p>
-<p>DashboardBody is the Schema for the dashboards API</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>metadata</code></br>
-<em>
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#objectmeta-v1-meta">
-Kubernetes meta/v1.ObjectMeta
-</a>
-</em>
-</td>
-<td>
-Refer to the Kubernetes API documentation for the fields of the
-<code>metadata</code> field.
-</td>
-</tr>
-<tr>
-<td>
-<code>spec</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.DashboardSpec">
-DashboardSpec
-</a>
-</em>
-</td>
-<td>
-<br/>
-<br/>
-<table>
-<tr>
-<td>
-<code>title</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>The name of the dashboard that will be created in New Relic</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>widgets</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.Widget">
-[]Widget
-</a>
-</em>
-</td>
-<td>
-<p>A list of widgets to add to the dashboard</p>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>
-<code>status</code></br>
-<em>
-<a href="#common.newrelic.io/v1alpha1.Status">
-Status
-</a>
-</em>
-</td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dashboards.newrelic.io/v1alpha1.DashboardSpec">DashboardSpec
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#dashboards.newrelic.io/v1alpha1.Dashboard">Dashboard</a>)
-</p>
-<p>
-<p>DashboardSpec defines the desired state of DashboardBody</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>title</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>The name of the dashboard that will be created in New Relic</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>widgets</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.Widget">
-[]Widget
-</a>
-</em>
-</td>
-<td>
-<p>A list of widgets to add to the dashboard</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dashboards.newrelic.io/v1alpha1.Data">Data
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#dashboards.newrelic.io/v1alpha1.Widget">Widget</a>)
-</p>
-<p>
-<p>Data represents the data to plot inside the widget. <br />
-Exactly one of Source, Nrql or ApmMetric should be specified. <br />
-<br />
-Leave all fields empty if you want to plot the application breakdown data, <br />
-also present in the main widget that comes with the default application dashboard. <br />
-For more information refer to the official <a href="https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#dashboard-data">New Relic documentation</a></p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>source</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>optional</em>
-<p>The text shown on the widget. Use in conjunction with visualization: markdown</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>nrql</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>optional</em>
-<p>The NRQL query used which defines the data to plot in the widget</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>apm</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.Apm">
-Apm
-</a>
-</em>
-</td>
-<td>
-<em>optional</em>
-<p>The APM metric parameters which defines the data to plot in the widget. <br />
-When using an APM metric for the data, visualization should be set to either <code>metric_line_chart</code> or <code>application_breakdown</code>. </p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dashboards.newrelic.io/v1alpha1.Metric">Metric
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#dashboards.newrelic.io/v1alpha1.Apm">Apm</a>)
-</p>
-<p>
-<p>Metric is the name of the metric as shown in Data Explorer</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>name</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>Name of the metric</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>values</code></br>
-<em>
-[]string
-</em>
-</td>
-<td>
-<p>List of metric values to plot. The available values will depend on the metric you choose. <br />
-Check the Data Explorer in New Relic to find out which values are available for which metrics.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dashboards.newrelic.io/v1alpha1.Widget">Widget
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#dashboards.newrelic.io/v1alpha1.DashboardSpec">DashboardSpec</a>)
-</p>
-<p>
-<p>Widget defines the widget parameters <br />
-For more details, refer to the official <a href="https://docs.newrelic.com/docs/insights/insights-api/manage-dashboards/insights-dashboard-api#widget-data">New Relic documentation</a></p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>title</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>The title of the widget created in New Relic</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>visualization</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>Visualization type to use for the widget. <br />
-Available options are: <br />
-- <code>application_breakdown</code> <br />
-- <code>attribute_sheet</code> <br />
-- <code>background_breakdown</code> <br />
-- <code>billboard</code> <br />
-- <code>billboard_comparison</code> <br />
-- <code>comparison_line_chart</code> <br />
-- <code>event_table</code> <br />
-- <code>facet_bar_chart</code> <br />
-- <code>facet_pie_chart</code> <br />
-- <code>facet_table</code> <br />
-- <code>faceted_area_chart</code> <br />
-- <code>faceted_line_chart</code> <br />
-- <code>funnel</code> <br />
-- <code>gauge</code> <br />
-- <code>heatmap</code> <br />
-- <code>histogram</code> <br />
-- <code>json</code> <br />
-- <code>line_chart</code> <br />
-- <code>markdown</code> <br />
-- <code>list</code> <br />
-- <code>metric_line_chart</code> (used for apm metrics) </p>
-</td>
-</tr>
-<tr>
-<td>
-<code>notes</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>Notes to add to the widget</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>data</code></br>
-<em>
-<a href="#dashboards.newrelic.io/v1alpha1.Data">
-Data
-</a>
-</em>
-</td>
-<td>
-<p>The data to plot on the widget</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>layout</code></br>
-<em>
-github.com/personio/newrelic-alert-manager/pkg/dashboards/domain/widget.Layout
-</em>
-</td>
-<td>
-<p>Defines the layout of the widget within the dashboard</p>
-</td>
-</tr>
-</tbody>
-</table>
-<hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>5492b8a</code>.
+on git commit <code>6f936d2</code>.
 </em></p>
